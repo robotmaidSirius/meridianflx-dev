@@ -49,9 +49,8 @@ git clone --recursive https://github.com/Ninagawa123/meridianflx-dev.git
 
 ### Meridian Twin
 
-
-Meridian_TWINは, ハードウェアとして通信用のESP32DevKitC, 制御用のTeensy4.0, それらを連結する専用ボードのMeiridian Boardで構成されます.
-デモは近藤科学のKRSサーボ(通信速度1.25Mbps)に対応しており, Meiridian Board Type.KはKHR-3HV用に搭載することができます.
+Meridian_TWINは, ハードウェアとして通信用のESP32DevKitC, 制御用のTeensy4.0, それらを連結する専用ボードのMeridian Boardで構成されます.
+デモは近藤科学のKRSサーボ(通信速度1.25Mbps)に対応しており, Meridian Board Type.KはKHR-3HV用に搭載することができます.
 PC側はROS1のmelodic/noeticに対応しており, 現在Rvizでの表示が可能です. またUnity(Mac/Win版)でもヒューマノイドの姿勢をリアルタイムに反映させることができます.
 
 <img width="500" alt="TypeK" src="./docs/images/Meridian_TWIN_Board.png">
