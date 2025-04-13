@@ -1,0 +1,26 @@
+name: Build Meridian
+on:
+  workflow_dispatch:
+    inputs:
+      board_env:
+        description: 'Select environments'
+        required: true
+        default: 'Meridian_Lite_ESP32'
+        type: choice
+        options:
+          - Meridian_Lite_ESP32
+          - Meridian_TWIN_ESP32
+          - Meridian_TWIN_Tsy40
+#          - Meridian_Lite_pico
+      build_flags:
+        description: 'Build flags'
+        required: false
+        type: string
+
+jobs:
+  Build_Meridian:
+    uses: ./.github/workflows/_WORKFLOW_CALL_RunningPlatformIO.yml
+    with:
+      board_env: ${{inputs.board_env}}
+      build_flags: ${{inputs.build_flags}}
+      firmware_name: ${{inputs.board_env}}
