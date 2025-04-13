@@ -1,14 +1,14 @@
-name: Build Meridian_LITE
+name: Build Meridian
 on:
   workflow_dispatch:
     inputs:
       board_env:
         description: 'Select environments'
         required: true
-        default: 'Meridian_Lite'
+        default: 'Meridian_Lite_ESP32'
         type: choice
         options:
-          - Meridian_Lite
+          - Meridian_Lite_ESP32
           - Meridian_TWIN_ESP32
           - Meridian_TWIN_Tsy40
 #          - Meridian_Lite_pico

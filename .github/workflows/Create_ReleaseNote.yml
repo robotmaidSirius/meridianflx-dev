@@ -5,30 +5,27 @@ on:
       - 'v*'
 
 jobs:
-  Build_Meridian_LITE_for_ESP32:
+  Build_Meridian_Lite:
     uses: ./.github/workflows/_WORKFLOW_CALL_RunningPlatformIO.yml
     with:
-      target_dir: Meridian_LITE_for_ESP32
-      board_env: esp32dev
+      board_env: Meridian_Lite_ESP32
       firmware_name: Meridian_LITE_for_ESP32
-  Build_Meridian_LITE_for_teensy40:
+  Build_Meridian_TWIN_ESP32:
     uses: ./.github/workflows/_WORKFLOW_CALL_RunningPlatformIO.yml
     with:
-      target_dir: Meridian_LITE_for_ESP32
-      board_env: teensy40
-      firmware_name: Meridian_LITE_for_teensy40
-  Build_Meridian_LITE_for_pico:
+      board_env: Meridian_TWIN_ESP32
+      firmware_name: Meridian_TWIN_for_ESP32
+  Build_Meridian_TWIN_Tsy40:
     uses: ./.github/workflows/_WORKFLOW_CALL_RunningPlatformIO.yml
     with:
-      target_dir: Meridian_LITE_for_ESP32
-      board_env: pico
-      firmware_name: Meridian_LITE_for_pico
+      board_env: Meridian_TWIN_Tsy40
+      firmware_name: Meridian_TWIN_Tsy40
 
   build:
     permissions:
       contents: write
     if: success()
-    needs: [Build_Meridian_LITE_for_ESP32, Build_Meridian_LITE_for_teensy40, Build_Meridian_LITE_for_pico]
+    needs: [Build_Meridian_Lite, Build_Meridian_TWIN_ESP32, Build_Meridian_TWIN_Tsy40]
     name: Build Releases on tags
     runs-on: ubuntu-latest
 

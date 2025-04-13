@@ -47,14 +47,19 @@ jobs:
         PLATFORMIO_BUILD_FLAGS: ${{inputs.build_flags}}
 
     - name: Rename firmware.bin
-      if: success() && '${{inputs.firmware_name}}' != 'firmware'
+      if: success() && '${{inputs.firmware_name}}' != 'firmware'&& '${{inputs.board_env}}' != 'Meridian_TWIN_Tsy40'
       working-directory: ${{github.workspace}}/.pio/build/${{inputs.board_env}}
       run: cp firmware.bin ${{inputs.firmware_name}}.bin
+
+    - name: Rename firmware.hex
+      if: success() && '${{inputs.firmware_name}}' != 'firmware'&& '${{inputs.board_env}}' == 'Meridian_TWIN_Tsy40'
+      working-directory: ${{github.workspace}}/.pio/build/${{inputs.board_env}}
+      run: cp firmware.hex ${{inputs.firmware_name}}.hex
 
     - name: Upload artifacts
       if: success()
       uses: actions/upload-artifact@v4
       with:
         name: ${{inputs.firmware_name}}
-        path: ${{github.workspace}}/.pio/build/${{inputs.board_env}}/${{inputs.firmware_name}}.bin
+        path: ${{github.workspace}}/.pio/build/${{inputs.board_env}}/${{inputs.firmware_name}}.*
         overwrite: true
