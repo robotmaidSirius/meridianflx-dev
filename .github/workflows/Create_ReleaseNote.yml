@@ -20,6 +20,7 @@ jobs:
     with:
       board_env: Meridian_TWIN_Tsy40
       firmware_name: Meridian_TWIN_Tsy40
+      ext_name: hex
 
   build:
     permissions:
