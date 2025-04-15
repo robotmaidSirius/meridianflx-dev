@@ -83,8 +83,8 @@ bool mrd_timeout_check(unsigned long a_limit) {
   unsigned long current_time = millis(); // 現在の時間を取得
 
   if (current_time - timeout_start >= a_limit) { // 指定された時間が経過しているかチェック
-    flg_timer_started = false; // タイムアウト監視開始フラグをサゲる
-    return true;               // 指定された時間が経過していれば true を返す
+    flg_timer_started = false;                   // タイムアウト監視開始フラグをサゲる
+    return true;                                 // 指定された時間が経過していれば true を返す
   }
 
   return false; // まだ時間が経過していなければ false を返す
@@ -102,7 +102,7 @@ void mrd_timeout_reset() {
 /// @brief meridim配列のチェックサムを算出して[len-1]に書き込む.
 /// @param a_meridim Meridim配列の共用体. 参照渡し.
 /// @return 常にtrueを返す.
-bool mrd_meriput90_cksm(Meridim90Union &a_meridim, int len=90) {
+bool mrd_meriput90_cksm(Meridim90Union &a_meridim, int len = 90) {
   int a_cksm = 0;
   for (int i = 0; i < len - 1; i++) {
     a_cksm += int(a_meridim.sval[i]);

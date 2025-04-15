@@ -162,15 +162,14 @@ void loop() {
     TsyDMASPI0.transfer(s_spi_meridim_dummy.bval, r_spi_meridim_dma.bval, MRDM_BYTE + 4);
 
     // [1-2] ESP32からのSPI受信データチェックサム確認
-    if (mrd.cksm_rslt(r_spi_meridim_dma.sval, MRDM_LEN)) //
-    { // チェックサムがOKならバッファから受信配列に転記
+    if (mrd.cksm_rslt(r_spi_meridim_dma.sval, MRDM_LEN)) {
+      // チェックサムがOKならバッファから受信配列に転記
       memcpy(r_spi_meridim.bval, r_spi_meridim_dma.bval, MRDM_BYTE);
       mrd_clearBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_13_ESP_TSY); // エラービットをサゲる
-      mrd.monitor_check_flow("csOK", monitor.flow); // 動作チェック用シリアル表示
-    } else // チェックサムがNGならバッファから転記せず前回のデータを使用する
-    {
-      mrd.monitor_check_flow("cs *NG* ", monitor.flow); // 動作チェック用シリアル表示
-      mrd_setBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_13_ESP_TSY); // エラービットをアゲる
+      mrd.monitor_check_flow("csOK", monitor.flow);                    // 動作チェック用シリアル表示
+    } else {                                                           // チェックサムがNGならバッファから転記せず前回のデータを使用する
+      mrd.monitor_check_flow("cs *NG* ", monitor.flow);                // 動作チェック用シリアル表示
+      mrd_setBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_13_ESP_TSY);   // エラービットをアゲる
     }
 
     // @[1-3] シーケンス番号チェック
@@ -178,12 +177,12 @@ void loop() {
     if (mrd.seq_compare_nums(mrdsq.r_expect, int(r_spi_meridim.usval[MRD_SEQ]))) {
       // 受信シーケンス番号の値が予想と合致なら
       mrd_clearBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_9_BOARD_SKIP); // エラービットをサゲる
-      flg.spi_rcvd = true; // SPI受信フラグをアゲる
+      flg.spi_rcvd = true;                                               // SPI受信フラグをアゲる
     } else {
       // 受信シーケンス番号の値が予想と違うなら
-      mrdsq.r_expect = int(r_spi_meridim.usval[MRD_SEQ]); // 現在の受信値を予想値として更新
+      mrdsq.r_expect = int(r_spi_meridim.usval[MRD_SEQ]);              // 現在の受信値を予想値として更新
       mrd_setBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_9_BOARD_SKIP); // エラービットをアゲる
-      flg.spi_rcvd = false; // SPI受信フラグをサゲる
+      flg.spi_rcvd = false;                                            // SPI受信フラグをサゲる
     }
 
     // @[1-4] 通信エラー処理(エラーカウンタへの反映)
@@ -322,7 +321,7 @@ void loop() {
       s_spi_meridim.sval[i * 2 + 20] = 0; // 仮に各サーボのコマンドを脱力&ポジション返信に設定
       s_spi_meridim.sval[i * 2 + 21] =
           mrd.float2HfShort(sv.ixl_tgt[i]); // 最新のサーボ角度degreeを格納
-      s_spi_meridim.sval[i * 2 + 50] = 0; // 仮に各サーボのコマンドを脱力&ポジション返信に設定
+      s_spi_meridim.sval[i * 2 + 50] = 0;   // 仮に各サーボのコマンドを脱力&ポジション返信に設定
       s_spi_meridim.sval[i * 2 + 51] =
           mrd.float2HfShort(sv.ixr_tgt[i]); // 最新のサーボ角度degreeを格納
     }
@@ -426,7 +425,7 @@ bool execute_master_command_1(Meridim90Union a_meridim, bool a_flg_exe) {
   // UDP受信の通信周期制御をボード側主導に（デフォルト）
   if (a_meridim.sval[MRD_MASTER] == MCMD_BOARD_TRANSMIT_ACTIVE) {
     flg.udp_board_passive = false; // UDP送信をアクティブモードに
-    flg.count_frame_reset = true; // フレームの管理時計をリセットフラグをアゲる
+    flg.count_frame_reset = true;  // フレームの管理時計をリセットフラグをアゲる
   }
 
   // コマンド:MCMD_EEPROM_ENTER_WRITE (10009) EEPROMの書き込みモードスタート
@@ -491,7 +490,7 @@ bool execute_master_command_2(Meridim90Union a_meridim, bool a_spi_rcvd) {
       delay(1);
     }
     flg.stop_board_during = false; // ボードの処理停止フラグをサゲる
-    flg.count_frame_reset = true; // フレームの管理時計をリセットフラグをアゲる
+    flg.count_frame_reset = true;  // フレームの管理時計をリセットフラグをアゲる
   }
   return true;
 }

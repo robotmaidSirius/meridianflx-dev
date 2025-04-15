@@ -14,9 +14,9 @@
 //================================================================================================================
 
 // ヘッダファイルの読み込み
-#include "main.h"
 #include "config.h"
 #include "keys.h"
+#include "main.h"
 
 #include "mrd_bt_pad.h"
 #include "mrd_eeprom.h"
@@ -70,17 +70,17 @@ void setup() {
   memset(r_spi_meridim_dma, 0, MRDM_BYTE + 4); // ※+4は不具合対策
 
   // SPI通信の初回送信データをセット
-  memset(s_spi_meridim.bval, 0, MRDM_BYTE + 4); // ※+4は不具合対策
+  memset(s_spi_meridim.bval, 0, MRDM_BYTE + 4);                              // ※+4は不具合対策
   s_spi_meridim.sval[MRD_CKSM] = mrd.cksm_val(s_spi_meridim.sval, MRDM_LEN); // チェックサムを格納
-  memcpy(s_spi_meridim_dma, s_spi_meridim.bval, MRDM_BYTE + 4); // 送信データをDMAバッファに転記
+  memcpy(s_spi_meridim_dma, s_spi_meridim.bval, MRDM_BYTE + 4);              // 送信データをDMAバッファに転記
 
   // SPI通信の設定
   slave.setDataMode(SPI_MODE3);
   slave.setMaxTransferSize(MRDM_BYTE + 4);
   slave.setDMAChannel(2); // 専用メモリの割り当て(1か2のみ)
   slave.setQueueSize(1);  // キューサイズ とりあえず1
-  slave.begin(); // 引数を指定しなければデフォルトのSPI（SPI2,HSPIを利用）
-                 // ピン番号は CS: 15, CLK: 14, MOSI: 13, MISO: 12
+  slave.begin();          // 引数を指定しなければデフォルトのSPI（SPI2,HSPIを利用）
+                          // ピン番号は CS: 15, CLK: 14, MOSI: 13, MISO: 12
 
   // Bluetoothの開始と表示(WIIMOTE)
   if (MOUNT_PAD == WIIMOTE) { // Bluetooth用スレッドの開始
@@ -272,14 +272,14 @@ void loop() {
           mrd_clearBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_12_TSY_ESP);
           mrd_meriput90_cksm(s_udp_meridim); // チェックサムの更新
           flg.meridim_rcvd = true;           // Meridim受信成功フラグをアゲる
-          flg.spi_rcvd = true; // SPI受信完了フラグをアゲてループを抜ける
+          flg.spi_rcvd = true;               // SPI受信完了フラグをアゲてループを抜ける
 
         } else { // チェックサムがNGなら, 前回の受信値を使用する
           // エラービット12番[ESP32のSPI受信エラー]をアゲる
           mrd_setBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_12_TSY_ESP);
           mrd_meriput90_cksm(s_udp_meridim); // チェックサムの更新
           flg.meridim_rcvd = false;          // Meridim受信成功フラグをサゲる
-          flg.spi_rcvd = true; // SPI受信完了フラグをアゲてループを抜ける
+          flg.spi_rcvd = true;               // SPI受信完了フラグをアゲてループを抜ける
         }
       }
     }

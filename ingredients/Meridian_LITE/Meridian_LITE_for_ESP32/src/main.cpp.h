@@ -15,9 +15,9 @@
 //==================================================================================================
 
 // ヘッダファイルの読み込み
-#include "main.h"
 #include "config.h"
 #include "keys.h"
+#include "main.h"
 
 #include "mrd_bt_pad.h"
 #include "mrd_disp.h"

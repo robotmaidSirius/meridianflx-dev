@@ -2,9 +2,9 @@
 #define __MERIDIAN_SERVO_KONDO_ICS_H__
 
 #include "config.h"
+#include "gs2d_krs.h"
 #include "main.h"
 #include "mrd_disp.h"
-#include "gs2d_krs.h"
 
 //================================================================================================================
 //  KONDO ICSサーボ関連の処理
@@ -61,7 +61,7 @@ void mrd_servo_drive_ics_double(Meridim90Union &a_meridim, ServoParam &a_sv) {
           a_sv.ixr_id[i], a_meridim.sval[(i * 2) + 50], a_sv.ixr_tgt[i], a_sv.ixr_tgt_past[i],
           a_sv.ixr_trim[i], a_sv.ixr_cw[i], a_sv.ixr_err[i], a_sv.ixr_stat[i], ics_R);
     }
-    delayMicroseconds(1); //Teensyの場合には必要かも
+    delayMicroseconds(1); // Teensyの場合には必要かも
   }
 }
 

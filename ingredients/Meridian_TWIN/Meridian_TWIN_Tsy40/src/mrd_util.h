@@ -83,8 +83,8 @@ bool mrd_timeout_check(unsigned long a_limit) {
   unsigned long current_time = millis(); // 現在の時間を取得
 
   if (current_time - timeout_start >= a_limit) { // 指定された時間が経過しているかチェック
-    flg_timer_started = false; // タイムアウト監視開始フラグをサゲる
-    return true;               // 指定された時間が経過していれば true を返す
+    flg_timer_started = false;                   // タイムアウト監視開始フラグをサゲる
+    return true;                                 // 指定された時間が経過していれば true を返す
   }
 
   return false; // まだ時間が経過していなければ false を返す

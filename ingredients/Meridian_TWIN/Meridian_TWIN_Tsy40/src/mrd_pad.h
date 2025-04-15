@@ -11,7 +11,7 @@
 
 // リモコン受信ボタンデータの変換テーブル
 constexpr unsigned short PAD_TABLE_KRC5FH_TO_COMMON[16] = //
-    {0,    64,   32,  128,  1,  4,  2,  8,                //
+    {0, 64, 32, 128, 1, 4, 2, 8,                          //
      1024, 4096, 512, 2048, 16, 64, 32, 256};             //
 
 //------------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ constexpr unsigned short PAD_TABLE_KRC5FH_TO_COMMON[16] = //
 uint64_t mrd_pad_read_krc(uint a_interval, IcsHardSerialClass &a_ics) {
   static uint64_t pre_val_tmp = 0; // 前回の値を保持する静的変数
   int8_t pad_analog_tmp[4] = {0};  // アナログ入力のデータ組み立て用
-  //static int calib[4] = {0};       // アナログスティックのキャリブレーション値
+  // static int calib[4] = {0};       // アナログスティックのキャリブレーション値
 
   static unsigned long last_time_tmp = 0; // 最後に関数が呼ばれた時間を記録
   unsigned long current_time_tmp = millis();
@@ -53,7 +53,7 @@ uint64_t mrd_pad_read_krc(uint a_interval, IcsHardSerialClass &a_ics) {
         }
 
         if ((button_tmp & 368) == 368) {
-          pad_common_tmp += 8; // 右側十字ボタン全部押しなら start押下とみなす
+          pad_common_tmp += 8;              // 右側十字ボタン全部押しなら start押下とみなす
           button_tmp &= 0b1111111010001111; // 右十字ボタンのクリア
         }
 

@@ -13,12 +13,11 @@
 //  各動作計算モジュールへの分岐
 //------------------------------------------------------------------------------------
 
-/// @brief モーション初期化のためのスタブ関数. 現在は何も行わず, 常にfalseを返す. 
-/// @param mrd_s_meridim モーションデータを保持する構造体. 
-/// @return 常にfalseを返す. 
-bool mrd_move_init(Meridim90Union mrd_s_meridim)
-{
-    return false;
+/// @brief モーション初期化のためのスタブ関数. 現在は何も行わず, 常にfalseを返す.
+/// @param mrd_s_meridim モーションデータを保持する構造体.
+/// @return 常にfalseを返す.
+bool mrd_move_init(Meridim90Union mrd_s_meridim) {
+  return false;
 }
 
 //------------------------------------------------------------------------------------

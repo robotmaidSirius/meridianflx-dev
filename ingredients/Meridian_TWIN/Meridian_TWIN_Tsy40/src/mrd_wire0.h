@@ -226,15 +226,15 @@ bool mrd_meriput90_ahrs(Meridim90Union &a_meridim, float a_ahrs_result[]) {
 /// @param yaw 現在のヨー角をラジアン単位で指定する.
 /// @return 変換されたヨー角を度単位で返す. 対応していないセンサの場合は0を返す.
 float mrd_wire0_setyaw(float yaw) {
-  if (MOUNT_IMUAHRS == MPU6050_IMU) // MPU6050
-  {
+  if (MOUNT_IMUAHRS == MPU6050_IMU) { // MPU6050
     return yaw * 180 / M_PI;
-  } else if (MOUNT_IMUAHRS == MPU9250_IMU) // MPU9250
-  {
+  } else if (MOUNT_IMUAHRS == MPU9250_IMU) { // MPU9250
     return 0;
-  } else if (MOUNT_IMUAHRS == BNO055_AHRS) // BNO055
+  } else if (MOUNT_IMUAHRS == BNO055_AHRS) { // BNO055
     return 0;
-  { return 0; }
+  } else {
+    return 0;
+  }
 }
 
 #endif // __MERIDIAN_WIRE0_H__

@@ -23,7 +23,7 @@ IntervalTimer wireTimer1;
 bool mrd_wire1_read_merimote_i2c(PadUnion &a_pad_array, PadUnion &a_pad_i2c, int a_len) {
   int i_tmp = 0;
   Wire1.requestFrom(I2C1_MERIMOTE_ADDR, a_len * 2);
-  while (Wire1.available()) {         // バッファにデータがある間
+  while (Wire1.available()) {             // バッファにデータがある間
     a_pad_i2c.bval[i_tmp] = Wire1.read(); // バッファから1バイト読み取り
     i_tmp++;
     if (i_tmp > a_len * 2) {

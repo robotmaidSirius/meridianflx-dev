@@ -37,11 +37,11 @@ bool mrd_servo_begin(UartLine a_line, int mrd_servo_type) {
       break;
     case 43: // ICS3.5/3.6(KONDO,KRS)
       if (a_line == L)
-        ics_L.begin(); 
+        ics_L.begin();
       else if (a_line == R)
-        ics_R.begin(); 
+        ics_R.begin();
       else if (a_line == C)
-        ics_C.begin(); 
+        ics_C.begin();
       break;
     case 44: // PMX(KONDO)
       break;
@@ -58,7 +58,6 @@ bool mrd_servo_begin(UartLine a_line, int mrd_servo_type) {
   }
   return false;
 }
-
 
 //------------------------------------------------------------------------------------
 //  サーボ通信フォーメーションの分岐
