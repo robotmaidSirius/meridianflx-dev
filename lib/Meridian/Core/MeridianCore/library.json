@@ -1,0 +1,18 @@
+{
+    "name": "MeridianCore",
+    "version": "1.0.0",
+    "description": "Meridian Core",
+    "keywords": "Meridian",
+    "license": "MIT License",
+    "dependencies": {
+        "ninagawa123/Meridian": "*"
+    },
+    "headers": "meridian_core.hpp",
+    "examples": [],
+    "build": {
+        "flags": []
+    },
+    "export": {
+        "exclude": []
+    }
+}
