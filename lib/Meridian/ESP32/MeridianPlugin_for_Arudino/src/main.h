@@ -1,5 +1,5 @@
-#ifndef __MERIDIAN_MAIN_FUNC__
-#define __MERIDIAN_MAIN_FUNC__
+#ifndef __MERIDIAN_MAIN_H__
+#define __MERIDIAN_MAIN_H__
 
 // ヘッダファイルの読み込み
 #include "config.h"
@@ -108,6 +108,11 @@ typedef union {
 Meridim90Union s_udp_meridim;       // Meridim配列データ送信用(short型, センサや角度は100倍値)
 Meridim90Union r_udp_meridim;       // Meridim配列データ受信用
 Meridim90Union s_udp_meridim_dummy; // SPI送信ダミー用
+Meridim90Union s_spi_meridim;       // Meridim配列データ送信用
+Meridim90Union r_spi_meridim;       // Meridim配列データ受信用
+Meridim90Union tmp_meridim;         // チェック用配列
+uint8_t *s_spi_meridim_dma;         // DMA用
+uint8_t *r_spi_meridim_dma;         // DMA用
 
 // フラグ用変数
 struct MrdFlags {
@@ -132,6 +137,8 @@ struct MrdFlags {
   bool udp_receive_mode = MODE_UDP_RECEIVE; // PCからのデータ受信実施（0:OFF, 1:ON, 通常は1）
   bool udp_send_mode = MODE_UDP_SEND;       // PCへのデータ送信実施（0:OFF, 1:ON, 通常は1）
   bool meridim_rcvd = false;                // Meridimが正しく受信できたか.
+  bool test_value = false;                  // テスト用の仮設変数. 意味を持たない.
+  bool fixed_ip = MODE_FIXED_IP;            // 固定IPモード（0:OFF, 1:ON）.
 };
 MrdFlags flg;
 
@@ -139,6 +146,7 @@ MrdFlags flg;
 struct MrdSq {
   int s_increment = 0; // フレーム毎に0-59999をカウントし, 送信
   int r_expect = 0;    // フレーム毎に0-59999をカウントし, 受信値と比較
+  int r_past = 0;      // 前回のシーケンス番号をキープ
 };
 MrdSq mrdsq;
 

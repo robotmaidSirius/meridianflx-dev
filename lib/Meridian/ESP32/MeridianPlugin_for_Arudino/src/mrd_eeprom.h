@@ -10,9 +10,19 @@
 
 // EEPROM読み書き用共用体
 typedef union {
+#if true
   uint8_t bval[EEPROM_SIZE];            // 1バイト単位で540個のデータを持つ
   short saval[3][int(EEPROM_SIZE / 4)]; // short型で3*90個の配列データを持つ
   short sval[int(EEPROM_SIZE / 2)];     // short型で270個のデータを持つ
+#else
+  uint8_t bval[EEPROM_SIZE];                // 1バイト単位で540個のデータを持つ
+  int16_t saval[6][int(EEPROM_SIZE / 6)];   // short型で6*90個の配列データを持つ
+  uint16_t sauval[6][int(EEPROM_SIZE / 6)]; // ushort型で6*90個の配列データを持つ
+  int16_t baval[6][int(EEPROM_SIZE / 3)];   // byte型で6*180個の配列データを持つ
+  uint8_t bauval[6][int(EEPROM_SIZE / 3)];  // ubyte型で6*180個の配列データを持つ
+  int16_t sval[int(EEPROM_SIZE / 2)];       // short型で270個のデータを持つ
+  uint16_t usval[int(EEPROM_SIZE / 2)];     // short型で270個のデータを持つ
+#endif
 } UnionEEPROM;
 UnionEEPROM eeprom_write_data; // EEPROM書き込み用
 UnionEEPROM eeprom_read_data;  // EEPROM読み込み用
@@ -47,6 +57,21 @@ UnionEEPROM mrd_eeprom_make_data_from_config() {
     // 各サーボの直立デフォルト値 degree
     array_tmp.saval[1][21 + i * 2] = mrd.float2HfShort(sv.ixl_trim[i]);
     array_tmp.saval[1][51 + i * 2] = mrd.float2HfShort(sv.ixr_trim[i]);
+    // // 左サーボの情報を格納
+    // array_tmp.sauval[1][20 + i * 2] =
+    //     ((sv.ixl_mount[i] != 0) << 15) |     // bit16: マウント有無 (0以外なら1)
+    //     ((sv.ixl_id[i] & 0x7F) << 8) |       // bit15-9: ID (7ビット)
+    //     ((sv.ixl_cw[i] == -1 ? 1 : 0) << 8); // bit8: 正逆 (1ビット)
+    // // 各サーボの直立デフォルト値 degree
+    // array_tmp.saval[1][21 + i * 2] = short(mrd.float2HfShort(sv.ixl_trim[i]));
+
+    // // 右サーボの情報を格納
+    // array_tmp.sauval[1][50 + i * 2] =
+    //     ((sv.ixl_mount[i] != 0) << 15) |     // bit16: マウント有無 (0以外なら1)
+    //     ((sv.ixl_id[i] & 0x7F) << 8) |       // bit15-9: ID (7ビット)
+    //     ((sv.ixl_cw[i] == -1 ? 1 : 0) << 8); // bit8: 正逆 (1ビット)
+    // // 各サーボの直立デフォルト値 degree
+    // array_tmp.saval[1][51 + i * 2] = short(mrd.float2HfShort(sv.ixr_trim[i]));
   };
   return array_tmp;
 }
@@ -71,6 +96,46 @@ bool mrd_eeprom_dump_to_serial(UnionEEPROM a_data, int a_bhd) {
   Serial.print("EEPROM Length ");
   Serial.print(len_tmp); // EEPROMの長さ表示
   Serial.println("byte, 16bit Dump;");
+#if false
+  int k = 0;
+  char hex_tmp[5];
+  for (int i = 0; i < int(EEPROM_SIZE / 2); i++) { // 読み込むデータはshort型で作成
+    k++;
+    if (a_bhd == Bin) {
+      // 16桁のビット列を表示
+      for (int bit = 15; bit >= 0; bit--) {
+        Serial.print((a_data.usval[i] >> bit) & 1);
+      }
+    } else if (a_bhd == Hex) {
+      sprintf(hex_tmp, "%04X", (uint16_t)a_data.sval[i]); // 符号なし16ビットにキャストして表示
+      Serial.print(hex_tmp);
+    } else {
+      Serial.print(a_data.sval[i], DEC);
+    }
+
+    if (a_bhd == Bin) {
+      if (k % 90 == 0) {
+        Serial.println(",\n");
+        k = 0;
+      } else if (k % 20 == 0) {
+        Serial.println("/");
+      } else if (k % 5 == 0) {
+        Serial.println();
+      } else {
+        Serial.print(" ");
+      }
+    } else {
+      if (k % 90 == 0) {
+        Serial.println(",");
+        k = 0;
+      } else if (k % 10 == 0) {
+        Serial.print((k % 20 == 0) ? "\n" : "  ");
+      } else {
+        Serial.print(" ");
+      }
+    }
+  }
+#else
   for (int i = 0; i < 270; i++) // 読み込むデータはshort型で作成
   {
     if (a_bhd == 0) {
@@ -86,6 +151,66 @@ bool mrd_eeprom_dump_to_serial(UnionEEPROM a_data, int a_bhd) {
       Serial.print("/");
     }
   }
+#endif
+  return true;
+}
+
+//------------------------------------------------------------------------------------
+//  EEPROM データ作成→書き込み
+//------------------------------------------------------------------------------------
+
+/// @brief EEPROMにサーボの設定とデフォルト位置を保存する.
+/// @param a_data EEPROM書き込み用の配列データ.
+/// @param a_len_byte EEPROMの使用サイズ.
+/// @return UnionEEPROM のフォーマットで配列を返す.
+bool mrd_eeprom_set(UnionEEPROM a_data, int a_len_byte) //
+{
+  if (flg.eeprom_set) {
+    // a_data = mrd_eeprom_make_data_from_config();
+    // EEPROM書き込み
+    for (int i = 0; i < a_len_byte; i++) { // データを書き込む時はbyte型
+      EEPROM.write(i, a_data.bval[i]);
+    }
+    // Serial.println();
+    return true;
+  }
+  return false;
+}
+
+//------------------------------------------------------------------------------------
+//  EEPROM データ作成
+//------------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------------
+//  EEPROM 書き込み
+//------------------------------------------------------------------------------------
+
+/// @brief EEPROMを0でフォーマットする
+/// @param a_flg_protect EEPROMの書き込み許可があるかどうかのブール値.
+/// @param a_len_byte EEPROMの使用サイズ.
+/// @param Serial メッセージ表示用のハードウェアシリアル.
+/// @return EEPROMの書き込みと読み込みが成功した場合はtrueを, 書き込まなかった場合はfalseを返す.
+bool mrd_eeprom_zero_format(bool a_flg_protect, int a_len_byte, Stream &Serial) {
+  Serial.println("Try to EEPROM zero format...");
+
+  if (a_flg_protect) { // EEPROM書き込み実施フラグをチェック
+    return false;
+  }
+  if (flg.eeprom_protect) { // config.hのEEPROM書き込みプロテクトをチェック
+    Serial.println("EEPROM is protected. To unprotect, please set 'EEPROM_PROTECT' to false.");
+    return false;
+  }
+
+  // EEPROM書き込み
+  for (int i = 0; i < EEPROM_SIZE; i++) { // データを書き込む時はbyte型
+    if (i >= EEPROM.length()) {           // EEPROMのサイズを超えないようチェック
+      Serial.println("Error: EEPROM address out of range.");
+      return false;
+    }
+    // 書き込みデータがEEPROM内のデータと違う場合のみ書き込みをセット
+    EEPROM.write(i, 0);
+  }
+  Serial.println("EEPROM zero format finished.");
   return true;
 }
 
@@ -134,7 +259,7 @@ bool mrd_eeprom_write(UnionEEPROM a_write_data, bool a_flg_protect) {
   }
   if (flg_renew_tmp) // 変更箇所があれば書き込みを実施
   {
-    EEPROM.commit(); // 書き込みを確定する
+    EEPROM.commit(); // 書き込みを確定にcommitがESP32では必要.Teensyでは不要,
     Serial.print("Value updated ");
     return true;
   } else {
