@@ -1,3 +1,4 @@
+#if defined(MERIDIAN_TWIN_ESP32)
 // Meridian_TWIN_for_ESP32 By Izumi Ninagawa & Meridian Project
 // MIT Licenced.
 //
@@ -27,6 +28,7 @@
 #include <Arduino.h>
 #include <ESP32DMASPISlave.h> // DMAでSPI通信を高速化するめのライブラリ
 ESP32DMASPI::Slave slave;
+MERIDIANFLOW::Meridian mrd;
 
 //================================================================================================================
 //  SETUP
@@ -362,3 +364,4 @@ bool execute_master_command_from_Tsy(Meridim90Union a_meridim, bool a_flg_exe) {
   }
   return false;
 }
+#endif

@@ -1,3 +1,4 @@
+#if defined(MERIDIAN_TWIN_TSY40)
 #ifndef __MERIDIAN_MAIN__
 #define __MERIDIAN_MAIN__
 
@@ -514,3 +515,4 @@ void mrd_countup_errs() {
 }
 
 #endif // __MERIDIAN_MAIN__
+#endif

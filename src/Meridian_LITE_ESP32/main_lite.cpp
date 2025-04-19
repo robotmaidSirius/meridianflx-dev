@@ -1,3 +1,4 @@
+#if defined(MERIDIAN_LITE_ESP32)
 #ifndef __MERIDIAN_LITE_MAIN__
 #define __MERIDIAN_LITE_MAIN__
 
@@ -498,3 +499,4 @@ bool execute_master_command_2(Meridim90Union a_meridim, bool a_flg_exe) {
 }
 
 #endif // __MERIDIAN_LITE_MAIN__
+#endif

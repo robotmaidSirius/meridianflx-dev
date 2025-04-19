@@ -3,7 +3,6 @@
 
 // ヘッダファイルの読み込み
 #include "config.h"
-#include "keys.h"
 #include "main.h"
 
 // ライブラリ導入
