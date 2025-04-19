@@ -181,6 +181,7 @@ PadUnion pad_i2c = {0};   // pad値のi2c送受信用配列
 
 // リモコンのアナログ入力データ
 struct PadValue {
+  unsigned short btn = 0;
   unsigned short stick_R = 0;
   int stick_R_x = 0;
   int stick_R_y = 0;
@@ -291,5 +292,7 @@ uint16_t mrd_seq_predict_num(uint16_t a_previous_num) {
 // 予約用
 bool execute_master_command_1(Meridim90Union a_meridim, bool a_flg_exe);
 bool execute_master_command_2(Meridim90Union a_meridim, bool a_flg_exe);
+bool execute_master_command_from_PC(Meridim90Union a_meridim, bool a_flg_exe);
+bool execute_master_command_from_Tsy(Meridim90Union a_meridim, bool a_flg_exe);
 
-#endif //__MERIDIAN_MAIN_FUNC__
+#endif //__MERIDIAN_MAIN_H__

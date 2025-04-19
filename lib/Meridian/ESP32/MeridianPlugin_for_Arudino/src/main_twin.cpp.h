@@ -45,13 +45,13 @@ void setup() {
   mrd_disp.hello_twin_esp(VERSION, SERIAL_PC_BPS, SPI0_SPEED);
 
   // EEPROMの初期化
-  // mrd_eeprom_init(EEPROM_BYTE);
+  // mrd_eeprom_init(EEPROM_SIZE);
 
   // EEPROMの内容のダンプ表示
-  // mrd_eeprom_dump_at_boot(EEPROM_BYTE, EEPROM_DUMP, EEPROM_STYLE, Serial);
+  // mrd_eeprom_dump_at_boot(EEPROM_SIZE, EEPROM_DUMP, EEPROM_STYLE, Serial);
 
   // EEPROMのリードライトテスト
-  // mrd_eeprom_write_read_check(mrd_eeprom_make_data_from_config(), EEPROM_BYTE, //
+  // mrd_eeprom_write_read_check(mrd_eeprom_make_data_from_config(), EEPROM_SIZE, //
   //                            CHECK_EEPROM_RW, EEPROM_PROTECT, EEPROM_STYLE, Serial);
 
   // WiFiの初期化と開始

@@ -1,5 +1,5 @@
-#ifndef __MERIDIAN_MESSAGE_H__
-#define __MERIDIAN_MESSAGE_H__
+#ifndef __MERIDIAN_DISPLAY_MESSAGE_H__
+#define __MERIDIAN_DISPLAY_MESSAGE_H__
 
 // ヘッダファイルの読み込み
 #include "config.h"
@@ -56,6 +56,22 @@ public:
     m_serial.println(" bps");
     m_serial.print("Set i2c0   ");
     m_serial.print(a_i2c0_speed);
+    m_serial.println(" bps");
+  }
+
+  /// @brief システムのバージョン情報と通信速度の設定を表示するためのメッセージを出力する.
+  /// @param a_version バージョン情報.
+  /// @param a_pc_speed PCとのUSBシリアル通信速度.
+  /// @param a_spi_speed SPIの通信速度.
+  void hello_twin_esp(String a_version, int a_pc_speed, int a_spi_speed) {
+    m_serial.println();
+    m_serial.print("Hi, This is ");
+    m_serial.println(a_version);
+    m_serial.print("Set PC-USB ");
+    m_serial.print(a_pc_speed);
+    m_serial.println(" bps");
+    m_serial.print("Set SPI0   ");
+    m_serial.print(a_spi_speed);
     m_serial.println(" bps");
   }
 
@@ -214,6 +230,12 @@ public:
     m_serial.println("-) Meridian -LITE- system on ESP32 now flows. (-");
   }
 
+  /// @brief システムの動作開始を示すメッセージを出力する.
+  void flow_start_twin_esp() {
+    m_serial.println();
+    m_serial.println("-) Meridian TWIN system on side ESP32 now flows. (-");
+  }
+
   //------------------------------------------------------------------------------------
   //  イベントメッセージ
   //------------------------------------------------------------------------------------
@@ -286,4 +308,4 @@ public:
   }
 };
 
-#endif // __MERIDIAN_MESSAGE_H__
+#endif // __MERIDIAN_DISPLAY_MESSAGE_H__

@@ -284,7 +284,7 @@ void loop() {
     pad_array.ui64val = mrd_pad_read(MOUNT_PAD, pad_array.ui64val);
 
     // リモコンの値をmeridimに格納する
-    meriput90_pad(s_udp_meridim, pad_array, PAD_BUTTON_MARGE);
+    mrd_meriput90_pad(s_udp_meridim, pad_array, PAD_BUTTON_MARGE);
   }
 
   //------------------------------------------------------------------------------------

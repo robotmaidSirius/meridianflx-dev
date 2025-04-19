@@ -277,7 +277,7 @@ void Core0_BT_r(void *args) { // サブCPU(Core0)で実行するプログラム
 /// @param a_pad_array PAD受信値の格納用配列.
 /// @param a_marge PADボタンデータをマージするかどうかのブール値.
 /// trueの場合は既存のデータにビット単位でOR演算を行い, falseの場合は新しいデータで上書きする.
-bool meriput90_pad(Meridim90Union &a_meridim, PadUnion a_pad_array, bool a_marge) {
+bool mrd_meriput90_pad(Meridim90Union &a_meridim, PadUnion a_pad_array, bool a_marge) {
 
   // ボタンデータの処理 (マージ or 上書き)
   if (a_marge) {

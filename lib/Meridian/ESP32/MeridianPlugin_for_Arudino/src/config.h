@@ -1,5 +1,5 @@
-#ifndef __MERIDIAN_CONFIG__
-#define __MERIDIAN_CONFIG__
+#ifndef __MERIDIAN_CONFIG_H__
+#define __MERIDIAN_CONFIG_H__
 
 //==================================================================================================
 //  MERIDIAN - LITE - ESP32の配線
@@ -60,6 +60,50 @@
 // [R10] 右足首/ロール
 
 //==================================================================================================
+//  MERIDIAN TWIN ESP32の配線
+//==================================================================================================
+//   ESP32devkitC  -  Teensy4.0 or PIN
+//   [3.3v]        -> x
+//   [EN]          -> x
+//   [SENSOR_VP]   -> x
+//   [SENSOR_VN]   -> x
+//   [34]          -> x
+//   [35]          -> x
+//   [32]          -> x
+//   [33]          -> x
+//   [25]          -> x
+//   [26]          -> x
+//   [27]          -> x
+//   [14]          -> SPI/SD_SCK (Teensy[13]) & SD_CLK (SD[5])
+//   [12]          -> MISO (Teensy[12])
+//   [GND1]        -> x
+//   [13]          -> MOSI (Teensy[11])
+//   [D2]          -> x
+//   [D3]          -> x
+//   [CMD]         -> x
+//   [5V]          -> 5V
+
+//   [GND3]        -> GND
+//   [23]          -> x
+//   [22]          -> x
+//   [TXD0]        -> x
+//   [RXD0]        -> x
+//   [21]          -> x
+//   [GND2]        -> x
+//   [19]          -> x
+//   [18]          -> x
+//   [05]          -> x
+//   [17]          -> x
+//   [16]          -> x
+//   [04]          -> x
+//   [00]          -> x
+//   [02]          -> x
+//   [15]          -> SPI_CS (Teensy[10])
+//   [D1]          -> x
+//   [D0]          -> x
+//   [CLK]         -> x
+
+//==================================================================================================
 //  Meridim90配列 一覧表
 //==================================================================================================
 //
@@ -117,8 +161,8 @@
 #define EEPROM_SET     0   // 起動時にEEPROMにconfig.hの内容をセット(mrd_set_eeprom)
 #define EEPROM_PROTECT 0   // EEPROMの書き込み保護(0:保護しない, 1:書き込み禁止)
 #define EEPROM_LOAD    0   // 起動時にEEPROMの内容を諸設定にロードする(未導入)
-#define EEPROM_DUMP    0   // 起動時のEEPROM内容のダンプ表示
-#define EEPROM_STYLE   Dec // 起動時のEEPROM内容のダンプ表示の書式(Bin,Hex,Dec)
+#define EEPROM_DUMP    1   // 起動時のEEPROM内容のダンプ表示
+#define EEPROM_STYLE   Hex // 起動時のEEPROM内容のダンプ表示の書式(Bin,Hex,Dec)
 
 // 動作チェックモード
 #define CHECK_SD_RW     1 // 起動時のSDカードリーダーの読み書きチェック
@@ -132,6 +176,8 @@
 #define MONITOR_SEQ               0    // シリアルモニタでシーケンス番号チェックを表示（0:OFF, 1:ON）
 #define MONITOR_PAD               0    // シリアルモニタでリモコンのデータを表示（0:OFF, 1:ON）
 #define MONITOR_SUPPRESS_DURATION 8000 // 起動直後のタイムアウトメッセージ抑制時間(単位ms)
+
+// #define MONITOR_SUPPRESS_DURATION 20000 // 起動直後のタイムアウトメッセージ抑制時間(単位ms)
 
 // I2C設定, I2Cセンサ関連設定
 #define I2C0_SPEED       400000 // I2Cの速度（400kHz推奨）
@@ -148,6 +194,7 @@
 #define SERIAL_PC_TIMEOUT 2000   // PCとのシリアル接続確立タイムアウト(ms)
 
 // JOYPAD関連設定
+#define MOUNT_PAD        NONE  // ESP32へのジョイパッドの搭載 NONE:0, PC:0, WIIMOTE:5, WIIMOTE_C:6
 #define PAD_INIT_TIMEOUT 10000 // 起動時のJOYPADの接続確立のタイムアウト(ms)
 #define PAD_INTERVAL     10    // JOYPADのデータを読みに行くフレーム間隔 (※KRC-5FHでは4推奨)
 #define PAD_BUTTON_MARGE 1     // 0:JOYPADのボタンデータをMeridim受信値に論理積, 1:Meridim受信値に論理和
@@ -160,7 +207,8 @@
 #define PIN_CHIPSELECT_SD 15 // SDカード用のCSピン
 #define PIN_I2C0_SDA      22 // I2CのSDAピン
 #define PIN_I2C0_SCL      21 // I2CのSCLピン
-#define PIN_LED_BT        26 // Bluetooth接続確認用ピン(点滅はペアリング,点灯でリンク確立)
+#define PIN_LED_BT        23 // Bluetooth接続確認用ピン(点滅はペアリング,点灯でリンク確立)
+// #define PIN_LED_BT        26 // Bluetooth接続確認用ピン(点滅はペアリング,点灯でリンク確立)
 
 //-------------------------------------------------------------------------
 // サーボ設定
@@ -489,4 +537,4 @@ float IDR_TRIM[IXR_MAX] = {
 #define ERRBIT_9_BOARD_SKIP    9  // PC → ESP32 → Teensy のフレームスキップエラー(末端で捕捉)
 #define ERRBIT_8_PC_SKIP       8  // Teensy → ESP32 → PC のフレームスキップエラー(末端で捕捉)
 
-#endif // __MERIDIAN_CONFIG__
+#endif // __MERIDIAN_CONFIG_H__
