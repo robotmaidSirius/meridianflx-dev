@@ -90,7 +90,7 @@ void setup() {
   mrd_disp.servo_mounts_3lines(sv);
 
   // EEPROMのゼロフォーマット
-  // mrd_eeprom_zero_format(EEPROM_PROTECT, EEPROM_BYTE, Serial);// ゼロフォーマット
+  // mrd_eeprom_zero_format(EEPROM_PROTECT, EEPROM_SIZE, Serial);// ゼロフォーマット
 
   // EEPROMのリードライトテスト
   // mrd_eeprom_write_read_check(mrd_eeprom_make_data_from_config_lite(), //
@@ -98,14 +98,14 @@ void setup() {
   //                            CHECK_EEPROM_RW, EEPROM_PROTECT, EEPROM_STYLE);
 
   // EEPROMにconfig.h設定のサーボパラメータを書き込む
-  // mrd_eeprom_set(mrd_eeprom_make_data_from_config_lite(sv), EEPROM_BYTE);
+  // mrd_eeprom_set(mrd_eeprom_make_data_from_config_lite(sv), EEPROM_SIZE);
 
   // EEPROM内容のダンプ表示
-  // mrd_eeprom_dump_serial(mrd_eeprom_load(EEPROM_BYTE, Serial), EEPROM_BYTE, EEPROM_STYLE,
+  // mrd_eeprom_dump_to_serial(mrd_eeprom_read(EEPROM_SIZE, Serial), EEPROM_SIZE, EEPROM_STYLE,
   // Serial);
 
   // EEPROMからサーボパラメータをロードして反映
-  // mrd_servo_load_param_lite(mrd_eeprom_load(EEPROM_BYTE, Serial), sv);
+  // mrd_servo_load_param_lite(mrd_eeprom_read(EEPROM_SIZE, Serial), sv);
 
   // 配列のリセット
   memset(s_spi_meridim.bval, 0, MRDM_BYTE + 4);     // 配列要素を0でリセット
@@ -437,7 +437,7 @@ bool execute_master_command_1(Meridim90Union a_meridim, bool a_flg_exe) {
 
   // コマンド:MCMD_EEPROM_SAVE_TRIM (10101) 現在のサーボ位置をトリム値としてEEPROMに書き込む
   if (a_meridim.sval[MRD_MASTER] == MCMD_EEPROM_SAVE_TRIM) {
-    eeprom_write_data = mrd_eeprom_load(EEPROM_BYTE, Serial); // ベースとなるデータを読み込む
+    eeprom_write_data = mrd_eeprom_read(EEPROM_SIZE, Serial); // ベースとなるデータを読み込む
     eeprom_write_data = mrd_eeprom_make_trim_from_current_lite(eeprom_write_data, sv);
     mrd_eeprom_write_all(eeprom_write_data, flg.eeprom_protect, Serial);
     s_spi_meridim.sval[MRD_MASTER] = MCMD_ACK; // コマンド実行成功信号を追記

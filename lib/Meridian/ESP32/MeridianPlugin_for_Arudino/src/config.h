@@ -145,7 +145,7 @@
 // 各種ハードウェアのマウント有無
 #define MOUNT_SD      1           // SDカードリーダーの有無 (0:なし, 1:あり)
 #define MOUNT_IMUAHRS BNO055_AHRS // IMU/AHRSの搭載 NO_IMU, MPU6050_IMU, MPU9250_IMU, BNO055_AHRS
-#define MOUNT_PAD     KRR5FH      // ジョイパッドの搭載 PC, MERIMOTE, BLUERETRO, KRR5FH, WIIMOTE
+#define MOUNT_PAD     NONE        // ジョイパッドの搭載 NONE:0, PC:0, WIIMOTE:5, WIIMOTE_C:6
 
 // 動作モード
 #define MODE_ESP32_STANDALONE 0 // ESP32をボードに挿さず動作確認（0:NO, 1:YES）
@@ -190,11 +190,11 @@
 #define SPI0_SPEED 6000000 // SPI通信の速度（6000000kHz推奨）
 
 // PC接続関連設定
-#define SERIAL_PC_BPS     115200 // PCとのシリアル速度（モニタリング表示用）
+// #define SERIAL_PC_BPS 1000000 // PCとのシリアル速度（モニタリング表示用）(TWIN用)
+#define SERIAL_PC_BPS     115200 // PCとのシリアル速度（モニタリング表示用）(Lite用)
 #define SERIAL_PC_TIMEOUT 2000   // PCとのシリアル接続確立タイムアウト(ms)
 
 // JOYPAD関連設定
-#define MOUNT_PAD        NONE  // ESP32へのジョイパッドの搭載 NONE:0, PC:0, WIIMOTE:5, WIIMOTE_C:6
 #define PAD_INIT_TIMEOUT 10000 // 起動時のJOYPADの接続確立のタイムアウト(ms)
 #define PAD_INTERVAL     10    // JOYPADのデータを読みに行くフレーム間隔 (※KRC-5FHでは4推奨)
 #define PAD_BUTTON_MARGE 1     // 0:JOYPADのボタンデータをMeridim受信値に論理積, 1:Meridim受信値に論理和

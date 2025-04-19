@@ -15,13 +15,13 @@
 
 // EEPROM読み書き用共用体
 typedef union {
-  uint8_t bval[EEPROM_BYTE];                // 1バイト単位で540個のデータを持つ
-  int16_t saval[6][int(EEPROM_BYTE / 6)];   // short型で6*90個の配列データを持つ
-  uint16_t sauval[6][int(EEPROM_BYTE / 6)]; // ushort型で6*90個の配列データを持つ
-  int16_t baval[6][int(EEPROM_BYTE / 3)];   // byte型で6*180個の配列データを持つ
-  uint8_t bauval[6][int(EEPROM_BYTE / 3)];  // ubyte型で6*180個の配列データを持つ
-  int16_t sval[int(EEPROM_BYTE / 2)];       // short型で270個のデータを持つ
-  uint16_t usval[int(EEPROM_BYTE / 2)];     // short型で270個のデータを持つ
+  uint8_t bval[EEPROM_SIZE];                // 1バイト単位で540個のデータを持つ
+  int16_t saval[6][int(EEPROM_SIZE / 6)];   // short型で6*90個の配列データを持つ
+  uint16_t sauval[6][int(EEPROM_SIZE / 6)]; // ushort型で6*90個の配列データを持つ
+  int16_t baval[6][int(EEPROM_SIZE / 3)];   // byte型で6*180個の配列データを持つ
+  uint8_t bauval[6][int(EEPROM_SIZE / 3)];  // ubyte型で6*180個の配列データを持つ
+  int16_t sval[int(EEPROM_SIZE / 2)];       // short型で270個のデータを持つ
+  uint16_t usval[int(EEPROM_SIZE / 2)];     // short型で270個のデータを持つ
 } UnionEEPROM;
 UnionEEPROM eeprom_write_data; // EEPROM書き込み用
 UnionEEPROM eeprom_read_data;  // EEPROM読み込み用
@@ -34,7 +34,7 @@ UnionEEPROM eeprom_read_data;  // EEPROM読み込み用
 /// @param a_len_byte EEPROMの使用サイズ.
 /// @param a_serial メッセージ表示用のハードウェアシリアル.
 /// @return UnionEEPROM のフォーマットで配列を返す.
-UnionEEPROM mrd_eeprom_load(int a_len_byte, Stream &a_serial) {
+UnionEEPROM mrd_eeprom_read(int a_len_byte, Stream &a_serial) {
   if (a_len_byte > EEPROM.length()) // EEPROMのサイズを超えないようチェック
   {
     a_len_byte = EEPROM.length();
@@ -59,7 +59,7 @@ UnionEEPROM mrd_eeprom_load(int a_len_byte, Stream &a_serial) {
 /// @param a_bhd ダンプリストの表示形式.(0:Bin, 1:Hex, 2:Dec)
 /// @param a_serial メッセージ表示用のハードウェアシリアル.
 /// @return 終了時にtrueを返す.
-bool mrd_eeprom_dump_serial(UnionEEPROM a_data, int a_len_byte, int a_bhd, Stream &a_serial) {
+bool mrd_eeprom_dump_to_serial(UnionEEPROM a_data, int a_len_byte, int a_bhd, Stream &a_serial) {
   a_serial.print("EEPROM Length ");
   a_serial.print(EEPROM.length()); // EEPROMの長さ表示
   a_serial.print(", Used Length ");
@@ -172,7 +172,7 @@ bool mrd_eeprom_zero_format(bool a_flg_protect, int a_len_byte, Stream &a_serial
   }
 
   // EEPROM書き込み
-  for (int i = 0; i < EEPROM_BYTE; i++) // データを書き込む時はbyte型
+  for (int i = 0; i < EEPROM_SIZE; i++) // データを書き込む時はbyte型
   {
     if (i >= EEPROM.length()) // EEPROMのサイズを超えないようチェック
     {
@@ -204,7 +204,7 @@ bool mrd_eeprom_write_all(UnionEEPROM a_data, bool a_flg_protect, Stream &a_seri
   // EEPROM書き込み
   byte old_value_tmp;                   // EEPROMにすでに書き込んであるデータ
   bool flg_renew_tmp = false;           // 書き込みコミットを実施するかのフラグ
-  for (int i = 0; i < EEPROM_BYTE; i++) // データを書き込む時はbyte型
+  for (int i = 0; i < EEPROM_SIZE; i++) // データを書き込む時はbyte型
   {
     if (i >= EEPROM.length()) // EEPROMのサイズを超えないようチェック
     {
@@ -260,7 +260,7 @@ bool mrd_eeprom_set(UnionEEPROM a_data, int a_len_byte) //
 /// @return 終了時にtrueを返す.
 bool mrd_eeprom_dump_at_boot(int a_len_byte, bool a_flg_do, int a_bhd, Stream &a_serial) {
   if (a_flg_do) {
-    mrd_eeprom_dump_serial(mrd_eeprom_load(a_len_byte, a_serial), a_len_byte, a_bhd, a_serial);
+    mrd_eeprom_dump_to_serial(mrd_eeprom_read(a_len_byte, a_serial), a_len_byte, a_bhd, a_serial);
     return true;
   }
   return false;
@@ -281,7 +281,7 @@ bool mrd_eeprom_write_read_check(UnionEEPROM a_write_data, int a_len_byte, bool 
 
   // EEPROM書き込みを実行
   a_serial.println("Try to write EEPROM: ");
-  mrd_eeprom_dump_serial(a_write_data, a_len_byte, a_bhd, a_serial); // 書き込み内容をダンプ表示
+  mrd_eeprom_dump_to_serial(a_write_data, a_len_byte, a_bhd, a_serial); // 書き込み内容をダンプ表示
 
   if (mrd_eeprom_write_all(a_write_data, a_protect, a_serial)) {
     a_serial.println("...Write OK.");
@@ -293,8 +293,8 @@ bool mrd_eeprom_write_read_check(UnionEEPROM a_write_data, int a_len_byte, bool 
   // EEPROM読み込みを実行
   a_serial.println("Read EEPROM: ");
   UnionEEPROM a_data_tmp;
-  mrd_eeprom_load(a_len_byte, a_serial);
-  mrd_eeprom_dump_serial(a_data_tmp, a_len_byte, a_bhd, a_serial); // 読み込み内容をダンプ表示
+  mrd_eeprom_read(a_len_byte, a_serial);
+  mrd_eeprom_dump_to_serial(a_data_tmp, a_len_byte, a_bhd, a_serial); // 読み込み内容をダンプ表示
   a_serial.println("...Read completed.");
 
   return true;
@@ -308,7 +308,7 @@ bool mrd_eeprom_write_read_check(UnionEEPROM a_write_data, int a_len_byte, bool 
 /// @param index_y 配列の一次元目(0~2).
 /// @param index_x 配列の二次元目(0~89).
 /// @return short型データを返す.
-short mrd_eeprom_load_short(int index_y, int index_x) {
+short mrd_eeprom_read_short(int index_y, int index_x) {
   return short(EEPROM.read(index_y * 90 + index_x));
 }
 
@@ -317,7 +317,7 @@ short mrd_eeprom_load_short(int index_y, int index_x) {
 /// @param index_x 配列の二次元目(0~179).
 /// @param low_high 下位ビットか上位ビットか. (0:low_bit, 1:high_bit)
 /// @return byte型データを返す.
-int8_t mrd_eeprom_load_byte(int index_y, int index_x, int low_high) //
+int8_t mrd_eeprom_read_byte(int index_y, int index_x, int low_high) //
 {
   return int8_t(EEPROM.read(index_y * 180 + index_x * 2 + low_high));
 }
