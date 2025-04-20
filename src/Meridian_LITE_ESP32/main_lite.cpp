@@ -120,8 +120,8 @@ void setup() {
   mrd_disp.servo_bps_2lines(SERVO_BAUDRATE_L, SERVO_BAUDRATE_R);
 
   // サーボ用UART設定
-  mrd_servo_begin(L, MOUNT_SERVO_TYPE_L);         // サーボモータの通信初期設定. Serial2
-  mrd_servo_begin(R, MOUNT_SERVO_TYPE_R);         // サーボモータの通信初期設定. Serial3
+  mrd_servo_begin(MOUNT_SERVO_TYPE_L, ics_L);     // サーボモータの通信初期設定. Serial2
+  mrd_servo_begin(MOUNT_SERVO_TYPE_R, ics_R);     // サーボモータの通信初期設定. Serial3
   mrd_disp.servo_protocol(L, MOUNT_SERVO_TYPE_R); // サーボプロトコルの表示
   mrd_disp.servo_protocol(R, MOUNT_SERVO_TYPE_R);
 
@@ -306,7 +306,7 @@ void loop() {
   if (MOUNT_PAD > 0) { // リモコンがマウントされていれば
 
     // リモコンデータの読み込み
-    pad_array.ui64val = mrd_pad_read(MOUNT_PAD, pad_array.ui64val);
+    pad_array.ui64val = mrd_pad_read(MOUNT_PAD, pad_array.ui64val, ics_R);
 
     // リモコンの値をmeridimに格納する
     mrd_meriput90_pad(s_udp_meridim, pad_array, PAD_BUTTON_MARGE);
@@ -349,9 +349,8 @@ void loop() {
   mrd.monitor_check_flow("[8]", monitor.flow); // デバグ用フロー表示
 
   // @[8-1] サーボ受信値の処理
-  if (!MODE_ESP32_STANDALONE) { // サーボ処理を行うかどうか
-    mrd_servos_drive_lite(s_udp_meridim, MOUNT_SERVO_TYPE_L, MOUNT_SERVO_TYPE_R,
-                          sv); // サーボ動作を実行する
+  if (!MODE_ESP32_STANDALONE) {                                                                     // サーボ処理を行うかどうか
+    mrd_servos_drive_lite(s_udp_meridim, MOUNT_SERVO_TYPE_L, MOUNT_SERVO_TYPE_R, sv, ics_L, ics_R); // サーボ動作を実行する
   } else {
     // ボード単体動作モードの場合はサーボ処理をせずL0番サーボ値として+-30度のサインカーブ値を返す
     sv.ixl_tgt[0] = sin(tmr.count_loop * M_PI / 180.0) * 30;

@@ -13,7 +13,6 @@
 #include <TsyDMASPI.h>                  // SPI通信Master用
 #include <cstdint>
 
-
 //------------------------------------------------------------------------------------
 //  列挙型
 //------------------------------------------------------------------------------------
@@ -254,5 +253,13 @@ struct MrdMonitor {
 bool execute_master_command_1(Meridim90Union a_meridim, bool a_flg_exe);
 bool execute_master_command_2(Meridim90Union a_meridim, bool a_flg_exe);
 void mrd_countup_errs();
+
+extern MERIDIANFLOW::Meridian mrd;
+extern MrdFlags flg;
+
+extern PadUnion pad_array; // PAD値の格納用配列(一次転記)
+extern ServoParam sv;
+extern AhrsValue ahrs;
+extern PadUnion pad_i2c; // PAD値のi2c送受信用配列
 
 #endif //__MERIDIAN_MAIN_H__

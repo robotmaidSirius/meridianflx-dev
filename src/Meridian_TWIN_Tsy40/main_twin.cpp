@@ -106,9 +106,9 @@ void setup() {
   mrd_disp.servo_bps_3lines(SERVO_BAUDRATE_L, SERVO_BAUDRATE_R, SERVO_BAUDRATE_C);
 
   // サーボ用UART設定
-  mrd_servo_begin(L, MOUNT_SERVO_TYPE_L); // サーボモータの通信初期設定. Serial2
-  mrd_servo_begin(R, MOUNT_SERVO_TYPE_R); // サーボモータの通信初期設定. Serial3
-  mrd_servo_begin(C, MOUNT_SERVO_TYPE_C); // サーボモータの通信初期設定. Serial1
+  mrd_servo_begin(MOUNT_SERVO_TYPE_L, ics_L); // サーボモータの通信初期設定. Serial2
+  mrd_servo_begin(MOUNT_SERVO_TYPE_R, ics_R); // サーボモータの通信初期設定. Serial3
+  mrd_servo_begin(MOUNT_SERVO_TYPE_C, ics_C); // サーボモータの通信初期設定. Serial1
   mrd_disp.servo_protcol(L, MOUNT_SERVO_TYPE_L);
   mrd_disp.servo_protcol(R, MOUNT_SERVO_TYPE_R);
   mrd_disp.servo_protcol(C, MOUNT_SERVO_TYPE_C);
@@ -272,7 +272,7 @@ void loop() {
     mrd.monitor_check_flow("[7]", monitor.flow); // 動作チェック用シリアル表示
 
     // @[7-1] コントローラの値を取得する
-    pad_new = mrd_pad_reader(MOUNT_PAD, PAD_INTERVAL);
+    pad_new = mrd_pad_reader(MOUNT_PAD, PAD_INTERVAL, ics_R);
 
     // @[7-2] コントローラの値をmeridimに格納する
     mrd_meriput90_pad(MOUNT_PAD, s_spi_meridim, pad_new, PAD_BUTTON_MARGE);
@@ -329,7 +329,7 @@ void loop() {
     mrd.monitor_check_flow("[11]", monitor.flow); // 動作チェック用シリアル表示
 
     // @[11-1] サーボコマンド用の配列に基づき, サーボ命令の実行およびサーボ角度戻り値の取得
-    mrd_servo_drive(s_spi_meridim, MOUNT_SERVO_TYPE_L, MOUNT_SERVO_TYPE_R, MOUNT_SERVO_TYPE_C);
+    mrd_servo_drive(s_spi_meridim, MOUNT_SERVO_TYPE_L, MOUNT_SERVO_TYPE_R, MOUNT_SERVO_TYPE_C, ics_L, ics_R);
 
     // @[11-end] サーボの動作結果が s_spi_meridim に格納完了している.
 

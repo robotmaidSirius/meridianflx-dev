@@ -25,7 +25,7 @@ constexpr unsigned short PAD_TABLE_KRC5FH_TO_COMMON[16] = //
 /// @brief KRC-5FHジョイパッドからデータを読み取り, 指定された間隔でデータを更新する.
 /// @param a_interval 読み取り間隔（ミリ秒）.
 /// @return 更新されたジョイパッドの状態を64ビット整数で返す.
-uint64_t mrd_pad_read_krc(uint a_interval, IcsHardSerialClass &a_ics) {
+uint64_t mrd_pad_read_krc(uint a_interval, IcsHardSerialClass &a_servo) {
   static uint64_t pre_val_tmp = 0; // 前回の値を保持する静的変数
   int8_t pad_analog_tmp[4] = {0};  // アナログ入力のデータ組み立て用
   // static int calib[4] = {0};       // アナログスティックのキャリブレーション値
@@ -38,7 +38,7 @@ uint64_t mrd_pad_read_krc(uint a_interval, IcsHardSerialClass &a_ics) {
     int krr_analog_tmp[4];             // krrからのアナログ入力データ
     unsigned short pad_common_tmp = 0; // PS準拠に変換後のボタンデータ
     bool rcvd_tmp;                     // 受信機がデータを受信成功したか
-    rcvd_tmp = ics_R.getKrrAllData(&krr_button_tmp, krr_analog_tmp);
+    rcvd_tmp = a_servo.getKrrAllData(&krr_button_tmp, krr_analog_tmp);
     delayMicroseconds(2);
 
     if (rcvd_tmp) // リモコンデータが受信できていたら
@@ -109,11 +109,11 @@ uint64_t mrd_pad_read_krc(uint a_interval, IcsHardSerialClass &a_ics) {
 /// @param a_interval ジョイパッドのデータ読み取り間隔（ミリ秒）.
 /// @return PAD受信値を共用体(PadUnion)データで返す.
 /// @note 関数内で外部変数ics_Rを使用.
-PadUnion mrd_pad_reader(PadType a_type, uint a_interval) {
+PadUnion mrd_pad_reader(PadType a_type, uint a_interval, IcsHardSerialClass &a_servo) {
   PadUnion pad_array_tmp = {0};
   if (a_type == KRR5FH) // KRC-5FH+KRR-5FH
   {
-    pad_array_tmp.ui64val[0] = mrd_pad_read_krc(a_interval, ics_R);
+    pad_array_tmp.ui64val[0] = mrd_pad_read_krc(a_interval, a_servo);
     return pad_array_tmp;
   } else if (a_type == MERIMOTE) // merimote
   {

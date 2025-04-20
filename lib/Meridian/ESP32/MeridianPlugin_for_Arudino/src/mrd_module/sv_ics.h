@@ -48,19 +48,19 @@ float mrd_servo_process_ics(int a_servo_id, int a_cmd, float a_tgt, float a_tgt_
 /// @brief ICSサーボを駆動する関数
 /// @param a_meridim Meridimデータの参照
 /// @param a_sv サーボパラメータの配列
-void mrd_sv_drive_ics_double(Meridim90Union &a_meridim, ServoParam &a_sv) {
+void mrd_sv_drive_ics_double(Meridim90Union &a_meridim, ServoParam &a_sv, IcsHardSerialClass &a_servoL, IcsHardSerialClass &a_servoR) {
   for (int i = 0; i < a_sv.num_max; i++) {
     // L系統サーボの処理
     if (a_sv.ixl_mount[i]) {
       a_sv.ixl_tgt[i] = mrd_servo_process_ics(
           a_sv.ixl_id[i], a_meridim.sval[(i * 2) + 20], a_sv.ixl_tgt[i], a_sv.ixl_tgt_past[i],
-          a_sv.ixl_trim[i], a_sv.ixl_cw[i], a_sv.ixl_err[i], a_sv.ixl_stat[i], ics_L);
+          a_sv.ixl_trim[i], a_sv.ixl_cw[i], a_sv.ixl_err[i], a_sv.ixl_stat[i], a_servoL);
     }
     // R系統サーボの処理
     if (a_sv.ixr_mount[i]) {
       a_sv.ixr_tgt[i] = mrd_servo_process_ics(
           a_sv.ixr_id[i], a_meridim.sval[(i * 2) + 50], a_sv.ixr_tgt[i], a_sv.ixr_tgt_past[i],
-          a_sv.ixr_trim[i], a_sv.ixr_cw[i], a_sv.ixr_err[i], a_sv.ixr_stat[i], ics_R);
+          a_sv.ixr_trim[i], a_sv.ixr_cw[i], a_sv.ixr_err[i], a_sv.ixr_stat[i], a_servoR);
     }
     // delayMicroseconds(2); //Teensyの場合には必要かも
   }

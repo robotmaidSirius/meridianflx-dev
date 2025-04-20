@@ -6,6 +6,7 @@
 #include "main.h"
 #include "mrd_module/sv_ftbrx.h"
 #include "mrd_module/sv_ics.h"
+#include <IcsHardSerialClass.h> // ICSサーボのインスタンス設定
 
 //==================================================================================================
 //  Servo 関連の処理
@@ -19,7 +20,7 @@
 /// @param a_line UART通信ライン（L, R, またはC）.
 /// @param a_servo_type サーボのタイプを示す整数値.
 /// @return サーボがサポートされている場合はtrueを, サポートされていない場合はfalseを返す.
-bool mrd_servo_begin(UartLine a_line, int a_servo_type) {
+bool mrd_servo_begin(int a_servo_type, IcsHardSerialClass &a_servo) {
   switch (a_servo_type) {
   case 1:
     // single PWM [WIP]
@@ -37,10 +38,7 @@ bool mrd_servo_begin(UartLine a_line, int a_servo_type) {
     // DYNAMIXEL Protocol 2.0 [WIP]
     return false;
   case 43:
-    if (a_line == L)
-      ics_L.begin(); // サーボモータの通信初期設定. Serial2
-    else if (a_line == R)
-      ics_R.begin(); // サーボモータの通信初期設定. Serial3
+    a_servo.begin(); // サーボモータの通信初期設定.
     return true;
   case 44:
     // PMX(KONDO) [WIP]
@@ -71,10 +69,9 @@ bool mrd_servo_begin(UartLine a_line, int a_servo_type) {
 /// @param a_sv サーボパラメータの構造体.
 /// @return サーボの駆動が成功した場合はtrueを, 失敗した場合はfalseを返す.
 bool mrd_servos_drive_lite(Meridim90Union &a_meridim, int a_L_type, int a_R_type,
-                           ServoParam &a_sv) {
-  if (a_L_type == 43 && a_R_type == 43) // ICSサーボがL系R系に設定されていた場合はLR均等送信を実行
-  {
-    mrd_sv_drive_ics_double(a_meridim, a_sv);
+                           ServoParam &a_sv, IcsHardSerialClass &a_servoL, IcsHardSerialClass &a_servoR) {
+  if (a_L_type == 43 && a_R_type == 43) { // ICSサーボがL系R系に設定されていた場合はLR均等送信を実行
+    mrd_sv_drive_ics_double(a_meridim, a_sv, a_servoL, a_servoR);
     return true;
   } else {
     return false;

@@ -6,7 +6,9 @@
 #include "main.h"
 
 // ライブラリ導入
-#include <ESP32Wiimote.h> // Wiiコントローラー
+#include <ESP32Wiimote.h>       // Wiiコントローラー
+#include <IcsHardSerialClass.h> // ICSサーボのインスタンス設定
+
 ESP32Wiimote wiimote;
 
 // リモコン受信ボタンデータの変換テーブル
@@ -30,7 +32,7 @@ constexpr unsigned short PAD_TABLE_KRC5FH_TO_COMMON[16] = { //
 /// @brief KRC-5FHジョイパッドからデータを読み取り, 指定された間隔でデータを更新する.
 /// @param a_interval 読み取り間隔（ミリ秒）.
 /// @return 更新されたジョイパッドの状態を64ビット整数で返す.
-uint64_t mrd_pad_read_krc(uint a_interval, IcsHardSerialClass &a_ics) {
+uint64_t mrd_pad_read_krc(uint a_interval, IcsHardSerialClass &a_servo) {
   static uint64_t pre_val_tmp = 0; // 前回の値を保持する静的変数
   int8_t pad_analog_tmp[4] = {0};  // アナログ入力のデータ組み立て用
   static int calib[4] = {0};       // アナログスティックのキャリブレーション値
@@ -43,7 +45,7 @@ uint64_t mrd_pad_read_krc(uint a_interval, IcsHardSerialClass &a_ics) {
     int krr_analog_tmp[4];             // krrからのアナログ入力データ
     unsigned short pad_common_tmp = 0; // PS準拠に変換後のボタンデータ
     bool rcvd_tmp;                     // 受信機がデータを受信成功したか
-    rcvd_tmp = ics_R.getKrrAllData(&krr_button_tmp, krr_analog_tmp);
+    rcvd_tmp = a_servo.getKrrAllData(&krr_button_tmp, krr_analog_tmp);
     delayMicroseconds(2);
 
     if (rcvd_tmp) // リモコンデータが受信できていたら
@@ -187,10 +189,10 @@ uint64_t mrd_bt_read_wiimote() {
 /// @param a_pad_data 64ビットのボタンデータ
 /// @return 64ビット整数に変換された受信データ
 /// @note WIIMOTEの場合は, スレッドがpad_array.ui64valを自動更新.
-uint64_t mrd_pad_read(PadType a_pad_type, uint64_t a_pad_data) {
+uint64_t mrd_pad_read(PadType a_pad_type, uint64_t a_pad_data, IcsHardSerialClass &a_servo) {
 
   if (a_pad_type == KRR5FH) { // KRR5FH
-    return mrd_pad_read_krc(PAD_INTERVAL, ics_R);
+    return mrd_pad_read_krc(PAD_INTERVAL, a_servo);
   }
 
   if (a_pad_type == WIIMOTE) { // Wiimote

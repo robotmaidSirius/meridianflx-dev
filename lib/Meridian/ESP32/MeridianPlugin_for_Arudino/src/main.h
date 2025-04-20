@@ -8,10 +8,6 @@
 #include <Adafruit_BNO055.h>            // 9軸センサBNO055用
 #include <MPU6050_6Axis_MotionApps20.h> // MPU6050用
 #include <Meridian.h>                   // Meridianのライブラリ導入
-extern MERIDIANFLOW::Meridian mrd;
-#include <IcsHardSerialClass.h> // ICSサーボのインスタンス設定
-extern IcsHardSerialClass ics_L;
-extern IcsHardSerialClass ics_R;
 
 //------------------------------------------------------------------------------------
 //  列挙型
@@ -278,5 +274,11 @@ bool execute_master_command_1(Meridim90Union a_meridim, bool a_flg_exe);
 bool execute_master_command_2(Meridim90Union a_meridim, bool a_flg_exe);
 bool execute_master_command_from_PC(Meridim90Union a_meridim, bool a_flg_exe);
 bool execute_master_command_from_Tsy(Meridim90Union a_meridim, bool a_flg_exe);
+
+extern MERIDIANFLOW::Meridian mrd;
+extern PadUnion pad_array; // pad値の格納用配列
+extern ServoParam sv;
+extern MrdFlags flg;
+extern AhrsValue ahrs;
 
 #endif //__MERIDIAN_MAIN_H__
