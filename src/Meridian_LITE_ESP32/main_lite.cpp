@@ -23,7 +23,7 @@
 #include "mrd_bt_pad.h"
 #include "mrd_disp.h"
 #include "mrd_eeprom.h"
-#include "mrd_move.h"
+#include "mrd_module/mrd_move.h"
 #include "mrd_sd.h"
 #include "mrd_servo.h"
 #include "mrd_util.h"

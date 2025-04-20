@@ -5,7 +5,7 @@
     "keywords": "Meridian Arduino ESP32",
     "license": "MIT License",
     "dependencies": {
-        "ninagawa123/Meridian": "*"
+        "MeridianPlugin": "*"
     },
     "headers": "",
     "examples": [],

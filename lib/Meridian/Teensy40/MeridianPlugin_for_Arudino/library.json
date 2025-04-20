@@ -5,7 +5,7 @@
     "keywords": "Meridian Arduino Teensy40",
     "license": "MIT License",
     "dependencies": {
-        "ninagawa123/Meridian": "*"
+        "MeridianPlugin": "*"
     },
     "headers": "",
     "examples": [],

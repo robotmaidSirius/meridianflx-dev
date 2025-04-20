@@ -5,7 +5,7 @@
     "keywords": "Meridian",
     "license": "MIT License",
     "dependencies": {
-        "ninagawa123/Meridian": "*"
+        "MeridianCore": "*"
     },
     "headers": "",
     "examples": [],
