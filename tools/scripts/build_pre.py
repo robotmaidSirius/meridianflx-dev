@@ -40,11 +40,6 @@ def crate_keyfile(path):
         file.write('#endif // __MERIDIAN_KEYS_H__\n')
     print(f'# [Info] "keys.h" has been created at {file_path}')
 
-if __name__ == '__main__':
-    crate_keyfile("Meridian_LITE_ESP32")
-    crate_keyfile("Meridian_TWIN_ESP32")
-    crate_keyfile("Meridian_TWIN_Tsy40")
-
 if env.IsIntegrationDump():
    # stop the current script execution
    Return()
