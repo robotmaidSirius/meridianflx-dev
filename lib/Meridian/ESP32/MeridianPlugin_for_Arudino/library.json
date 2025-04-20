@@ -1,0 +1,18 @@
+{
+    "name": "MeridianPlugin for Arduino",
+    "version": "1.0.0",
+    "description": "MeridianPlugin for Arduino",
+    "keywords": "Meridian Arduino ESP32",
+    "license": "MIT License",
+    "dependencies": {
+        "ninagawa123/Meridian": "*"
+    },
+    "headers": "",
+    "examples": [],
+    "build": {
+        "flags": []
+    },
+    "export": {
+        "exclude": []
+    }
+}
