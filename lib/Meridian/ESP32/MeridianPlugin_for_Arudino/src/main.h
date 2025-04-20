@@ -86,13 +86,11 @@ enum BinHexDec { // 数値表示タイプの列挙型(Bin, Hex, Dec)
 //------------------------------------------------------------------------------------
 
 // システム用の変数
-const int MRDM_BYTE = MRDM_LEN * 2;    // Meridim配列のバイト型の長さ
-const int MRD_ERR = MRDM_LEN - 2;      // エラーフラグの格納場所（配列の末尾から2つめ）
-const int MRD_ERR_u = MRD_ERR * 2 + 1; // エラーフラグの格納場所（上位8ビット）
-const int MRD_ERR_l = MRD_ERR * 2;     // エラーフラグの格納場所（下位8ビット）
-const int MRD_CKSM = MRDM_LEN - 1;     // チェックサムの格納場所（配列の末尾）
-const int PAD_LEN = 5;                 // リモコン用配列の長さ
-TaskHandle_t thp[4];                   // マルチスレッドのタスクハンドル格納用
+const int MRDM_BYTE = MRDM_LEN * 2;         // Meridim配列のバイト型の長さ
+const int MRD_ERR_u = MRD_ERR_CODE * 2 + 1; // エラーフラグの格納場所（上位8ビット）
+const int MRD_ERR_l = MRD_ERR_CODE * 2;     // エラーフラグの格納場所（下位8ビット）
+const int PAD_LEN = 5;                      // リモコン用配列の長さ
+TaskHandle_t thp[4];                        // マルチスレッドのタスクハンドル格納用
 
 //------------------------------------------------------------------------------------
 //  クラス・構造体・共用体

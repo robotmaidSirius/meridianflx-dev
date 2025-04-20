@@ -150,12 +150,12 @@ void loop() {
     memcpy(s_spi_meridim.bval, r_udp_meridim.bval, MRDM_BYTE + 4);
 
     // エラービット14番(ESP32のPCからのUDP受信エラー検出)をサゲる
-    mrd_clearBit16(s_spi_meridim.usval[MRD_ERR], ERRBIT_14_PC_ESP);
+    mrd_clearBit16(s_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_14_PC_ESP);
 
   } else { // チェックサムがNGならバッファから転記せず前回のデータを使用する
 
     // エラービット14番(ESP32のPCからのUDP受信エラー検出)をアゲる
-    mrd_setBit16(s_spi_meridim.usval[MRD_ERR], ERRBIT_14_PC_ESP);
+    mrd_setBit16(s_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_14_PC_ESP);
 
     err.pc_esp++;
   }
@@ -175,7 +175,7 @@ void loop() {
   if (mrdsq.r_expect == r_udp_meridim.usval[MRD_SEQ]) {
 
     // エラービット10番[ESP受信のスキップ検出]をサゲる
-    mrd_clearBit16(s_spi_meridim.usval[MRD_ERR], ERRBIT_10_UDP_ESP_SKIP);
+    mrd_clearBit16(s_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_10_UDP_ESP_SKIP);
     flg.meridim_rcvd = true; // Meridim受信成功フラグをアゲる
 
   } else { // 受信シーケンス番号の値が予想と違ったら,
@@ -184,7 +184,7 @@ void loop() {
     mrdsq.r_expect = r_udp_meridim.usval[MRD_SEQ];
 
     // エラービット10番[ESP受信のスキップ検出]をアゲる
-    mrd_setBit16(s_spi_meridim.usval[MRD_ERR], ERRBIT_10_UDP_ESP_SKIP);
+    mrd_setBit16(s_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_10_UDP_ESP_SKIP);
 
     // シーケンス番号が前回と同じでなければ,
     if (mrdsq.r_past != r_udp_meridim.usval[MRD_SEQ]) {
@@ -271,14 +271,14 @@ void loop() {
           // チェックサムがOKなら, DMAからUDP送信配列に転記
           memcpy(s_udp_meridim.bval, tmp_meridim.bval, MRDM_BYTE);
           // エラービット12番[ESP32のSPI受信エラー]をサゲる
-          mrd_clearBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_12_TSY_ESP);
+          mrd_clearBit16(s_udp_meridim.usval[MRD_ERR_CODE], ERRBIT_12_TSY_ESP);
           mrd_meriput90_cksm(s_udp_meridim); // チェックサムの更新
           flg.meridim_rcvd = true;           // Meridim受信成功フラグをアゲる
           flg.spi_rcvd = true;               // SPI受信完了フラグをアゲてループを抜ける
 
         } else { // チェックサムがNGなら, 前回の受信値を使用する
           // エラービット12番[ESP32のSPI受信エラー]をアゲる
-          mrd_setBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_12_TSY_ESP);
+          mrd_setBit16(s_udp_meridim.usval[MRD_ERR_CODE], ERRBIT_12_TSY_ESP);
           mrd_meriput90_cksm(s_udp_meridim); // チェックサムの更新
           flg.meridim_rcvd = false;          // Meridim受信成功フラグをサゲる
           flg.spi_rcvd = true;               // SPI受信完了フラグをアゲてループを抜ける

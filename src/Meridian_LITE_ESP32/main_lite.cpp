@@ -224,13 +224,13 @@ void loop() {
     memcpy(s_udp_meridim.bval, r_udp_meridim.bval, MRDM_LEN * 2);
 
     // @[2-4a] エラービット14番(ESP32のPCからのUDP受信エラー検出)をサゲる
-    mrd_clearBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_14_PC_ESP);
+    mrd_clearBit16(s_udp_meridim.usval[MRD_ERR_CODE], ERRBIT_14_PC_ESP);
 
   } else // チェックサムがNGならバッファから転記せず前回のデータを使用する
   {
 
     // @[2-4b] エラービット14番(ESP32のPCからのUDP受信エラー検出)をアゲる
-    mrd_setBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_14_PC_ESP);
+    mrd_setBit16(s_udp_meridim.usval[MRD_ERR_CODE], ERRBIT_14_PC_ESP);
     err.pc_esp++;
     mrd.monitor_check_flow("CsErr*", monitor.flow); // デバグ用フロー表示
   }
@@ -244,14 +244,14 @@ void loop() {
   if (mrd.seq_compare_nums(mrdsq.r_expect, int(s_udp_meridim.usval[MRD_SEQ]))) {
 
     // エラービット10番[ESP受信のスキップ検出]をサゲる
-    mrd_clearBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_10_UDP_ESP_SKIP);
+    mrd_clearBit16(s_udp_meridim.usval[MRD_ERR_CODE], ERRBIT_10_UDP_ESP_SKIP);
     flg.meridim_rcvd = true; // Meridim受信成功フラグをアゲる.
 
   } else {                                              // 受信シーケンス番号の値が予想と違ったら
     mrdsq.r_expect = int(s_udp_meridim.usval[MRD_SEQ]); // 現在の受信値を予想結果としてキープ
 
     // エラービット10番[ESP受信のスキップ検出]をアゲる
-    mrd_setBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_10_UDP_ESP_SKIP);
+    mrd_setBit16(s_udp_meridim.usval[MRD_ERR_CODE], ERRBIT_10_UDP_ESP_SKIP);
 
     err.esp_skip++;
     flg.meridim_rcvd = false; // Meridim受信成功フラグをサゲる.

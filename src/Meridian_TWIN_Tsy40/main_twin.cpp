@@ -166,24 +166,24 @@ void loop() {
     if (mrd.cksm_rslt(r_spi_meridim_dma.sval, MRDM_LEN)) {
       // チェックサムがOKならバッファから受信配列に転記
       memcpy(r_spi_meridim.bval, r_spi_meridim_dma.bval, MRDM_BYTE);
-      mrd_clearBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_13_ESP_TSY); // エラービットをサゲる
-      mrd.monitor_check_flow("csOK", monitor.flow);                    // 動作チェック用シリアル表示
-    } else {                                                           // チェックサムがNGならバッファから転記せず前回のデータを使用する
-      mrd.monitor_check_flow("cs *NG* ", monitor.flow);                // 動作チェック用シリアル表示
-      mrd_setBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_13_ESP_TSY);   // エラービットをアゲる
+      mrd_clearBit16(r_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_13_ESP_TSY); // エラービットをサゲる
+      mrd.monitor_check_flow("csOK", monitor.flow);                         // 動作チェック用シリアル表示
+    } else {                                                                // チェックサムがNGならバッファから転記せず前回のデータを使用する
+      mrd.monitor_check_flow("cs *NG* ", monitor.flow);                     // 動作チェック用シリアル表示
+      mrd_setBit16(r_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_13_ESP_TSY);   // エラービットをアゲる
     }
 
     // @[1-3] シーケンス番号チェック
     mrdsq.r_expect = mrd.seq_predict_num(mrdsq.r_expect); // シーケンス番号予想値の生成
     if (mrd.seq_compare_nums(mrdsq.r_expect, int(r_spi_meridim.usval[MRD_SEQ]))) {
       // 受信シーケンス番号の値が予想と合致なら
-      mrd_clearBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_9_BOARD_SKIP); // エラービットをサゲる
-      flg.spi_rcvd = true;                                               // SPI受信フラグをアゲる
+      mrd_clearBit16(r_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_9_BOARD_SKIP); // エラービットをサゲる
+      flg.spi_rcvd = true;                                                    // SPI受信フラグをアゲる
     } else {
       // 受信シーケンス番号の値が予想と違うなら
-      mrdsq.r_expect = int(r_spi_meridim.usval[MRD_SEQ]);              // 現在の受信値を予想値として更新
-      mrd_setBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_9_BOARD_SKIP); // エラービットをアゲる
-      flg.spi_rcvd = false;                                            // SPI受信フラグをサゲる
+      mrdsq.r_expect = int(r_spi_meridim.usval[MRD_SEQ]);                   // 現在の受信値を予想値として更新
+      mrd_setBit16(r_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_9_BOARD_SKIP); // エラービットをアゲる
+      flg.spi_rcvd = false;                                                 // SPI受信フラグをサゲる
     }
 
     // @[1-4] 通信エラー処理(エラーカウンタへの反映)
