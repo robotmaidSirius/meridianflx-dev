@@ -20,6 +20,7 @@
 #include "main.h"
 
 #include "mrd_bt_pad.h"
+#include "mrd_disp.h"
 #include "mrd_eeprom.h"
 #include "mrd_util.h"
 #include "mrd_wifi.h"
@@ -27,6 +28,32 @@
 // ライブラリ導入
 #include <Arduino.h>
 #include <ESP32DMASPISlave.h> // DMAでSPI通信を高速化するめのライブラリ
+
+//==================================================================================================
+// インスタンス
+//==================================================================================================
+
+TaskHandle_t thp[4];                // マルチスレッドのタスクハンドル格納用
+Meridim90Union s_udp_meridim;       // Meridim配列データ送信用(short型, センサや角度は100倍値)
+Meridim90Union r_udp_meridim;       // Meridim配列データ受信用
+Meridim90Union s_udp_meridim_dummy; // SPI送信ダミー用
+Meridim90Union s_spi_meridim;       // Meridim配列データ送信用
+Meridim90Union r_spi_meridim;       // Meridim配列データ受信用
+Meridim90Union tmp_meridim;         // チェック用配列
+uint8_t *s_spi_meridim_dma;         // DMA用
+uint8_t *r_spi_meridim_dma;         // DMA用
+MrdFlags flg;
+MrdSq mrdsq;
+MrdTimer tmr;
+MrdErr err;
+PadUnion pad_array = {0}; // pad値の格納用配列
+PadUnion pad_i2c = {0};   // pad値のi2c送受信用配列
+PadValue pad_analog;
+AhrsValue ahrs;
+ServoParam sv;
+MrdMonitor monitor;
+MrdMsgHandler mrd_disp(Serial);
+
 ESP32DMASPI::Slave slave;
 MERIDIANFLOW::Meridian mrd;
 

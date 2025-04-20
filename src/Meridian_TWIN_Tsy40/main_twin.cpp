@@ -34,6 +34,33 @@
 #include "mrd_wire1.h"
 
 //==================================================================================================
+// インスタンス
+//==================================================================================================
+
+MERIDIANFLOW::Meridian mrd; // ライブラリのクラスを mrdという名前でインスタンス化
+IcsHardSerialClass ics_L(&Serial2, PIN_EN_L, SERVO_BAUDRATE_L, SERVO_TIMEOUT_L);
+IcsHardSerialClass ics_R(&Serial3, PIN_EN_R, SERVO_BAUDRATE_R, SERVO_TIMEOUT_R);
+IcsHardSerialClass ics_C(&Serial1, PIN_EN_C, SERVO_BAUDRATE_C, SERVO_TIMEOUT_C);
+Meridim90Union s_spi_meridim;       // SPI送信用配列(short型, センサや角度は100倍値)
+Meridim90Union r_spi_meridim;       // SPI受信用配列
+Meridim90Union s_spi_meridim_dma;   // SPI送信DMA用配列
+Meridim90Union r_spi_meridim_dma;   // SPI受信DMA用配列
+Meridim90Union s_spi_meridim_dummy; // SPI送信ダミーデータ用配列
+MrdFlags flg;
+MrdSq mrdsq;
+MrdTimer tmr;
+MrdErr err;
+PadUnion pad_array = {0}; // PAD値の格納用配列(一次転記)
+PadUnion pad_new = {0};   // PAD値の格納用配列(二次転記)
+PadUnion pad_i2c = {0};   // PAD値のi2c送受信用配列
+PadValue pad_analog;
+AhrsValue ahrs;
+ServoParam sv;
+MrdMonitor monitor;
+MrdMsgHandler mrd_disp(Serial);
+MrdSdHandler mrd_sd(Serial);
+
+//==================================================================================================
 //  SET UP
 //==================================================================================================
 
@@ -237,7 +264,7 @@ void loop() {
     mrd.monitor_check_flow("[6]", monitor.flow); // 動作チェック用シリアル表示
 
     // @[6-3] 最新のセンサー値を配列に格納する
-    mrd_meriput90_ahrs(s_spi_meridim, ahrs.result);
+    mrd_meriput90_ahrs(s_spi_meridim, ahrs.result, flg.imuahrs_available);
 
     //------------------------------------------------------------------------------------
     //  [ 7 ] リモコンの読み取り

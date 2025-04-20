@@ -6,18 +6,13 @@
 
 #include <Adafruit_BNO055.h> // 9軸センサBNO055用
 #include <Arduino.h>
+#include <IcsHardSerialClass.h>         // ICSサーボのインスタンス設定
 #include <MPU6050_6Axis_MotionApps20.h> // MPU6050用
 #include <Meridian.h>                   // Meridianのライブラリ導入
 #include <SPI.h>                        // SDカードやSPI通信用
 #include <TsyDMASPI.h>                  // SPI通信Master用
 #include <cstdint>
 
-MERIDIANFLOW::Meridian mrd; // ライブラリのクラスを mrdという名前でインスタンス化
-
-#include <IcsHardSerialClass.h> // ICSサーボのインスタンス設定
-IcsHardSerialClass ics_L(&Serial2, PIN_EN_L, SERVO_BAUDRATE_L, SERVO_TIMEOUT_L);
-IcsHardSerialClass ics_R(&Serial3, PIN_EN_R, SERVO_BAUDRATE_R, SERVO_TIMEOUT_R);
-IcsHardSerialClass ics_C(&Serial1, PIN_EN_C, SERVO_BAUDRATE_C, SERVO_TIMEOUT_C);
 
 //------------------------------------------------------------------------------------
 //  列挙型
@@ -86,11 +81,6 @@ typedef union {
   uint8_t bval[MRDM_BYTE + 4];        // byte型で180個の配列データ
   uint8_t ubval[MRDM_BYTE + 4];       // 上記のunsigned byte型
 } Meridim90Union;
-Meridim90Union s_spi_meridim;       // SPI送信用配列(short型, センサや角度は100倍値)
-Meridim90Union r_spi_meridim;       // SPI受信用配列
-Meridim90Union s_spi_meridim_dma;   // SPI送信DMA用配列
-Meridim90Union r_spi_meridim_dma;   // SPI受信DMA用配列
-Meridim90Union s_spi_meridim_dummy; // SPI送信ダミーデータ用配列
 
 // フラグ管理用の構造体
 struct MrdFlags {
@@ -117,14 +107,12 @@ struct MrdFlags {
   bool servoR_drive = false;            // R系統のサーボの送受信
   bool servoC_drive = false;            // C系統のサーボの送受信
 };
-MrdFlags flg;
 
 // シーケンス番号管理用の構造体
 struct MrdSq {
   int s_increment = 0; // フレーム毎に0-59999をカウントし, 送信
   int r_expect = 0;    // フレーム毎に0-59999をカウントし, 受信値と比較
 };
-MrdSq mrdsq;
 
 // タイマー管理用の構造体
 struct MrdTimer {
@@ -135,7 +123,6 @@ struct MrdTimer {
   int count_pad_interval = 0;     // JOYPADのデータを読みに行くためのフレームカウント★
   unsigned long count_frame = 0;  // メインフレームのカウント
 };
-MrdTimer tmr;
 
 // エラーカウント管理用の構造体
 struct MrdErr {
@@ -147,7 +134,6 @@ struct MrdErr {
   int tsy_skip = 0; // ESP→Teensy受信のカウントの連番スキップ回数
   int pc_skip = 0;  // PC受信のカウントの連番スキップ回数
 };
-MrdErr err;
 
 // リモコン値格納用の共用体
 typedef union {
@@ -159,9 +145,6 @@ typedef union {
                               // [0]button, [1]pad.stick_L_x:pad.stick_L_y,
                               // [2]pad.stick_R_x:pad.stick_R_y, [3]pad.L2_val:pad.R2_val
 } PadUnion;
-PadUnion pad_array = {0}; // PAD値の格納用配列(一次転記)
-PadUnion pad_new = {0};   // PAD値の格納用配列(二次転記)
-PadUnion pad_i2c = {0};   // PAD値のi2c送受信用配列
 
 // リモコンのアナログ入力データ用の構造体
 struct PadValue {
@@ -175,7 +158,6 @@ struct PadValue {
   int R2_val = 0;
   int L2_val = 0;
 };
-PadValue pad_analog;
 
 // 6軸or9軸センサー用の構造体
 struct AhrsValue {
@@ -204,8 +186,6 @@ struct AhrsValue {
   VectorInt16 mag;                                        // [x, y, z]            磁力センサの測定値
   long temperature;                                       // センサの温度測定値
 };
-AhrsValue ahrs;
-
 // サーボパラメータ用の構造体
 struct ServoParam {
   // サーボの最大接続 (サーボ送受信のループ処理数）
@@ -254,7 +234,6 @@ struct ServoParam {
   uint16_t ixr_stat[IXR_MAX] = {0}; // R系統サーボのコンディションステータス配列
   uint16_t ixc_stat[IXC_MAX] = {0}; // C系統サーボのコンディションステータス配列
 };
-ServoParam sv;
 
 // モニタリング設定用の構造体
 struct MrdMonitor {
@@ -265,14 +244,6 @@ struct MrdMonitor {
   bool seq_num = MONITOR_SEQ;             // シーケンス番号チェックを表示
   bool pad = MONITOR_PAD;                 // リモコンのデータを表示
 };
-
-MrdMonitor monitor;
-
-#include "mrd_disp.h"
-MrdMsgHandler mrd_disp(Serial);
-
-#include "mrd_sd.h"
-MrdSdHandler mrd_sd(Serial);
 
 //==================================================================================================
 //  関 数 各 種

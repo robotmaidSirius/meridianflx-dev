@@ -30,9 +30,33 @@
 #include "mrd_wifi.h"
 #include "mrd_wire0.h"
 
+//==================================================================================================
+// インスタンス
+//==================================================================================================
+
 MERIDIANFLOW::Meridian mrd;
 IcsHardSerialClass ics_L(&Serial1, PIN_EN_L, SERVO_BAUDRATE_L, SERVO_TIMEOUT_L);
 IcsHardSerialClass ics_R(&Serial2, PIN_EN_R, SERVO_BAUDRATE_R, SERVO_TIMEOUT_R);
+TaskHandle_t thp[4];                // マルチスレッドのタスクハンドル格納用
+Meridim90Union s_udp_meridim;       // Meridim配列データ送信用(short型, センサや角度は100倍値)
+Meridim90Union r_udp_meridim;       // Meridim配列データ受信用
+Meridim90Union s_udp_meridim_dummy; // SPI送信ダミー用
+Meridim90Union s_spi_meridim;       // Meridim配列データ送信用
+Meridim90Union r_spi_meridim;       // Meridim配列データ受信用
+Meridim90Union tmp_meridim;         // チェック用配列
+uint8_t *s_spi_meridim_dma;         // DMA用
+uint8_t *r_spi_meridim_dma;         // DMA用
+MrdFlags flg;
+MrdSq mrdsq;
+MrdTimer tmr;
+MrdErr err;
+PadUnion pad_array = {0}; // pad値の格納用配列
+PadUnion pad_i2c = {0};   // pad値のi2c送受信用配列
+PadValue pad_analog;
+AhrsValue ahrs;
+ServoParam sv;
+MrdMonitor monitor;
+MrdMsgHandler mrd_disp(Serial);
 
 // ライブラリ導入
 #include <Arduino.h>
@@ -271,7 +295,7 @@ void loop() {
   mrd.monitor_check_flow("[4]", monitor.flow); // デバグ用フロー表示
 
   // @[4-1] センサ値のMeridimへの転記
-  meriput90_ahrs(s_udp_meridim, ahrs.read, MOUNT_IMUAHRS); // BNO055_AHRS
+  meriput90_ahrs(s_udp_meridim, ahrs.read, MOUNT_IMUAHRS, flg.imuahrs_available); // BNO055_AHRS
 
   //------------------------------------------------------------------------------------
   //  [ 5 ] リモコンの読み取り
