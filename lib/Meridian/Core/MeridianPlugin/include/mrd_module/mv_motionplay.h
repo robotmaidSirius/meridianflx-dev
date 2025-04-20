@@ -1,8 +1,7 @@
 #ifndef __MERIDIAN_MOVEMENT_MOTIONPLAY_H__
 #define __MERIDIAN_MOVEMENT_MOTIONPLAY_H__
 
-#include "config.h"
-#include "main.h"
+// ヘッダファイルの読み込み
 
 //==================================================================================================
 //  モーション再生関連の処理
