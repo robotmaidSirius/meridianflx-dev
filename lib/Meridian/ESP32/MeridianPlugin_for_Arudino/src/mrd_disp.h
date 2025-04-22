@@ -43,7 +43,7 @@ public:
   /// @param a_pc_speed PCとのUSBシリアル通信速度.
   /// @param a_spi_speed SPIの通信速度.
   /// @param a_i2c0_speed I2C0の通信速度.
-  void hello_lite_esp(String a_version, int a_pc_speed, int a_spi_speed, int a_i2c0_speed) {
+  void hello_lite_esp(String a_version, int unix_time, int a_pc_speed, int a_spi_speed, int a_i2c0_speed) {
     m_serial.println();
     m_serial.print("Hi, This is ");
     m_serial.println(a_version);

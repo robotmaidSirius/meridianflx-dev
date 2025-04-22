@@ -8,7 +8,8 @@
 // 20240809 wiiリモコン, ヌンチャクに対応. Homeボタンでヌンチャクスティックのキャリブレーション.
 // 20240819 変数名をTWIN間で整合. EEPROM関連は調整中.
 
-#define VERSION "Meridian_TWIN_for_ESP32_v1.1.1_2024.08.19" // バージョン表示
+/// @brief バージョン情報の定義
+#define MERIDIAN_VERSION BUILD_BOARD_NAME " ver." BUILD_VERSION
 
 //==================================================================================================
 //  初期設定
@@ -71,7 +72,7 @@ void setup() {
   }
 
   // 起動メッセージ表示
-  mrd_disp.hello_twin_esp(VERSION, SERIAL_PC_BPS, SPI0_SPEED);
+  mrd_disp.hello_twin_esp(MERIDIAN_VERSION, BUILD_TIME, SERIAL_PC_BPS, SPI0_SPEED);
 
   // EEPROMの初期化
   // mrd_eeprom_init(EEPROM_SIZE);

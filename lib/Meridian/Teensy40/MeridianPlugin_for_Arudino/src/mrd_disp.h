@@ -40,7 +40,7 @@ public:
   /// @param a_spi0 SPI0の通信速度(Hz).
   /// @param a_i2c0 I2C0の通信速度(Hz).
   /// @param a_i2c1 I2C1の通信速度(Hz).
-  void hello_twin_tsy(String a_version, int a_pc, int a_spi0, int a_i2c0, int a_i2c1) {
+  void hello_twin_tsy(String a_version, int unix_time, int a_pc, int a_spi0, int a_i2c0, int a_i2c1) {
     m_serial.println();
     m_serial.print("Hi, This is ");
     m_serial.println(a_version);

@@ -1,7 +1,7 @@
 {
     "name": "MeridianPlugin",
     "version": "1.0.0",
-    "description": "MeridianPlugin",
+    "description": "共通のMeridianPluginのライブラリ",
     "keywords": "Meridian",
     "license": "MIT License",
     "dependencies": {

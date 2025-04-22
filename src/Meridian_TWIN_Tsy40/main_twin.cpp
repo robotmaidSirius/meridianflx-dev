@@ -2,7 +2,8 @@
 #ifndef __MERIDIAN_MAIN__
 #define __MERIDIAN_MAIN__
 
-#define VERSION "Meridian_TWIN_for_Teensy_v1.1.1_2024.08.19" // バージョン表示
+/// @brief バージョン情報の定義
+#define MERIDIAN_VERSION BUILD_BOARD_NAME " ver." BUILD_VERSION
 
 // Meridian_TWIN_for_Teensy By Izumi Ninagawa & Meridian Project
 // MIT Licenced.
@@ -81,7 +82,7 @@ void setup() {
   mrd_disp.charging(CHARGE_TIME);
 
   // 起動メッセージの表示(バージョン, PC-USB,SPI0,i2c0のスピード)
-  mrd_disp.hello_twin_tsy(VERSION, SERIAL_PC_BPS, SPI0_SPEED, I2C0_SPEED, I2C1_SPEED);
+  mrd_disp.hello_twin_tsy(MERIDIAN_VERSION, BUILD_TIME, SERIAL_PC_BPS, SPI0_SPEED, I2C0_SPEED, I2C1_SPEED);
 
   // サーボ値の初期設定
   sv.num_max = max(mrd_max_used_index(IXL_MT, IXL_MAX),
