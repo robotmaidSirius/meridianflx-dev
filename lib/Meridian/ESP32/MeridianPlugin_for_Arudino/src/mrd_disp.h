@@ -62,7 +62,7 @@ public:
   /// @param a_version バージョン情報.
   /// @param a_pc_speed PCとのUSBシリアル通信速度.
   /// @param a_spi_speed SPIの通信速度.
-  void hello_twin_esp(String a_version, int a_pc_speed, int a_spi_speed) {
+  void hello_twin_esp(String a_version, int unix_time, int a_pc_speed, int a_spi_speed) {
     m_serial.println();
     m_serial.print("Hi, This is ");
     m_serial.println(a_version);

@@ -4,8 +4,8 @@
 // ヘッダファイルの読み込み
 #include "config.h"
 #include "main.h"
-#include "mrd_module/sv_ftbrx.h"
-#include "mrd_module/sv_ics.h"
+#include "mrd_module/servo/sv_ftbrx.h"
+#include "mrd_module/servo/sv_ics.h"
 #include <IcsHardSerialClass.h> // ICSサーボのインスタンス設定
 
 //==================================================================================================

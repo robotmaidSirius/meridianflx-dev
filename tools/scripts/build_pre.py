@@ -32,7 +32,7 @@ def crate_keyfile(path):
     FIXED_IP_SUBNET = os.getenv('FIXED_IP_SUBNET', '255.255.255.0')
 
     # If the file already exists, do not overwrite it
-    with open(file_path, "w") as file:
+    with open(file_path, "w", encoding='utf-8') as file:
         file.write('#ifndef __MERIDIAN_KEYS_H__\n')
         file.write('#define __MERIDIAN_KEYS_H__\n\n')
 
