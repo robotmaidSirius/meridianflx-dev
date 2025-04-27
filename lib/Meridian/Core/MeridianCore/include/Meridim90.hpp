@@ -3,9 +3,8 @@
  * @brief Meridianで定義されているMeridim90型
  * @version 1.0.0
  * @date 2025-04-20
- *
- * @copyright Copyright (c) 2025
- *
+ * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
+ * @note MIT LICENSE
  */
 #ifndef __MERIDIAN_CORE_MERIDIM_MERIDIM90_HPP__
 #define __MERIDIAN_CORE_MERIDIM_MERIDIM90_HPP__

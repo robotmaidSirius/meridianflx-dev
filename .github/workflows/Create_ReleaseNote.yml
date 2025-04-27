@@ -5,28 +5,33 @@ on:
       - 'v*'
 
 jobs:
-  Build_MERIDIAN_LITE:
+  Build_MERIDIAN_LITE_ESP32:
     uses: ./.github/workflows/_WORKFLOW_CALL_RunningPlatformIO.yml
     with:
-      board_env: MERIDIAN_LITE_ESP32
+      board_env: Meridian_LITE_ESP32
       firmware_name: Meridian_LITE_for_ESP32
   Build_MERIDIAN_TWIN_ESP32:
     uses: ./.github/workflows/_WORKFLOW_CALL_RunningPlatformIO.yml
     with:
-      board_env: MERIDIAN_TWIN_ESP32
+      board_env: Meridian_TWIN_ESP32
       firmware_name: Meridian_TWIN_for_ESP32
   Build_MERIDIAN_TWIN_TSY40:
     uses: ./.github/workflows/_WORKFLOW_CALL_RunningPlatformIO.yml
     with:
-      board_env: MERIDIAN_TWIN_TSY40
+      board_env: Meridian_TWIN_Tsy40
       firmware_name: Meridian_TWIN_for_Tsy40
       ext_name: hex
+  BUILD_MERIDIAN_LITE_M5STACK_ATOM:
+    uses: ./.github/workflows/_WORKFLOW_CALL_RunningPlatformIO.yml
+    with:
+      board_env: Meridian_LITE_M5StackAtom
+      firmware_name: Meridian_LITE_for_M5StackAtom
 
   build:
     permissions:
       contents: write
     if: success()
-    needs: [Build_MERIDIAN_LITE, Build_MERIDIAN_TWIN_ESP32, Build_MERIDIAN_TWIN_TSY40]
+    needs: [Build_MERIDIAN_LITE_ESP32, Build_MERIDIAN_TWIN_ESP32, Build_MERIDIAN_TWIN_TSY40, BUILD_MERIDIAN_LITE_M5STACK_ATOM]
     name: Build Releases on tags
     runs-on: ubuntu-latest
 

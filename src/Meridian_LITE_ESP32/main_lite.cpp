@@ -1,6 +1,4 @@
-#if defined(MERIDIAN_LITE_ESP32)
-#ifndef __MERIDIAN_LITE_MAIN__
-#define __MERIDIAN_LITE_MAIN__
+#if defined(Meridian_LITE_ESP32)
 
 /// @brief バージョン情報の定義
 #define MERIDIAN_VERSION BUILD_BOARD_NAME " ver." BUILD_VERSION
@@ -522,5 +520,4 @@ bool execute_master_command_2(Meridim90Union a_meridim, bool a_flg_exe) {
   return false;
 }
 
-#endif // __MERIDIAN_LITE_MAIN__
-#endif
+#endif // Meridian_LITE_ESP32

@@ -1,15 +1,14 @@
 /**
- * @file test_sample.cpp
- * @author Akari-mobility (masiro.to.akari@gmail.com)
- * @brief
- * @version 0.0.1
- * @date 2023-03-07
- *
- * @copyright Copyright (c) 2023 / MaSiRo Project.
- *
+ * @file communication_diagnostic.cpp
+ * @brief テストコード / ログ出力
+ * @version 1.0.0
+ * @date 2025-04-20
+ * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
+ * @note MIT LICENSE
  */
-
 #include <unity.h>
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void setUp(void) {
   // set stuff up here
@@ -19,7 +18,7 @@ void tearDown(void) {
   // clean stuff up here
 }
 
-///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void test_setup(void) {
   bool result = true;
@@ -33,7 +32,7 @@ void test_loop(void) {
   TEST_ASSERT_EQUAL(1, result);
 }
 
-///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void RUN_UNITY_TESTS() {
   UNITY_BEGIN();
@@ -44,7 +43,7 @@ void RUN_UNITY_TESTS() {
   UNITY_END();
 }
 
-///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifndef ARDUINO
 #include <Arduino.h>
@@ -54,14 +53,13 @@ void setup() {
   delay(2000);
 
   RUN_UNITY_TESTS();
+  exit(0);
 }
 void loop() {
-  exit(0);
 }
 #else
 int main(int argc, char **argv) {
   RUN_UNITY_TESTS();
-  exit(0);
   return 0;
 }
 #endif

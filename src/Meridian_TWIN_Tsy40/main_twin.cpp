@@ -1,6 +1,4 @@
-#if defined(MERIDIAN_TWIN_TSY40)
-#ifndef __MERIDIAN_MAIN__
-#define __MERIDIAN_MAIN__
+#if defined(Meridian_TWIN_Tsy40)
 
 /// @brief バージョン情報の定義
 #define MERIDIAN_VERSION BUILD_BOARD_NAME " ver." BUILD_VERSION
@@ -542,5 +540,4 @@ void mrd_countup_errs() {
   increment_err(0, err.pc_skip);  // PC受信のカウントのスキップ
 }
 
-#endif // __MERIDIAN_MAIN__
-#endif
+#endif // Meridian_TWIN_Tsy40

@@ -3,9 +3,8 @@
  * @brief プラグインのためのインターフェイスクラス
  * @version 1.0.0
  * @date 2025-04-20
- *
- * @copyright Copyright (c) 2025
- *
+ * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
+ * @note MIT LICENSE
  */
 #ifndef __MERIDIAN_MODULES_PLUGIN_I_MRD_PLUGIN_HPP__
 #define __MERIDIAN_MODULES_PLUGIN_I_MRD_PLUGIN_HPP__
@@ -53,6 +52,13 @@ public:
 protected:
   meridian::core::communication::IMeridianDiagnostic *diag;
   Status state;
+
+private:
+#ifdef MERIDIAN_DEFAULT_LEVEL_LEVEL
+  meridian::core::communication::IMeridianDiagnostic::OUTPUT_LOG_LEVEL _level = Meridian_DEFAULT_LEVEL_LEVEL;
+#else
+  meridian::core::communication::IMeridianDiagnostic::OUTPUT_LOG_LEVEL _level = OUTPUT_LOG_LEVEL::LEVEL_WARN;
+#endif
 };
 
 } // namespace plugin

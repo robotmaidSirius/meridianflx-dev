@@ -1,4 +1,4 @@
-#if defined(MERIDIAN_TWIN_ESP32)
+#if defined(Meridian_TWIN_ESP32)
 // Meridian_TWIN_for_ESP32 By Izumi Ninagawa & Meridian Project
 // MIT Licenced.
 //
@@ -392,4 +392,5 @@ bool execute_master_command_from_Tsy(Meridim90Union a_meridim, bool a_flg_exe) {
   }
   return false;
 }
-#endif
+
+#endif // Meridian_TWIN_ESP32
