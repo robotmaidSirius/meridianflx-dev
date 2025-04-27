@@ -29,7 +29,7 @@ def crate_keyfile(path):
     MODE_FIXED_IP = os.getenv('MODE_FIXED_IP', '0')
     FIXED_IP_ADDR = os.getenv('FIXED_IP_ADDR', '192.168.1.xxx')
     FIXED_IP_GATEWAY = os.getenv('FIXED_IP_GATEWAY', '192.168.1.xxx')
-    FIXED_IP_SUBNET = os.getenv('FIXED_IP_SUBNET', '192.168.1.xxx')
+    FIXED_IP_SUBNET = os.getenv('FIXED_IP_SUBNET', '255.255.255.0')
 
     # If the file already exists, do not overwrite it
     with open(file_path, "w") as file:
@@ -37,17 +37,17 @@ def crate_keyfile(path):
         file.write('#define __MERIDIAN_KEYS_H__\n\n')
 
         file.write('// Wifiアクセスポイントの設定\n')
-        file.write('#define WIFI_AP_SSID  "' + WIFI_AP_SSID     + '"        // アクセスポイントのWIFI_AP_SSID\n')
-        file.write('#define WIFI_AP_PASS  "' + WIFI_AP_PASS     + '"        // アクセスポイントのパスワード\n')
-        file.write('#define WIFI_SEND_IP  "' + WIFI_SEND_IP     + '"        // 送り先のPCのIPアドレス（PCのIPアドレスを調べておく）\n')
-        file.write('#define UDP_SEND_PORT ' + UDP_SEND_PORT     + '         // 送り先のポート番号\n')
-        file.write('#define UDP_RESV_PORT ' + UDP_RECEIVED_PORT + '         // このESP32のポート番号\n\n')
+        file.write('#define WIFI_AP_SSID  "' + WIFI_AP_SSID      + '"   ///! アクセスポイントのWIFI_AP_SSID\n')
+        file.write('#define WIFI_AP_PASS  "' + WIFI_AP_PASS      + '"   ///! アクセスポイントのパスワード\n')
+        file.write('#define WIFI_SEND_IP  "' + WIFI_SEND_IP      + '"   ///! 送り先のPCのIPアドレス（PCのIPアドレスを調べておく）\n')
+        file.write('#define UDP_SEND_PORT (' + UDP_SEND_PORT     + ')   ///! 送り先のポート番号\n')
+        file.write('#define UDP_RESV_PORT (' + UDP_RECEIVED_PORT + ')   ///! このESP32のポート番号\n\n')
 
         file.write('// ESP32のIPアドレスを固定する場合は下記の4項目を設定\n')
-        file.write('#define MODE_FIXED_IP    ' + MODE_FIXED_IP     + '      // IPアドレスを固定するか（0:NO, 1:YES）\n')
-        file.write('#define FIXED_IP_ADDR    "' + FIXED_IP_ADDR    + '"     // ESP32のIPアドレスを固定時のESPのIPアドレス\n')
-        file.write('#define FIXED_IP_GATEWAY "' + FIXED_IP_GATEWAY + '"     // ESP32のIPアドレスを固定時のルーターのゲートウェイ\n')
-        file.write('#define FIXED_IP_SUBNET  "' + FIXED_IP_SUBNET  + '"     // ESP32のIPアドレスを固定時のサブネット\n\n')
+        file.write('#define MODE_FIXED_IP    (' + MODE_FIXED_IP     + ')    ///! IPアドレスを固定するか（0:NO, 1:YES）\n')
+        file.write('#define FIXED_IP_ADDR    "' + FIXED_IP_ADDR     + '"    ///! ESP32のIPアドレスを固定時のESPのIPアドレス\n')
+        file.write('#define FIXED_IP_GATEWAY "' + FIXED_IP_GATEWAY  + '"    ///! ESP32のIPアドレスを固定時のルーターのゲートウェイ\n')
+        file.write('#define FIXED_IP_SUBNET  "' + FIXED_IP_SUBNET   + '"    ///! ESP32のIPアドレスを固定時のサブネット\n\n')
         file.write('#endif // __MERIDIAN_KEYS_H__\n')
     print(f'# [Info] "keys.h" has been created at {file_path}')
 

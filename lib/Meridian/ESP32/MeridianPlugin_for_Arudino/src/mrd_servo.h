@@ -71,7 +71,7 @@ bool mrd_servo_begin(int a_servo_type, IcsHardSerialClass &a_servo) {
 bool mrd_servos_drive_lite(Meridim90Union &a_meridim, int a_L_type, int a_R_type,
                            ServoParam &a_sv, IcsHardSerialClass &a_servoL, IcsHardSerialClass &a_servoR) {
   if (a_L_type == 43 && a_R_type == 43) { // ICSサーボがL系R系に設定されていた場合はLR均等送信を実行
-    mrd_sv_drive_ics_double(a_meridim, a_sv, a_servoL, a_servoR);
+    mrd_servo_drive_ics_double(a_meridim, a_sv, a_servoL, a_servoR);
     return true;
   } else {
     return false;

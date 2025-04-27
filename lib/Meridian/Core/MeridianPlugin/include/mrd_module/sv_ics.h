@@ -2,10 +2,9 @@
 #define __MERIDIAN_SERVO_KONDO_ICS_H__
 
 #include "config.h"
+#include "gs2d_krs.h"
 #include "main.h"
 #include "mrd_disp.h"
-
-#include "gs2d_krs.h"
 
 //==================================================================================================
 //  KONDO ICSサーボ関連の処理
@@ -48,7 +47,7 @@ float mrd_servo_process_ics(int a_servo_id, int a_cmd, float a_tgt, float a_tgt_
 /// @brief ICSサーボを駆動する関数
 /// @param a_meridim Meridimデータの参照
 /// @param a_sv サーボパラメータの配列
-void mrd_sv_drive_ics_double(Meridim90Union &a_meridim, ServoParam &a_sv, IcsHardSerialClass &a_servoL, IcsHardSerialClass &a_servoR) {
+void mrd_servo_drive_ics_double(Meridim90Union &a_meridim, ServoParam &a_sv, IcsHardSerialClass &a_servoL, IcsHardSerialClass &a_servoR) {
   for (int i = 0; i < a_sv.num_max; i++) {
     // L系統サーボの処理
     if (a_sv.ixl_mount[i]) {
@@ -62,7 +61,9 @@ void mrd_sv_drive_ics_double(Meridim90Union &a_meridim, ServoParam &a_sv, IcsHar
           a_sv.ixr_id[i], a_meridim.sval[(i * 2) + 50], a_sv.ixr_tgt[i], a_sv.ixr_tgt_past[i],
           a_sv.ixr_trim[i], a_sv.ixr_cw[i], a_sv.ixr_err[i], a_sv.ixr_stat[i], a_servoR);
     }
-    // delayMicroseconds(2); //Teensyの場合には必要かも
+#if defined(Meridian_TWIN_Tsy40)
+    delayMicroseconds(1); // Teensyの場合には必要かも
+#endif
   }
 }
 
