@@ -44,6 +44,8 @@ public:
   virtual bool setup() { return false; }
 
 public:
+  IMeridianDiagnostic() {}
+
   /// @brief 出力レベルの設定
   /// @param level 出力レベル
   void set_level(OUTPUT_LOG_LEVEL level) { this->_level = level; }

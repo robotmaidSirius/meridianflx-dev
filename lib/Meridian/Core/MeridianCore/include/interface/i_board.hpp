@@ -22,7 +22,7 @@ public:
   IBoard() = default;
   virtual ~IBoard() = default;
 
-  virtual bool Setup() = 0;
+  virtual bool Begin() = 0;
   virtual bool Loop(Meridim90 &a_meridim) {
     bool result = false;
     // Meridim90 a_meridim;

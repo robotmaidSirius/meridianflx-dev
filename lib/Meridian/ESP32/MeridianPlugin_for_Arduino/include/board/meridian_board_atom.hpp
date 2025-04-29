@@ -11,70 +11,57 @@
 
 #include "board/pins/meridian_board_atom_pins.hpp"
 #include "board/setting/meridian_board_atom_setting.hpp"
+#include "mrd_util_for_arduino.hpp"
 
 #include <interface/i_board.hpp>
 #include <interface/i_mrd_communication_conversation.hpp>
 #include <interface/i_mrd_communication_diagnostic.hpp>
 #include <interface/i_mrd_plugin.hpp>
 
+/// @brief バージョン情報の定義
+#define MERIDIAN_VERSION BUILD_BOARD_NAME " ver." BUILD_VERSION
+
 namespace meridian {
 namespace board {
 
 class MeridianBoardAtom : public IBoard {
 public:
-  struct Parameter {
+  class Parameter {
+  public:
     bool is_network_ap_mode = true;
     bool is_network_sta_mode = false;
     bool is_factory_mode = false;
   };
-  struct Plugin {
+  class Plugin {
   public:
-    /// @brief 通信用のインターフェースと診断用のインターフェースをまとめた構造体
-    struct mrd_communication {
-    public:
-      IMeridianConversation *con; ///< 通信用のインターフェース
-      IMeridianDiagnostic *diag;  ///< 診断用のインターフェース
-    };
-    struct mrd_plugin {
-    public:
-      IMeridianPlugin *pad;
-    };
-
-  public:
-    CallbackProcess Processing = nullptr;
-
-  public:
-    mrd_communication communication; ///< 通信用のインターフェース
-    mrd_plugin plugin;               ///< プラグインのインターフェース
+    IMeridianConversation *con = nullptr; ///! 通信用のインターフェース
+    IMeridianDiagnostic *diag = nullptr;  ///! 診断用のインターフェース
+    IMeridianPlugin *pad = nullptr;
   };
+
+public:
+  Plugin plugin;
+  Parameter parameter;
+  CallbackProcess event_process = nullptr;
 
 public:
   MeridianBoardAtom() {}
   ~MeridianBoardAtom() {}
 
-  bool Setup() {
-
-    Plugin entity;
-
-    this->_parameter = new Parameter();
-    bool result = this->Setup(this->_plugin, this->_parameter);
-
-    return this->_is_setup;
-  }
-  bool Setup(Plugin *a_plugin, Parameter *a_parameter) {
+  bool Begin() override {
     bool result = false;
-    if (nullptr != a_plugin) {
-      this->_plugin = a_plugin;
-    } else {
-      this->_plugin = new Plugin();
-    }
-    if (nullptr != a_parameter) {
-      this->_parameter = a_parameter;
-    } else {
-      this->_parameter = new Parameter();
-    }
     ////////////////////////////////////////////////////////////////////////////////////////////////
     result = true;
+    if (nullptr != this->plugin.diag) {
+      this->plugin.diag = new IMeridianDiagnostic();
+    }
+
+    this->plugin.con->set_diagnostic(*this->plugin.diag);
+    this->plugin.diag->setup();
+    this->plugin.diag->log(this->_level, "==========================================");
+    this->plugin.diag->log(this->_level, "Hello M5Stack Atom!");
+    this->plugin.diag->log(this->_level, "Version: " MERIDIAN_VERSION);
+    this->plugin.diag->log(this->_level, "Formatted Build Time: %s", GetTimeString(BUILD_TIME).c_str());
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     this->_is_setup = result;
@@ -95,16 +82,23 @@ public:
     return result;
   }
 
-  bool Input(Meridim90 &a_meridim) { return true; }
-  bool Processing(Meridim90 &a_meridim) { return true; }
-  bool Output(Meridim90 a_meridim) { return true; }
+  bool Input(Meridim90 &a_meridim) {
+    return true;
+  }
+  bool Processing(Meridim90 &a_meridim) {
+    return true;
+  }
+  bool Output(Meridim90 a_meridim) {
+    return true;
+  }
 
 private:
-  Plugin *_plugin = nullptr;
-  Parameter *_parameter = nullptr;
   bool _is_setup = false;
+  OUTPUT_LOG_LEVEL _level = OUTPUT_LOG_LEVEL::LEVEL_INFO;
 };
 } // namespace board
 } // namespace meridian
+
+#undef MERIDIAN_VERSION
 
 #endif // __MERIDIAN_BOARD_MERIDIAN_BOARD_LITE_ATOM_HPP__

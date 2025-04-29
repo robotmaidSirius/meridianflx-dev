@@ -1,8 +1,8 @@
 {
-    "name": "MeridianPlugin for Teensy40 on Arduino",
+    "name": "MeridianPlugin on ESP32 for Arduino",
     "version": "1.0.0",
-    "description": "フレームワークが'Arduino'、CPUが'Teensy40'である場合のMeridianPluginのライブラリ",
-    "keywords": "Meridian Arduino Teensy40",
+    "description": "フレームワークが'Arduino'、CPUが'ESP32'である場合のMeridianPluginのライブラリ",
+    "keywords": "Meridian Arduino ESP32",
     "author": "Meridian Team",
     "license": "MIT License",
     "dependencies": {

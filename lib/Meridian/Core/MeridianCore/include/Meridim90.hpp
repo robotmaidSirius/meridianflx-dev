@@ -10,6 +10,8 @@
 #define __MERIDIAN_CORE_MERIDIM_MERIDIM90_HPP__
 
 #include <stdint.h>
+#define MERIDIM90_USER_DATA_SIZE 12 // TODO: データサイズを設定する
+#define MERIDIM90_BYTE_LEN       90 // TODO: 値を設定する
 
 //==================================================================================================
 //  Meridim90配列 一覧表

@@ -35,8 +35,9 @@ public:
   };
 
 public:
+  IMeridianConversation() {}
   virtual const char *get_name() { return "Conversation-None"; }
-  virtual bool setup() { return true; }
+  virtual bool begin() { return true; }
 
 private:
   virtual bool received(Meridim90 &a_meridim) { return false; }
@@ -77,6 +78,13 @@ protected:
 private:
   bool _is_send = true;
   bool _is_received = true;
+
+private:
+#ifdef MERIDIAN_DEFAULT_LEVEL_LEVEL
+  OUTPUT_LOG_LEVEL _level = MERIDIAN_DEFAULT_LEVEL_LEVEL;
+#else
+  OUTPUT_LOG_LEVEL _level = OUTPUT_LOG_LEVEL::LEVEL_WARN;
+#endif
 };
 
 } // namespace communication
