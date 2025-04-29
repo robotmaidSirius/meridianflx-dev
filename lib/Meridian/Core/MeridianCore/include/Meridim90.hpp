@@ -192,4 +192,6 @@ struct Meridim90 {
 } // namespace core
 } // namespace meridian
 
+using namespace meridian::core::meridim;
+
 #endif // __MERIDIAN_CORE_MERIDIM_MERIDIM90_HPP__

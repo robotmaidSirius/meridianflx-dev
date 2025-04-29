@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "Meridian Core",
     "keywords": "Meridian",
+    "author": "Meridian Team",
     "license": "MIT License",
     "dependencies": {
         "ninagawa123/Meridian": "*"

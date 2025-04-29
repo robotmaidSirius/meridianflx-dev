@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "フレームワークが'Arduino'、CPUが'ESP32'である場合のMeridianPluginのライブラリ",
     "keywords": "Meridian Arduino ESP32",
+    "author": "Meridian Team",
     "license": "MIT License",
     "dependencies": {
         "MeridianPlugin": "*"

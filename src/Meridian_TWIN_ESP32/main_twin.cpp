@@ -1,4 +1,20 @@
+/**
+ * @file main_twin.cpp
+ * @brief
+ * @version 1.0.0
+ * @date 2025-04-27
+ * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
+ * @note MIT LICENSE
+ */
 #if defined(Meridian_TWIN_ESP32)
+
+#include "app_twin.hpp"
+#include <board/meridian_board_twin_for_esp32.hpp>
+
+meridian::board::MeridianBoardTwinForEsp32 board;
+
+//==================================================================================================
+
 // Meridian_TWIN_for_ESP32 By Izumi Ninagawa & Meridian Project
 // MIT Licenced.
 //
@@ -62,6 +78,7 @@ MERIDIANFLOW::Meridian mrd;
 //  SETUP
 //==================================================================================================
 void setup() {
+  board.Setup();
 
   // シリアルモニターの設定
   Serial.begin(SERIAL_PC_BPS);
@@ -129,6 +146,13 @@ void setup() {
 // MAIN LOOP
 //==================================================================================================
 void loop() {
+  Meridim90 a_meridim;
+
+  if (true == board.Input(a_meridim)) {
+    // アプリ処理を記載する
+
+    board.Output(a_meridim);
+  }
 
   //------------------------------------------------------------------------------------
   //  [ 1 ] UDP受信待受ループ (PC → ESP32)

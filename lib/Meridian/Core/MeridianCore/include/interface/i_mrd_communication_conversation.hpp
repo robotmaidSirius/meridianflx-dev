@@ -1,6 +1,6 @@
 /**
  * @file i_mrd_communication_conversation.hpp
- * @brief
+ * @brief 通信のためのインターフェイスクラス
  * @version 1.0.0
  * @date 2025-04-20
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
@@ -15,8 +15,6 @@
 namespace meridian {
 namespace core {
 namespace communication {
-
-using namespace meridian::core::meridim;
 
 class IMeridianConversation {
 public:
@@ -38,11 +36,11 @@ public:
 
 public:
   virtual const char *get_name() { return "Conversation-None"; }
-  virtual bool setup() = 0;
+  virtual bool setup() { return true; }
 
 private:
-  virtual bool received(Meridim90 &a_meridim) = 0;
-  virtual bool send(Meridim90 &a_meridim) = 0;
+  virtual bool received(Meridim90 &a_meridim) { return false; }
+  virtual bool send(Meridim90 &a_meridim) { return false; }
 
 public:
   /// @brief 送信、受信をするか制御します。フラグがtrueの場合、送信、受信を行います。

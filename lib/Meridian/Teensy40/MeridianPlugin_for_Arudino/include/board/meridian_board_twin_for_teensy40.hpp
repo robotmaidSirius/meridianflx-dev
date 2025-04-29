@@ -17,15 +17,15 @@ namespace board {
 
 class MeridianBoardTwinForTeensy40 {
 public:
-  MeridianBoardTwinForTeensy40() = default;
-  ~MeridianBoardTwinForTeensy40() = default;
+  MeridianBoardTwinForTeensy40() {}
+  ~MeridianBoardTwinForTeensy40() {}
 
   bool Setup() {
     return true; // Setup successful
   }
-  bool Loop() {
-    return true; // Loop successful
-  }
+  bool Input(Meridim90 &a_meridim) { return true; } // Input successful
+  // bool Process(Meridim90 &a_meridim) { return true; } // Process successful
+  bool Output(Meridim90 a_meridim) { return true; } // Output successful
 };
 
 } // namespace board

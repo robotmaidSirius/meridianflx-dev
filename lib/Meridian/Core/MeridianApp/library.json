@@ -1,7 +1,7 @@
 {
-    "name": "MeridianPlugin",
+    "name": "MeridianApp",
     "version": "1.0.0",
-    "description": "共通のMeridianPluginのライブラリ",
+    "description": "Meridian application library",
     "keywords": "Meridian",
     "author": "Meridian Team",
     "license": "MIT License",

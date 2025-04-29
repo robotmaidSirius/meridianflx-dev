@@ -1,4 +1,19 @@
+/**
+ * @file main_twin.cpp
+ * @brief
+ * @version 1.0.0
+ * @date 2025-04-27
+ * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
+ * @note MIT LICENSE
+ */
 #if defined(Meridian_TWIN_Tsy40)
+
+#include "app_twin.hpp"
+#include <board/meridian_board_twin_for_teensy40.hpp>
+
+meridian::board::MeridianBoardTwinForTeensy40 board;
+
+//==================================================================================================
 
 /// @brief バージョン情報の定義
 #define MERIDIAN_VERSION BUILD_BOARD_NAME " ver." BUILD_VERSION
@@ -64,6 +79,8 @@ MrdSdHandler mrd_sd(Serial);
 //==================================================================================================
 
 void setup() {
+  board.Setup();
+
   // シリアルモニターの設定
   Serial.begin(SERIAL_PC_BPS); //
 
@@ -171,6 +188,13 @@ void setup() {
 //  MAIN LOOP
 //==================================================================================================
 void loop() {
+  Meridim90 a_meridim;
+
+  if (true == board.Input(a_meridim)) {
+    // アプリ処理を記載する
+
+    board.Output(a_meridim);
+  }
 
   // 計算用ループカウンタのカウントアップ
   tmr.count_loop += tmr.count_loop_dlt;

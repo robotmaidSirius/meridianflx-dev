@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "フレームワークが'Arduino'、CPUが'Teensy40'である場合のMeridianPluginのライブラリ",
     "keywords": "Meridian Arduino Teensy40",
+    "author": "Meridian Team",
     "license": "MIT License",
     "dependencies": {
         "MeridianPlugin": "*"

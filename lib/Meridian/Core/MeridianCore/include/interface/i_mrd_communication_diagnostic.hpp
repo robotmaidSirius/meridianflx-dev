@@ -22,21 +22,21 @@ namespace meridian {
 namespace core {
 namespace communication {
 
+/// @brief Define log level
+typedef enum output_log_level_t {
+  LEVEL_ALL,         /*!< Any logging levels that have been configured are logged at this log level. */
+  LEVEL_TRACE,       /*!< The TRACE log level records all of the application's behaviour details. Its purpose is primarily diagnostic, and it is more granular and finer than the DEBUG log level. */
+  LEVEL_DEBUG,       /*!< You are providing diagnostic information in a thorough manner with DEBUG. It's long and contains more information than you'll need when using the application. */
+  LEVEL_INFO,        /*!< INFO messages are similar to how applications normally behave. */
+  LEVEL_WARN,        /*!< When an unexpected application issue has been identified, the WARN log level is used.  This indicates that you are unsure if the issue will recur or not. At this time, you may not notice any negative effects on your application. */
+  LEVEL_ERROR,       /*!< This log level is used when a serious issue is preventing the application's functionalities from functioning properly. */
+  LEVEL_FATAL,       /*!< The FATAL level of logging indicates that the application's situation is critical, such as when a critical function fails. */
+  LEVEL_OPERATIONAL, /*!< When This log level signals operational messages. */
+  LEVEL_OFF          /*!< Nothing is logged at this level of logging. */
+} OUTPUT_LOG_LEVEL;
+
 class IMeridianDiagnostic {
 public:
-  /// @brief Define log level
-  typedef enum output_log_level_t {
-    LEVEL_ALL,         /*!< Any logging levels that have been configured are logged at this log level. */
-    LEVEL_TRACE,       /*!< The TRACE log level records all of the application's behaviour details. Its purpose is primarily diagnostic, and it is more granular and finer than the DEBUG log level. */
-    LEVEL_DEBUG,       /*!< You are providing diagnostic information in a thorough manner with DEBUG. It's long and contains more information than you'll need when using the application. */
-    LEVEL_INFO,        /*!< INFO messages are similar to how applications normally behave. */
-    LEVEL_WARN,        /*!< When an unexpected application issue has been identified, the WARN log level is used.  This indicates that you are unsure if the issue will recur or not. At this time, you may not notice any negative effects on your application. */
-    LEVEL_ERROR,       /*!< This log level is used when a serious issue is preventing the application's functionalities from functioning properly. */
-    LEVEL_FATAL,       /*!< The FATAL level of logging indicates that the application's situation is critical, such as when a critical function fails. */
-    LEVEL_OPERATIONAL, /*!< When This log level signals operational messages. */
-    LEVEL_OFF          /*!< Nothing is logged at this level of logging. */
-  } OUTPUT_LOG_LEVEL;
-
 public:
   /// @brief 仮想関数 - 名前を取得
   virtual const char *get_name() { return "Diagnostic-None"; }
@@ -91,7 +91,7 @@ public:
 
 protected:
   virtual size_t message(OUTPUT_LOG_LEVEL level, const char *message) { return 0; }
-  char *get_text_level(OUTPUT_LOG_LEVEL level) {
+  const char *get_text_level(OUTPUT_LOG_LEVEL level) {
     switch (level) {
     case OUTPUT_LOG_LEVEL::LEVEL_ALL:
       return "---";

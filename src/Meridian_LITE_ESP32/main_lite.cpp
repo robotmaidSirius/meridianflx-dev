@@ -1,4 +1,19 @@
+/**
+ * @file main_lite.cpp
+ * @brief
+ * @version 1.0.0
+ * @date 2025-04-27
+ * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
+ * @note MIT LICENSE
+ */
 #if defined(Meridian_LITE_ESP32)
+
+#include "app_lite.hpp"
+#include <board/meridian_board_lite.hpp>
+
+meridian::board::MeridianBoardLite board;
+
+//==================================================================================================
 
 /// @brief バージョン情報の定義
 #define MERIDIAN_VERSION BUILD_BOARD_NAME " ver." BUILD_VERSION
@@ -79,6 +94,7 @@ void IRAM_ATTR frame_timer() {
 //  SETUP
 //==================================================================================================
 void setup() {
+  board.Setup();
 
   // BT接続確認用LED設定
   pinMode(PIN_LED_BT, OUTPUT);
@@ -191,6 +207,13 @@ void setup() {
 // MAIN LOOP
 //==================================================================================================
 void loop() {
+  Meridim90 a_meridim;
+
+  if (true == board.Input(a_meridim)) {
+    // アプリ処理を記載する
+
+    board.Output(a_meridim);
+  }
 
   //------------------------------------------------------------------------------------
   //  [ 1 ] UDP送信

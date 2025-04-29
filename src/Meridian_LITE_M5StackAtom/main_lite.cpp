@@ -1,4 +1,19 @@
+/**
+ * @file main_lite.cpp
+ * @brief Meridian LITE M5Stack Atomのメインルーチン
+ * @version 1.0.0
+ * @date 2025-04-27
+ * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
+ * @note MIT LICENSE
+ */
 #if defined(Meridian_LITE_M5StackAtom)
+
+#include "app_lite.hpp"
+#include <board/meridian_board_atom.hpp>
+
+meridian::board::MeridianBoardAtom board;
+
+//==================================================================================================
 
 /// @brief バージョン情報の定義
 #define MERIDIAN_VERSION BUILD_BOARD_NAME " ver." BUILD_VERSION
@@ -25,10 +40,8 @@ String GetTimeString(int unixTime) {
 //  SETUP
 //==================================================================================================
 void setup() {
-  M5.begin(true, false, true);
+  M5.begin(true, true, true);
   M5.dis.begin();
-  // M5.dis.fillpix(CRGB::White);
-  // delay(1000);
   M5.dis.fillpix(CRGB::Green);
 
   Serial.println("==========================================");
@@ -37,12 +50,21 @@ void setup() {
   // Serial.println("Build Time: " BUILD_TIME);
 
   Serial.printf("Formatted Build Time: %s", GetTimeString(BUILD_TIME).c_str());
+
+  board.Setup();
 }
 
 //==================================================================================================
 // MAIN LOOP
 //==================================================================================================
 void loop() {
+  Meridim90 a_meridim;
+
+  if (true == board.Input(a_meridim)) {
+    // アプリ処理を記載する
+
+    board.Output(a_meridim);
+  }
   exit(0);
 }
 

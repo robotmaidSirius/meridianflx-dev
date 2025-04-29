@@ -11,21 +11,22 @@
 
 #include "board/pins/meridian_board_lite_pins.hpp"
 #include "board/setting/meridian_board_lite_setting.hpp"
+#include <Meridim90.hpp>
 
 namespace meridian {
 namespace board {
 
 class MeridianBoardLite {
 public:
-  MeridianBoardLite() = default;
-  ~MeridianBoardLite() = default;
+  MeridianBoardLite() {}
+  ~MeridianBoardLite() {}
 
   bool Setup() {
     return true; // Setup successful
   }
-  bool Loop() {
-    return true; // Loop successful
-  }
+  bool Input(Meridim90 &a_meridim) { return true; } // Input successful
+  // bool Process(Meridim90 &a_meridim) { return true; } // Process successful
+  bool Output(Meridim90 a_meridim) { return true; } // Output successful
 };
 
 } // namespace board

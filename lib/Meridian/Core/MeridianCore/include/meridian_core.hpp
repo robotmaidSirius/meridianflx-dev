@@ -1,6 +1,6 @@
 /**
  * @file meridian_core.hpp
- * @brief
+ * @brief Meridian Core 拡張ヘッダーファイル
  * @version 1.0.0
  * @date 2025-04-20
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.

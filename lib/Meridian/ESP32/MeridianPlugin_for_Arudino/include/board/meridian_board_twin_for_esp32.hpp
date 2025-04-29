@@ -11,21 +11,22 @@
 
 #include "board/pins/meridian_board_twin_for_esp32_pins.hpp"
 #include "board/setting/meridian_board_twin_for_esp32_setting.hpp"
+#include <Meridim90.hpp>
 
 namespace meridian {
 namespace board {
 
 class MeridianBoardTwinForEsp32 {
 public:
-  MeridianBoardTwinForEsp32() = default;
-  ~MeridianBoardTwinForEsp32() = default;
+  MeridianBoardTwinForEsp32() {}
+  ~MeridianBoardTwinForEsp32() {}
 
   bool Setup() {
     return true; // Setup successful
   }
-  bool Loop() {
-    return true; // Loop successful
-  }
+  bool Input(Meridim90 &a_meridim) { return true; } // Input successful
+  // bool Process(Meridim90 &a_meridim) { return true; } // Process successful
+  bool Output(Meridim90 a_meridim) { return true; } // Output successful
 };
 
 } // namespace board

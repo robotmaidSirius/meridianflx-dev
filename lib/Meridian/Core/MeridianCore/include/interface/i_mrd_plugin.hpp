@@ -16,18 +16,26 @@ namespace meridian {
 namespace modules {
 namespace plugin {
 
-using namespace meridian::core::meridim;
+using namespace meridian::core::communication;
 
-template <int N = 1>
 class IMeridianPlugin {
 public:
   class Status {
   public:
-    static const int OPTION_MAX = N;
+    Status(int a_option_max = 0) {
+      this->OPTION_SIZE = a_option_max;
 
+      // TODO: 配列を動的に確保する
+      this->option = new bool[this->OPTION_SIZE];
+      for (int i = 0; i < this->OPTION_SIZE; i++) {
+        this->option[i] = false;
+      }
+    }
+
+    int OPTION_SIZE = 0;
     bool initalized = false;
     bool setup = false;
-    bool option[Status::OPTION_MAX] = {false};
+    bool *option;
   };
 
 public:
@@ -44,25 +52,27 @@ public:
   void get_status(Status &a_state) {
     a_state.initalized = this->state.initalized;
     a_state.setup = this->state.setup;
-    for (int i = 0; i < Status::OPTION_MAX; i++) {
+    for (int i = 0; i < this->state.OPTION_SIZE; i++) {
       a_state.option[i] = this->state.option[i];
     }
   }
 
 protected:
-  meridian::core::communication::IMeridianDiagnostic *diag;
+  IMeridianDiagnostic *diag;
   Status state;
 
 private:
 #ifdef MERIDIAN_DEFAULT_LEVEL_LEVEL
-  meridian::core::communication::IMeridianDiagnostic::OUTPUT_LOG_LEVEL _level = Meridian_DEFAULT_LEVEL_LEVEL;
+  OUTPUT_LOG_LEVEL _level = MERIDIAN_DEFAULT_LEVEL_LEVEL;
 #else
-  meridian::core::communication::IMeridianDiagnostic::OUTPUT_LOG_LEVEL _level = OUTPUT_LOG_LEVEL::LEVEL_WARN;
+  OUTPUT_LOG_LEVEL _level = OUTPUT_LOG_LEVEL::LEVEL_WARN;
 #endif
 };
 
 } // namespace plugin
 } // namespace modules
 } // namespace meridian
+
+using namespace meridian::modules::plugin;
 
 #endif // __MERIDIAN_MODULES_PLUGIN_I_MRD_PLUGIN_HPP__
