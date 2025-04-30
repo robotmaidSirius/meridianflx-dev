@@ -22,21 +22,21 @@ public:
   IBoard() = default;
   virtual ~IBoard() = default;
 
-  virtual bool Begin() = 0;
-  virtual bool Loop(Meridim90 &a_meridim) {
+  virtual bool setup() { return true; }
+  virtual bool input(Meridim90 &a_meridim) { return true; }
+  virtual bool processing(Meridim90 &a_meridim) { return true; }
+  virtual bool output(Meridim90 a_meridim) { return true; }
+
+  virtual bool loop(Meridim90 &a_meridim) {
     bool result = false;
     // Meridim90 a_meridim;
 
-    if (true == this->Input(a_meridim)) {
-      this->Processing(a_meridim);
-      result = this->Output(a_meridim);
+    if (true == this->input(a_meridim)) {
+      this->processing(a_meridim);
+      result = this->output(a_meridim);
     }
     return result;
   }
-
-  virtual bool Input(Meridim90 &a_meridim) = 0;
-  virtual bool Processing(Meridim90 &a_meridim) = 0;
-  virtual bool Output(Meridim90 a_meridim) = 0;
 };
 
 } // namespace board

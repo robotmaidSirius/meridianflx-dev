@@ -12,21 +12,20 @@
 #include "board/pins/meridian_board_lite_pins.hpp"
 #include "board/setting/meridian_board_lite_setting.hpp"
 #include <Meridim90.hpp>
+#include <interface/i_board.hpp>
 
 namespace meridian {
 namespace board {
 
-class MeridianBoardLite {
+class MeridianBoardLite : public IBoard {
 public:
   MeridianBoardLite() {}
   ~MeridianBoardLite() {}
 
-  bool Setup() {
-    return true; // Setup successful
-  }
-  bool Input(Meridim90 &a_meridim) { return true; } // Input successful
-  // bool Process(Meridim90 &a_meridim) { return true; } // Process successful
-  bool Output(Meridim90 a_meridim) { return true; } // Output successful
+  bool setup() override { return true; }
+  bool input(Meridim90 &a_meridim) override { return true; }
+  bool processing(Meridim90 &a_meridim) override { return true; }
+  bool output(Meridim90 a_meridim) override { return true; }
 };
 
 } // namespace board

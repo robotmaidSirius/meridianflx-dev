@@ -42,7 +42,7 @@ public:
 
 public:
   const char *get_name() override { return "Wifi"; }
-  bool begin() override {
+  bool setup() override {
     return true;
   }
 

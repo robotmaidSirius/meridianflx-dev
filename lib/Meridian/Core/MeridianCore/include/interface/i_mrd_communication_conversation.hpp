@@ -36,12 +36,11 @@ public:
 
 public:
   IMeridianConversation() {}
-  virtual const char *get_name() { return "Conversation-None"; }
-  virtual bool begin() { return true; }
+  virtual const char *get_name() { return "NONE"; }
+  virtual bool setup() { return true; }
 
-private:
-  virtual bool received(Meridim90 &a_meridim) { return false; }
-  virtual bool send(Meridim90 &a_meridim) { return false; }
+  virtual bool received(Meridim90 &a_meridim) { return true; }
+  virtual bool send(Meridim90 &a_meridim) { return true; }
 
 public:
   /// @brief 送信、受信をするか制御します。フラグがtrueの場合、送信、受信を行います。

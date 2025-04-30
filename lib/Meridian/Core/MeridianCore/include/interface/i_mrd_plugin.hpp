@@ -40,9 +40,9 @@ public:
 
 public:
   virtual const char *get_name() { return "Unknow"; }
-  virtual bool setup() = 0;
-  virtual bool input(Meridim90 &a_meridim) = 0;
-  virtual bool output(Meridim90 &a_meridim) = 0;
+  virtual bool setup() { return true; }
+  virtual bool input(Meridim90 &a_meridim) { return true; }
+  virtual bool output(Meridim90 &a_meridim) { return true; }
 
 public:
   virtual void set_diagnostic(meridian::core::communication::IMeridianDiagnostic &a_ref) {

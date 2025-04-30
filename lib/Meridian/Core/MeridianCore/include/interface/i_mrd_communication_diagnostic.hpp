@@ -41,11 +41,9 @@ public:
   /// @brief 仮想関数 - 名前を取得
   virtual const char *get_name() { return "Diagnostic-None"; }
   /// @brief 仮想関数 - 初期化
-  virtual bool setup() { return false; }
+  virtual bool setup() { return true; }
 
 public:
-  IMeridianDiagnostic() {}
-
   /// @brief 出力レベルの設定
   /// @param level 出力レベル
   void set_level(OUTPUT_LOG_LEVEL level) { this->_level = level; }

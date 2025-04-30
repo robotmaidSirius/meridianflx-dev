@@ -19,7 +19,7 @@ namespace communication {
 
 class MrdDiagnosticUart : public meridian::core::communication::IMeridianDiagnostic {
 public:
-  MrdDiagnosticUart(HardwareSerial *a_serial, uint32_t a_baudrate = 115200, OUTPUT_LOG_LEVEL a_level = OUTPUT_LOG_LEVEL::LEVEL_INFO) : IMeridianDiagnostic() {
+  MrdDiagnosticUart(HardwareSerial *a_serial, uint32_t a_baudrate = 115200, OUTPUT_LOG_LEVEL a_level = OUTPUT_LOG_LEVEL::LEVEL_INFO) {
     this->disable();
     this->_serial = a_serial;
     this->_baudrate = a_baudrate;

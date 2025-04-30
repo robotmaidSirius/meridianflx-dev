@@ -48,11 +48,11 @@ public:
   MeridianBoardAtom() {}
   ~MeridianBoardAtom() {}
 
-  bool Begin() override {
+  bool setup() override {
     bool result = false;
     ////////////////////////////////////////////////////////////////////////////////////////////////
     result = true;
-    if (nullptr != this->plugin.diag) {
+    if (nullptr == this->plugin.diag) {
       this->plugin.diag = new IMeridianDiagnostic();
     }
 
@@ -69,26 +69,13 @@ public:
   }
 
 public:
-  bool Loop(Meridim90 &a_meridim) {
-    bool result = false;
-    // Meridim90 a_meridim;
-
-    if (true == this->Input(a_meridim)) {
-      // アプリ処理を記載する
-      // CALLBACK
-
-      result = this->Output(a_meridim);
-    }
-    return result;
-  }
-
-  bool Input(Meridim90 &a_meridim) {
+  bool input(Meridim90 &a_meridim) override {
     return true;
   }
-  bool Processing(Meridim90 &a_meridim) {
+  bool processing(Meridim90 &a_meridim) override {
     return true;
   }
-  bool Output(Meridim90 a_meridim) {
+  bool output(Meridim90 a_meridim) override {
     return true;
   }
 

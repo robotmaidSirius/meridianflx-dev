@@ -30,6 +30,8 @@ void Processing(Meridim90 &a_meridim) {
 void setup() {
   M5.begin(true, true, true);
   M5.dis.begin();
+  M5.dis.fillpix(CRGB::Yellow);
+  delay(3000);
   M5.dis.fillpix(CRGB::Green);
 
   board.event_process = Processing;
@@ -37,7 +39,7 @@ void setup() {
   board.plugin.diag = new MrdDiagnosticUart(&Serial);
   board.plugin.pad = nullptr;
 
-  if (false == board.Begin()) {
+  if (false == board.setup()) {
     while (true) {
       Serial.println("Error: Board Setup failed.");
       sleep(3000);
@@ -52,12 +54,11 @@ void setup() {
 void loop() {
   Meridim90 a_meridim;
 
-  if (true == board.Input(a_meridim)) {
+  if (true == board.input(a_meridim)) {
     // アプリ処理を記載する
 
-    board.Output(a_meridim);
+    board.output(a_meridim);
   }
-  exit(0);
 }
 
 #endif // Meridian_LITE_M5StackAtom
