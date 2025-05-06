@@ -25,8 +25,8 @@ bool mrd_wifi_init(WiFiUDP &a_udp, const char *a_ssid, const char *a_pass,
   delay(100);
   WiFi.begin(a_ssid, a_pass); // Wifiに接続
   int i = 0;
-  while (WiFi.status() !=
-         WL_CONNECTED) { // https://www.arduino.cc/en/Reference/WiFiStatus 戻り値一覧
+  // https://www.arduino.cc/en/Reference/WiFiStatus 戻り値一覧
+  while (WiFi.status() != WL_CONNECTED) {
     i++;
     if (i % 10 == 0) { // 0.5秒ごとに接続状況を出力
       a_serial.print(".");

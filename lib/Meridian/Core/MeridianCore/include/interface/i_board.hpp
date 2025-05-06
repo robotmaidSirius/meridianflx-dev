@@ -16,7 +16,7 @@ namespace board {
 
 class IBoard {
 public:
-  typedef void (*CallbackProcess)(Meridim90 &a_meridim);
+  typedef bool (*CallbackProcess)(Meridim90 &a_meridim);
 
 public:
   IBoard() = default;
@@ -26,15 +26,16 @@ public:
   virtual bool input(Meridim90 &a_meridim) { return true; }
   virtual bool processing(Meridim90 &a_meridim) { return true; }
   virtual bool output(Meridim90 a_meridim) { return true; }
+  virtual void waiting() {}
 
   virtual bool loop(Meridim90 &a_meridim) {
     bool result = false;
-    // Meridim90 a_meridim;
-
     if (true == this->input(a_meridim)) {
-      this->processing(a_meridim);
-      result = this->output(a_meridim);
+      if (true == this->processing(a_meridim)) {
+        result = this->output(a_meridim);
+      }
     }
+    this->waiting();
     return result;
   }
 };

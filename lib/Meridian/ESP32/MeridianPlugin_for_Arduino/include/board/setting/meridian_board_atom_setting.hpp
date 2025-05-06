@@ -12,6 +12,9 @@
 namespace meridian {
 namespace board {
 
+#define SETTING_DEFAULT_TIMER_SECTION_US 100 ///! タイマーの分解能(Default:100us)
+#define SETTING_DEFAULT_TIMER_DELAY_RATE 0.9 ///! スリープモードの割合
+
 } // namespace board
 } // namespace meridian
 

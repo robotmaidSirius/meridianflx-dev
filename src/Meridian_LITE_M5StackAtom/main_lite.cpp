@@ -15,13 +15,15 @@
 
 using namespace meridian::board;
 MeridianBoardAtom board;
+MrdDiagnosticUart diag(&Serial);
 
 //==================================================================================================
 
 #include <Arduino.h>
 #include <M5Atom.h>
 
-void Processing(Meridim90 &a_meridim) {
+bool process(Meridim90 &a_meridim) {
+  return true;
 }
 
 //==================================================================================================
@@ -34,9 +36,9 @@ void setup() {
   delay(3000);
   M5.dis.fillpix(CRGB::Green);
 
-  board.event_process = Processing;
+  board.event_process = process;
   board.plugin.con = new MrdConversationWifi();
-  board.plugin.diag = new MrdDiagnosticUart(&Serial);
+  board.plugin.diag = &diag;
   board.plugin.pad = nullptr;
 
   if (false == board.setup()) {
@@ -54,10 +56,8 @@ void setup() {
 void loop() {
   Meridim90 a_meridim;
 
-  if (true == board.input(a_meridim)) {
-    // アプリ処理を記載する
-
-    board.output(a_meridim);
+  if (true == board.loop(a_meridim)) {
+    // 最後の処理を記載します。
   }
 }
 

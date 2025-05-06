@@ -39,11 +39,20 @@ public:
 
   size_t message(OUTPUT_LOG_LEVEL level, const char *message) override {
     if (nullptr != this->_serial) {
+
+#if DEBUG_MERIDIAN_CORE
+      if (OUTPUT_LOG_LEVEL::LEVEL_OPERATIONAL == level) {
+        return this->_serial->printf("[%7.3f]%s", millis() / 100.0f, message);
+      } else {
+        return this->_serial->printf("[%7.3f][%s] %s\n", millis() / 100.0f, this->get_text_level(level), message);
+      }
+#else
       if (OUTPUT_LOG_LEVEL::LEVEL_OPERATIONAL == level) {
         return this->_serial->printf("%s", message);
       } else {
         return this->_serial->printf("[%s] %s\n", this->get_text_level(level), message);
       }
+#endif
     }
     return 0;
   }
