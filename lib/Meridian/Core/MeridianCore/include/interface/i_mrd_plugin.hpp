@@ -27,13 +27,13 @@ public:
   /// @param a_is_output 出力フラグ
   IMeridianPlugin(bool a_is_input = false, bool a_is_processing = false, bool a_is_output = false) {
     this->is_input = a_is_input;
-    this->is_output = a_is_processing;
-    this->is_processing = a_is_output;
+    this->is_output = a_is_output;
+    this->is_processing = a_is_processing;
   }
 
 public:
   /// @brief 区別させるための名前
-  virtual const char *get_name() { return "Unknow"; }
+  virtual const char *get_name() { return "Unknown"; }
   /// @brief プラグインの初期化
   virtual bool setup() { return true; }
   /// @brief 仮想関数 - 入力処理処理の実処理
@@ -51,17 +51,17 @@ public:
 protected:
   /// @brief 入力処理を実行するかを制御します。フラグがtrueの場合、入力処理を行います。
   /// @param a_flag 入力処理を実行するか
-  void set_contorl_input(bool a_flag) {
+  void set_control_input(bool a_flag) {
     this->is_input = a_flag;
   }
   /// @brief 出力処理を実行するかを制御します。フラグがtrueの場合、出力処理を行います。
   /// @param a_flag 出力処理を実行するか
-  void set_contorl_output(bool a_flag) {
+  void set_control_output(bool a_flag) {
     this->is_output = a_flag;
   }
   /// @brief Processを実行するかを制御します。フラグがtrueの場合、処理を行います。
   /// @param a_flag 処理を実行するか
-  void set_contorl_processing(bool a_flag) {
+  void set_control_processing(bool a_flag) {
     this->is_processing = a_flag;
   }
 
