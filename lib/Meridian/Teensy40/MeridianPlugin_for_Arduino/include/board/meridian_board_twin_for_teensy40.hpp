@@ -11,21 +11,21 @@
 
 #include "board/pins/meridian_board_twin_for_teensy40_pins.hpp"
 #include "board/setting/meridian_board_twin_for_teensy40_setting.hpp"
+#include <interface/i_board.hpp>
 
 namespace meridian {
 namespace board {
 
-class MeridianBoardTwinForTeensy40 {
+class MeridianBoardTwinForTeensy40 : public IBoard {
 public:
   MeridianBoardTwinForTeensy40() {}
   ~MeridianBoardTwinForTeensy40() {}
 
-  bool Setup() {
-    return true; // Setup successful
-  }
-  bool Input(Meridim90 &a_meridim) { return true; } // Input successful
-  // bool Process(Meridim90 &a_meridim) { return true; } // Process successful
-  bool Output(Meridim90 a_meridim) { return true; } // Output successful
+  bool begin() override { return true; }
+  bool input(Meridim90 &a_meridim) override { return true; }
+  // bool Process(Meridim90 &a_meridim) { return true; }
+  bool output(Meridim90 &a_meridim) override { return true; }
+  void waiting() override {}
 };
 
 } // namespace board

@@ -11,8 +11,10 @@
 
 #include "board/pins/meridian_board_lite_pins.hpp"
 #include "board/setting/meridian_board_lite_setting.hpp"
-#include <Meridim90.hpp>
+#include "mrd_util_for_arduino.hpp"
+
 #include <interface/i_board.hpp>
+#include <mrd_module/mrd_timer.hpp>
 
 namespace meridian {
 namespace board {
@@ -22,10 +24,14 @@ public:
   MeridianBoardLite() {}
   ~MeridianBoardLite() {}
 
-  bool setup() override { return true; }
+  bool begin() override { return true; }
   bool input(Meridim90 &a_meridim) override { return true; }
   bool processing(Meridim90 &a_meridim) override { return true; }
-  bool output(Meridim90 a_meridim) override { return true; }
+  bool output(Meridim90 &a_meridim) override { return true; }
+  /// @brief ループ時の待機処理
+  void waiting() override {
+    meridian::modules::mrd_timer_delay(SETTING_DEFAULT_TIMER_SECTION_US);
+  }
 };
 
 } // namespace board

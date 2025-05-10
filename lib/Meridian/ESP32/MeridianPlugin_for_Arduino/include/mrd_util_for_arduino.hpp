@@ -6,10 +6,16 @@
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#ifndef __MRD_UTIL_FOR_ARDUINO_HPP__
-#define __MRD_UTIL_FOR_ARDUINO_HPP__
+#ifndef __MERIDIAN_MRD_UTIL_FOR_ARDUINO_HPP__
+#define __MERIDIAN_MRD_UTIL_FOR_ARDUINO_HPP__
 
 #include <Arduino.h>
+
+#ifndef MRD_UTIL_BUFFER_SIZE
+#define MRD_UTIL_BUFFER_SIZE 128
+#endif
+
+namespace meridian {
 
 String GetTimeString(int unixTime) {
   // UnixTimeが指定している`BUILD_TIME`をyyyy/mm/dd hh:mm:ss形式に変換する
@@ -26,4 +32,36 @@ String GetTimeString(int unixTime) {
   return String(formattedTime);
 }
 
-#endif // __MRD_UTIL_FOR_ARDUINO_HPP__
+/// @brief フォーマットされた文字列を返す
+String mrd_format(const char *format, ...) {
+  char loc_buf[MRD_UTIL_BUFFER_SIZE];
+  char *message = loc_buf;
+  va_list arg;
+  va_list copy;
+  va_start(arg, format);
+  va_copy(copy, arg);
+  int len = vsnprintf(message, sizeof(loc_buf), format, copy);
+  va_end(copy);
+  if (len < 0) {
+    va_end(arg);
+    return "";
+  }
+  if ((unsigned long long)len >= sizeof(loc_buf)) {
+    message = (char *)malloc(len + 1);
+    if (message == NULL) {
+      va_end(arg);
+      return "";
+    }
+    len = vsnprintf(message, len + 1, format, arg);
+  }
+  va_end(arg);
+  String str(message);
+  if (message != loc_buf) {
+    free(message);
+  }
+  return str;
+}
+
+} // namespace meridian
+
+#endif // ___MERIDIAN_MRD_UTIL_FUNCTION_H__

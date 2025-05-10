@@ -50,8 +50,7 @@ private:
   bool received(Meridim90 &a_meridim) {
     static int a_len = MERIDIM90_BYTE_LEN;
     if (this->a_udp.available() >= a_len) {
-      if (this->a_udp.parsePacket() >= a_len) // データの受信バッファ確認
-      {
+      if (this->a_udp.parsePacket() >= a_len) { // データの受信バッファ確認
         if (nullptr != this->_gpio_signal) {
           this->_gpio_signal->write(1, true);
         }
@@ -97,7 +96,7 @@ private:
 
 public:
   void set_diagnostic(IMeridianDiagnostic &ref) override {
-    this->m_diag = &ref;
+    this->diag = &ref;
     if (nullptr != this->_gpio_connect) {
       this->_gpio_connect->set_diagnostic(ref);
     }
@@ -133,21 +132,21 @@ public:
       timeout_ms -= delay_ms;
       if (this->_output_log) {
         if (0 == timeout_ms % logging_time_ms) { // 0.5秒ごとに接続状況を出力
-          this->m_diag->log(OUTPUT_LOG_LEVEL::LEVEL_INFO, ".");
+          this->info(".", false);
           flag_output_once = true;
         }
       }
       delay(delay_ms);       // 接続が完了するまでループで待つ
       if (0 >= timeout_ms) { // 10秒でタイムアウト
         if (flag_output_once) {
-          this->m_diag->log(OUTPUT_LOG_LEVEL::LEVEL_INFO, "\n");
+          this->info("");
         }
-        this->m_diag->log(OUTPUT_LOG_LEVEL::LEVEL_ERROR, "Wifi init TIMEOUT.");
+        this->info("Wifi init TIMEOUT.");
         return false;
       }
     }
     if (this->_output_log && flag_output_once) {
-      this->m_diag->log(OUTPUT_LOG_LEVEL::LEVEL_INFO, "\n");
+      this->info("");
     }
     this->a_udp.setTimeout(this->_timeout_ms);
     uint8_t result = this->a_udp.begin(this->_open_port);

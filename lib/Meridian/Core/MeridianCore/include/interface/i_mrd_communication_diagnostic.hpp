@@ -15,7 +15,11 @@
 #include <stdlib.h>
 
 #ifndef MERIDIAN_COMMUNICATION_BUFFER_SIZE
-#define MERIDIAN_COMMUNICATION_BUFFER_SIZE 128
+/// @brief Diagnosticのバッファサイズ
+/// @note デフォルトは256バイト
+/// @note 256バイト以上のサイズが必要な場合は、MERIDIAN_COMMUNICATION_BUFFER_SIZEを定義してください。
+/// @note 例: -D MERIDIAN_COMMUNICATION_BUFFER_SIZE=512
+#define MERIDIAN_COMMUNICATION_BUFFER_SIZE 256
 #endif
 
 namespace meridian {
@@ -35,13 +39,20 @@ typedef enum output_log_level_t {
   LEVEL_OFF          /*!< Nothing is logged at this level of logging. */
 } OUTPUT_LOG_LEVEL;
 
+/// @brief ログ通知用のインターフェイスクラス
+/// @note このクラスを継承して実装すること。
 class IMeridianDiagnostic {
-public:
 public:
   /// @brief 仮想関数 - 名前を取得
   virtual const char *get_name() { return "Diagnostic-None"; }
   /// @brief 仮想関数 - 初期化
   virtual bool setup() { return true; }
+
+protected:
+  /// @brief 仮想関数 - メッセージを出力
+  /// @param level 出力レベル
+  /// @param message 出力メッセージ
+  virtual size_t message(OUTPUT_LOG_LEVEL level, bool a_newline, const char *message) { return 0; }
 
 public:
   /// @brief 出力レベルの設定
@@ -51,10 +62,11 @@ public:
   void enable() { this->_output_log = true; }
   /// @brief ログの出力を無効化
   void disable() { this->_output_log = false; }
+
   /// @brief ログを出力
   /// @param a_level ログレベル
   /// @param format 出力フォーマット
-  void log(OUTPUT_LOG_LEVEL a_level, const char *format, ...) {
+  void log(OUTPUT_LOG_LEVEL a_level, bool a_newline, const char *format, ...) {
     if (this->_output_log) {
       if (this->_level <= a_level) {
         char loc_buf[this->_BUFFER_SIZE];
@@ -79,7 +91,7 @@ public:
         }
         va_end(arg);
 
-        this->message(a_level, message);
+        this->message(a_level, a_newline, message);
         if (message != loc_buf) {
           free(message);
         }
@@ -90,7 +102,7 @@ public:
   }
 
 protected:
-  virtual size_t message(OUTPUT_LOG_LEVEL level, const char *message) { return 0; }
+  /// @brief ログレベルからテキストを取得
   const char *get_text_level(OUTPUT_LOG_LEVEL level) {
     switch (level) {
     case OUTPUT_LOG_LEVEL::LEVEL_ALL:
@@ -117,9 +129,13 @@ protected:
   }
 
 private:
-  bool _output_log = false;                                    /*!< Output control flag   */
-  OUTPUT_LOG_LEVEL _level = OUTPUT_LOG_LEVEL::LEVEL_INFO;      /*!< Output Level */
-  const int _BUFFER_SIZE = MERIDIAN_COMMUNICATION_BUFFER_SIZE; /*!< Buffer size */
+  bool _output_log = false;                                    ///! Output control flag
+  const int _BUFFER_SIZE = MERIDIAN_COMMUNICATION_BUFFER_SIZE; ///! Buffer size
+#ifdef MERIDIAN_DEFAULT_WHOLE_LOG_LEVEL
+  OUTPUT_LOG_LEVEL _level = MERIDIAN_DEFAULT_WHOLE_LOG_LEVEL; ///! Output Level
+#else
+  OUTPUT_LOG_LEVEL _level = OUTPUT_LOG_LEVEL::LEVEL_WARN; ///! Output Level
+#endif
 };
 
 } // namespace communication

@@ -37,11 +37,13 @@ void setup() {
   M5.dis.fillpix(CRGB::Green);
 
   board.event_process = process;
-  board.plugin.con = new MrdConversationWifi();
-  board.plugin.diag = &diag;
-  board.plugin.pad = nullptr;
+  board.push_communication(new MrdConversationWifi(), &diag);
+  // board.parameter.delay_time_ms = 1000;
+  IMeridianPlugin a;
+  board.push_module(&a);
+  board.push_module(new IMeridianPlugin);
 
-  if (false == board.setup()) {
+  if (false == board.begin()) {
     while (true) {
       Serial.println("Error: Board Setup failed.");
       sleep(3000);

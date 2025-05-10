@@ -94,7 +94,7 @@ void IRAM_ATTR frame_timer() {
 //  SETUP
 //==================================================================================================
 void setup() {
-  board.Setup();
+  board.begin();
 
   // BT接続確認用LED設定
   pinMode(PIN_LED_BT, OUTPUT);
@@ -209,10 +209,10 @@ void setup() {
 void loop() {
   Meridim90 a_meridim;
 
-  if (true == board.Input(a_meridim)) {
+  if (true == board.input(a_meridim)) {
     // アプリ処理を記載する
 
-    board.Output(a_meridim);
+    board.output(a_meridim);
   }
 
   //------------------------------------------------------------------------------------

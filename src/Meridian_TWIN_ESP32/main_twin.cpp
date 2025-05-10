@@ -78,7 +78,7 @@ MERIDIANFLOW::Meridian mrd;
 //  SETUP
 //==================================================================================================
 void setup() {
-  board.Setup();
+  board.begin();
 
   // シリアルモニターの設定
   Serial.begin(SERIAL_PC_BPS);
@@ -148,10 +148,10 @@ void setup() {
 void loop() {
   Meridim90 a_meridim;
 
-  if (true == board.Input(a_meridim)) {
+  if (true == board.input(a_meridim)) {
     // アプリ処理を記載する
 
-    board.Output(a_meridim);
+    board.output(a_meridim);
   }
 
   //------------------------------------------------------------------------------------
