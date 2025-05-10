@@ -31,7 +31,7 @@ protected:
   /// @brief 入力処理
   virtual bool input(Meridim90 &a_meridim) { return true; };
   /// @brief 処理の前処理
-  virtual bool process_prepair(Meridim90 &a_meridim) { return true; };
+  virtual bool process_prepare(Meridim90 &a_meridim) { return true; };
   /// @brief 処理の実処理
   virtual bool processing(Meridim90 &a_meridim) { return true; };
   /// @brief 処理の片付け
@@ -113,7 +113,7 @@ public:
 
     // 継承されたProcessの前処理
     if (true == result) {
-      result = this->process_prepair(a_meridim);
+      result = this->process_prepare(a_meridim);
     }
 
     // 登録されたモジュールの処理

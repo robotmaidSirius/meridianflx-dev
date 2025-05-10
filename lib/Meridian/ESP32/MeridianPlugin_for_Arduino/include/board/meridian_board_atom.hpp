@@ -71,7 +71,7 @@ public:
   /// @brief 入力処理
   bool input(Meridim90 &a_meridim) override { return true; };
   /// @brief 処理の前処理
-  bool process_prepair(Meridim90 &a_meridim) override { return true; };
+  bool process_prepare(Meridim90 &a_meridim) override { return true; };
   /// @brief 処理の実処理
   bool processing(Meridim90 &a_meridim) override { return true; };
   /// @brief 処理の片付け
