@@ -1,12 +1,15 @@
 {
     "cSpell.words": [
+        "Adafruit",
         "AHRS",
+        "baudrate",
         "BLUERETRO",
         "DYNAMIXEL",
         "EEPROM",
         "electroniccats",
         "espressif",
         "FEETECH",
+        "fillpix",
         "FTBRSX",
         "FTCSCS",
         "FTCSTS",

@@ -1,4 +1,20 @@
-#if defined(MERIDIAN_TWIN_ESP32)
+/**
+ * @file main_twin.cpp
+ * @brief
+ * @version 1.0.0
+ * @date 2025-04-27
+ * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
+ * @note MIT LICENSE
+ */
+#if defined(Meridian_TWIN_ESP32)
+
+#include "app_twin.hpp"
+#include <board/meridian_board_twin_for_esp32.hpp>
+
+meridian::board::MeridianBoardTwinForEsp32 board;
+
+//==================================================================================================
+
 // Meridian_TWIN_for_ESP32 By Izumi Ninagawa & Meridian Project
 // MIT Licenced.
 //
@@ -8,11 +24,12 @@
 // 20240809 wiiリモコン, ヌンチャクに対応. Homeボタンでヌンチャクスティックのキャリブレーション.
 // 20240819 変数名をTWIN間で整合. EEPROM関連は調整中.
 
-#define VERSION "Meridian_TWIN_for_ESP32_v1.1.1_2024.08.19" // バージョン表示
+/// @brief バージョン情報の定義
+#define MERIDIAN_VERSION BUILD_BOARD_NAME " ver." BUILD_VERSION
 
-//================================================================================================================
+//==================================================================================================
 //  初期設定
-//================================================================================================================
+//==================================================================================================
 
 // ヘッダファイルの読み込み
 #include "config.h"
@@ -20,6 +37,7 @@
 #include "main.h"
 
 #include "mrd_bt_pad.h"
+#include "mrd_disp.h"
 #include "mrd_eeprom.h"
 #include "mrd_util.h"
 #include "mrd_wifi.h"
@@ -27,13 +45,40 @@
 // ライブラリ導入
 #include <Arduino.h>
 #include <ESP32DMASPISlave.h> // DMAでSPI通信を高速化するめのライブラリ
+
+//==================================================================================================
+// インスタンス
+//==================================================================================================
+
+TaskHandle_t thp[4];                // マルチスレッドのタスクハンドル格納用
+Meridim90Union s_udp_meridim;       // Meridim配列データ送信用(short型, センサや角度は100倍値)
+Meridim90Union r_udp_meridim;       // Meridim配列データ受信用
+Meridim90Union s_udp_meridim_dummy; // SPI送信ダミー用
+Meridim90Union s_spi_meridim;       // Meridim配列データ送信用
+Meridim90Union r_spi_meridim;       // Meridim配列データ受信用
+Meridim90Union tmp_meridim;         // チェック用配列
+uint8_t *s_spi_meridim_dma;         // DMA用
+uint8_t *r_spi_meridim_dma;         // DMA用
+MrdFlags flg;
+MrdSq mrdsq;
+MrdTimer tmr;
+MrdErr err;
+PadUnion pad_array = {0}; // pad値の格納用配列
+PadUnion pad_i2c = {0};   // pad値のi2c送受信用配列
+PadValue pad_analog;
+AhrsValue ahrs;
+ServoParam sv;
+MrdMonitor monitor;
+MrdMsgHandler mrd_disp(Serial);
+
 ESP32DMASPI::Slave slave;
 MERIDIANFLOW::Meridian mrd;
 
-//================================================================================================================
+//==================================================================================================
 //  SETUP
-//================================================================================================================
+//==================================================================================================
 void setup() {
+  board.begin();
 
   // シリアルモニターの設定
   Serial.begin(SERIAL_PC_BPS);
@@ -44,7 +89,7 @@ void setup() {
   }
 
   // 起動メッセージ表示
-  mrd_disp.hello_twin_esp(VERSION, SERIAL_PC_BPS, SPI0_SPEED);
+  mrd_disp.hello_twin_esp(MERIDIAN_VERSION, BUILD_TIME, SERIAL_PC_BPS, SPI0_SPEED);
 
   // EEPROMの初期化
   // mrd_eeprom_init(EEPROM_SIZE);
@@ -97,10 +142,17 @@ void setup() {
   mrd_disp.flow_start_twin_esp();
 }
 
-//================================================================================================================
+//==================================================================================================
 // MAIN LOOP
-//================================================================================================================
+//==================================================================================================
 void loop() {
+  Meridim90 a_meridim;
+
+  if (true == board.input(a_meridim)) {
+    // アプリ処理を記載する
+
+    board.output(a_meridim);
+  }
 
   //------------------------------------------------------------------------------------
   //  [ 1 ] UDP受信待受ループ (PC → ESP32)
@@ -150,12 +202,12 @@ void loop() {
     memcpy(s_spi_meridim.bval, r_udp_meridim.bval, MRDM_BYTE + 4);
 
     // エラービット14番(ESP32のPCからのUDP受信エラー検出)をサゲる
-    mrd_clearBit16(s_spi_meridim.usval[MRD_ERR], ERRBIT_14_PC_ESP);
+    mrd_clearBit16(s_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_14_PC_ESP);
 
   } else { // チェックサムがNGならバッファから転記せず前回のデータを使用する
 
     // エラービット14番(ESP32のPCからのUDP受信エラー検出)をアゲる
-    mrd_setBit16(s_spi_meridim.usval[MRD_ERR], ERRBIT_14_PC_ESP);
+    mrd_setBit16(s_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_14_PC_ESP);
 
     err.pc_esp++;
   }
@@ -175,7 +227,7 @@ void loop() {
   if (mrdsq.r_expect == r_udp_meridim.usval[MRD_SEQ]) {
 
     // エラービット10番[ESP受信のスキップ検出]をサゲる
-    mrd_clearBit16(s_spi_meridim.usval[MRD_ERR], ERRBIT_10_UDP_ESP_SKIP);
+    mrd_clearBit16(s_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_10_UDP_ESP_SKIP);
     flg.meridim_rcvd = true; // Meridim受信成功フラグをアゲる
 
   } else { // 受信シーケンス番号の値が予想と違ったら,
@@ -184,7 +236,7 @@ void loop() {
     mrdsq.r_expect = r_udp_meridim.usval[MRD_SEQ];
 
     // エラービット10番[ESP受信のスキップ検出]をアゲる
-    mrd_setBit16(s_spi_meridim.usval[MRD_ERR], ERRBIT_10_UDP_ESP_SKIP);
+    mrd_setBit16(s_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_10_UDP_ESP_SKIP);
 
     // シーケンス番号が前回と同じでなければ,
     if (mrdsq.r_past != r_udp_meridim.usval[MRD_SEQ]) {
@@ -271,14 +323,14 @@ void loop() {
           // チェックサムがOKなら, DMAからUDP送信配列に転記
           memcpy(s_udp_meridim.bval, tmp_meridim.bval, MRDM_BYTE);
           // エラービット12番[ESP32のSPI受信エラー]をサゲる
-          mrd_clearBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_12_TSY_ESP);
+          mrd_clearBit16(s_udp_meridim.usval[MRD_ERR_CODE], ERRBIT_12_TSY_ESP);
           mrd_meriput90_cksm(s_udp_meridim); // チェックサムの更新
           flg.meridim_rcvd = true;           // Meridim受信成功フラグをアゲる
           flg.spi_rcvd = true;               // SPI受信完了フラグをアゲてループを抜ける
 
         } else { // チェックサムがNGなら, 前回の受信値を使用する
           // エラービット12番[ESP32のSPI受信エラー]をアゲる
-          mrd_setBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_12_TSY_ESP);
+          mrd_setBit16(s_udp_meridim.usval[MRD_ERR_CODE], ERRBIT_12_TSY_ESP);
           mrd_meriput90_cksm(s_udp_meridim); // チェックサムの更新
           flg.meridim_rcvd = false;          // Meridim受信成功フラグをサゲる
           flg.spi_rcvd = true;               // SPI受信完了フラグをアゲてループを抜ける
@@ -329,9 +381,9 @@ void loop() {
   // @[7-end] s_udp_meridimをPCに送信完了. [ 1 ]のudpの受信待ち受けへ.
 }
 
-//================================================================================================================
+//==================================================================================================
 //   [ 関 数 各 種
-//================================================================================================================
+//==================================================================================================
 
 /// @brief PCから受けたMaster Commandを実行する. 受信コマンドに基づき, 異なる処理を行う.
 /// @param a_meridim 実行したいコマンドの入ったMeridim配列を渡す.
@@ -364,4 +416,5 @@ bool execute_master_command_from_Tsy(Meridim90Union a_meridim, bool a_flg_exe) {
   }
   return false;
 }
-#endif
+
+#endif // Meridian_TWIN_ESP32

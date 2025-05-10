@@ -1,8 +1,22 @@
-#if defined(MERIDIAN_TWIN_TSY40)
-#ifndef __MERIDIAN_MAIN__
-#define __MERIDIAN_MAIN__
+/**
+ * @file main_twin.cpp
+ * @brief
+ * @version 1.0.0
+ * @date 2025-04-27
+ * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
+ * @note MIT LICENSE
+ */
+#if defined(Meridian_TWIN_Tsy40)
 
-#define VERSION "Meridian_TWIN_for_Teensy_v1.1.1_2024.08.19" // バージョン表示
+#include "app_twin.hpp"
+#include <board/meridian_board_twin_for_teensy40.hpp>
+
+meridian::board::MeridianBoardTwinForTeensy40 board;
+
+//==================================================================================================
+
+/// @brief バージョン情報の定義
+#define MERIDIAN_VERSION BUILD_BOARD_NAME " ver." BUILD_VERSION
 
 // Meridian_TWIN_for_Teensy By Izumi Ninagawa & Meridian Project
 // MIT Licenced.
@@ -14,9 +28,9 @@
 // 20240812 変数, 関数, ファイル名等を大幅に変更.
 // 20240819 EEPROMのコードは調整中.
 
-//================================================================================================================
+//==================================================================================================
 //  初期設定
-//================================================================================================================
+//==================================================================================================
 
 // ヘッダファイルの読み込み
 #include "config.h"
@@ -25,7 +39,7 @@
 #include "mrd_disp.h"
 #include "mrd_eeprom.h"
 #include "mrd_hwtimer.h"
-#include "mrd_move.h"
+#include "mrd_module/mrd_move.h"
 #include "mrd_pad.h"
 #include "mrd_sd.h"
 #include "mrd_servo.h"
@@ -33,11 +47,40 @@
 #include "mrd_wire0.h"
 #include "mrd_wire1.h"
 
-//================================================================================================================
+//==================================================================================================
+// インスタンス
+//==================================================================================================
+
+MERIDIANFLOW::Meridian mrd; // ライブラリのクラスを mrdという名前でインスタンス化
+IcsHardSerialClass ics_L(&Serial2, PIN_EN_L, SERVO_BAUDRATE_L, SERVO_TIMEOUT_L);
+IcsHardSerialClass ics_R(&Serial3, PIN_EN_R, SERVO_BAUDRATE_R, SERVO_TIMEOUT_R);
+IcsHardSerialClass ics_C(&Serial1, PIN_EN_C, SERVO_BAUDRATE_C, SERVO_TIMEOUT_C);
+Meridim90Union s_spi_meridim;       // SPI送信用配列(short型, センサや角度は100倍値)
+Meridim90Union r_spi_meridim;       // SPI受信用配列
+Meridim90Union s_spi_meridim_dma;   // SPI送信DMA用配列
+Meridim90Union r_spi_meridim_dma;   // SPI受信DMA用配列
+Meridim90Union s_spi_meridim_dummy; // SPI送信ダミーデータ用配列
+MrdFlags flg;
+MrdSq mrdsq;
+MrdTimer tmr;
+MrdErr err;
+PadUnion pad_array = {0}; // PAD値の格納用配列(一次転記)
+PadUnion pad_new = {0};   // PAD値の格納用配列(二次転記)
+PadUnion pad_i2c = {0};   // PAD値のi2c送受信用配列
+PadValue pad_analog;
+AhrsValue ahrs;
+ServoParam sv;
+MrdMonitor monitor;
+MrdMsgHandler mrd_disp(Serial);
+MrdSdHandler mrd_sd(Serial);
+
+//==================================================================================================
 //  SET UP
-//================================================================================================================
+//==================================================================================================
 
 void setup() {
+  board.begin();
+
   // シリアルモニターの設定
   Serial.begin(SERIAL_PC_BPS); //
 
@@ -54,7 +97,7 @@ void setup() {
   mrd_disp.charging(CHARGE_TIME);
 
   // 起動メッセージの表示(バージョン, PC-USB,SPI0,i2c0のスピード)
-  mrd_disp.hello_twin_tsy(VERSION, SERIAL_PC_BPS, SPI0_SPEED, I2C0_SPEED, I2C1_SPEED);
+  mrd_disp.hello_twin_tsy(MERIDIAN_VERSION, BUILD_TIME, SERIAL_PC_BPS, SPI0_SPEED, I2C0_SPEED, I2C1_SPEED);
 
   // サーボ値の初期設定
   sv.num_max = max(mrd_max_used_index(IXL_MT, IXL_MAX),
@@ -79,9 +122,9 @@ void setup() {
   mrd_disp.servo_bps_3lines(SERVO_BAUDRATE_L, SERVO_BAUDRATE_R, SERVO_BAUDRATE_C);
 
   // サーボ用UART設定
-  mrd_servo_begin(L, MOUNT_SERVO_TYPE_L); // サーボモータの通信初期設定. Serial2
-  mrd_servo_begin(R, MOUNT_SERVO_TYPE_R); // サーボモータの通信初期設定. Serial3
-  mrd_servo_begin(C, MOUNT_SERVO_TYPE_C); // サーボモータの通信初期設定. Serial1
+  mrd_servo_begin(MOUNT_SERVO_TYPE_L, ics_L); // サーボモータの通信初期設定. Serial2
+  mrd_servo_begin(MOUNT_SERVO_TYPE_R, ics_R); // サーボモータの通信初期設定. Serial3
+  mrd_servo_begin(MOUNT_SERVO_TYPE_C, ics_C); // サーボモータの通信初期設定. Serial1
   mrd_disp.servo_protcol(L, MOUNT_SERVO_TYPE_L);
   mrd_disp.servo_protcol(R, MOUNT_SERVO_TYPE_R);
   mrd_disp.servo_protcol(C, MOUNT_SERVO_TYPE_C);
@@ -141,10 +184,17 @@ void setup() {
   mrd_disp.flow_start_twin_tsy();
 }
 
-//================================================================================================================
+//==================================================================================================
 //  MAIN LOOP
-//================================================================================================================
+//==================================================================================================
 void loop() {
+  Meridim90 a_meridim;
+
+  if (true == board.input(a_meridim)) {
+    // アプリ処理を記載する
+
+    board.output(a_meridim);
+  }
 
   // 計算用ループカウンタのカウントアップ
   tmr.count_loop += tmr.count_loop_dlt;
@@ -166,24 +216,24 @@ void loop() {
     if (mrd.cksm_rslt(r_spi_meridim_dma.sval, MRDM_LEN)) {
       // チェックサムがOKならバッファから受信配列に転記
       memcpy(r_spi_meridim.bval, r_spi_meridim_dma.bval, MRDM_BYTE);
-      mrd_clearBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_13_ESP_TSY); // エラービットをサゲる
-      mrd.monitor_check_flow("csOK", monitor.flow);                    // 動作チェック用シリアル表示
-    } else {                                                           // チェックサムがNGならバッファから転記せず前回のデータを使用する
-      mrd.monitor_check_flow("cs *NG* ", monitor.flow);                // 動作チェック用シリアル表示
-      mrd_setBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_13_ESP_TSY);   // エラービットをアゲる
+      mrd_clearBit16(r_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_13_ESP_TSY); // エラービットをサゲる
+      mrd.monitor_check_flow("csOK", monitor.flow);                         // 動作チェック用シリアル表示
+    } else {                                                                // チェックサムがNGならバッファから転記せず前回のデータを使用する
+      mrd.monitor_check_flow("cs *NG* ", monitor.flow);                     // 動作チェック用シリアル表示
+      mrd_setBit16(r_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_13_ESP_TSY);   // エラービットをアゲる
     }
 
     // @[1-3] シーケンス番号チェック
     mrdsq.r_expect = mrd.seq_predict_num(mrdsq.r_expect); // シーケンス番号予想値の生成
     if (mrd.seq_compare_nums(mrdsq.r_expect, int(r_spi_meridim.usval[MRD_SEQ]))) {
       // 受信シーケンス番号の値が予想と合致なら
-      mrd_clearBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_9_BOARD_SKIP); // エラービットをサゲる
-      flg.spi_rcvd = true;                                               // SPI受信フラグをアゲる
+      mrd_clearBit16(r_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_9_BOARD_SKIP); // エラービットをサゲる
+      flg.spi_rcvd = true;                                                    // SPI受信フラグをアゲる
     } else {
       // 受信シーケンス番号の値が予想と違うなら
-      mrdsq.r_expect = int(r_spi_meridim.usval[MRD_SEQ]);              // 現在の受信値を予想値として更新
-      mrd_setBit16(r_spi_meridim.usval[MRD_ERR], ERRBIT_9_BOARD_SKIP); // エラービットをアゲる
-      flg.spi_rcvd = false;                                            // SPI受信フラグをサゲる
+      mrdsq.r_expect = int(r_spi_meridim.usval[MRD_SEQ]);                   // 現在の受信値を予想値として更新
+      mrd_setBit16(r_spi_meridim.usval[MRD_ERR_CODE], ERRBIT_9_BOARD_SKIP); // エラービットをアゲる
+      flg.spi_rcvd = false;                                                 // SPI受信フラグをサゲる
     }
 
     // @[1-4] 通信エラー処理(エラーカウンタへの反映)
@@ -237,7 +287,7 @@ void loop() {
     mrd.monitor_check_flow("[6]", monitor.flow); // 動作チェック用シリアル表示
 
     // @[6-3] 最新のセンサー値を配列に格納する
-    mrd_meriput90_ahrs(s_spi_meridim, ahrs.result);
+    mrd_meriput90_ahrs(s_spi_meridim, ahrs.result, flg.imuahrs_available);
 
     //------------------------------------------------------------------------------------
     //  [ 7 ] リモコンの読み取り
@@ -245,7 +295,7 @@ void loop() {
     mrd.monitor_check_flow("[7]", monitor.flow); // 動作チェック用シリアル表示
 
     // @[7-1] コントローラの値を取得する
-    pad_new = mrd_pad_reader(MOUNT_PAD, PAD_INTERVAL);
+    pad_new = mrd_pad_reader(MOUNT_PAD, PAD_INTERVAL, ics_R);
 
     // @[7-2] コントローラの値をmeridimに格納する
     mrd_meriput90_pad(MOUNT_PAD, s_spi_meridim, pad_new, PAD_BUTTON_MARGE);
@@ -302,7 +352,7 @@ void loop() {
     mrd.monitor_check_flow("[11]", monitor.flow); // 動作チェック用シリアル表示
 
     // @[11-1] サーボコマンド用の配列に基づき, サーボ命令の実行およびサーボ角度戻り値の取得
-    mrd_servo_drive(s_spi_meridim, MOUNT_SERVO_TYPE_L, MOUNT_SERVO_TYPE_R, MOUNT_SERVO_TYPE_C);
+    mrd_servo_drive(s_spi_meridim, MOUNT_SERVO_TYPE_L, MOUNT_SERVO_TYPE_R, MOUNT_SERVO_TYPE_C, ics_L, ics_R);
 
     // @[11-end] サーボの動作結果が s_spi_meridim に格納完了している.
 
@@ -391,13 +441,13 @@ void loop() {
   }
 }
 
-//================================================================================================================
+//==================================================================================================
 //  関 数 各 種
-//================================================================================================================
+//==================================================================================================
 
-//================================================================================================================
+//==================================================================================================
 //  Command processing
-//================================================================================================================
+//==================================================================================================
 
 /// @brief Master Commandの第1群を実行する. meridimの受信成功時に実施.
 /// @param a_flg_exe meridimの受信成功フラグ.
@@ -514,5 +564,4 @@ void mrd_countup_errs() {
   increment_err(0, err.pc_skip);  // PC受信のカウントのスキップ
 }
 
-#endif // __MERIDIAN_MAIN__
-#endif
+#endif // Meridian_TWIN_Tsy40

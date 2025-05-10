@@ -11,63 +11,57 @@
 
 #include <unity.h>
 
-void setUp(void)
-{
-    // set stuff up here
+void setUp(void) {
+  // set stuff up here
 }
 
-void tearDown(void)
-{
-    // clean stuff up here
-}
-
-///////////////////////////////////////////////////////////////////
-
-void test_setup(void)
-{
-    bool result = true;
-
-    TEST_ASSERT_TRUE(result);
-}
-
-void test_loop(void)
-{
-    int result = 1;
-
-    TEST_ASSERT_EQUAL(1, result);
+void tearDown(void) {
+  // clean stuff up here
 }
 
 ///////////////////////////////////////////////////////////////////
 
-void RUN_UNITY_TESTS()
-{
-    UNITY_BEGIN();
-    //////////////////////////////////
-    RUN_TEST(test_setup);
-    RUN_TEST(test_loop);
-    //////////////////////////////////
-    UNITY_END();
+void test_setup(void) {
+  bool result = true;
+
+  TEST_ASSERT_TRUE(result);
+}
+
+void test_loop(void) {
+  int result = 1;
+
+  TEST_ASSERT_EQUAL(1, result);
+}
+
+///////////////////////////////////////////////////////////////////
+
+void RUN_UNITY_TESTS() {
+  UNITY_BEGIN();
+  //////////////////////////////////
+  RUN_TEST(test_setup);
+  RUN_TEST(test_loop);
+  //////////////////////////////////
+  UNITY_END();
 }
 
 ///////////////////////////////////////////////////////////////////
 
 #ifndef ARDUINO
 #include <Arduino.h>
-void setup()
-{
-    // NOTE!!! Wait for >2 secs
-    // if board doesn't support software reset via Serial.DTR/RTS
-    delay(2000);
+void setup() {
+  // NOTE!!! Wait for >2 secs
+  // if board doesn't support software reset via Serial.DTR/RTS
+  delay(2000);
 
-    RUN_UNITY_TESTS();
+  RUN_UNITY_TESTS();
 }
-void loop()
-{
+void loop() {
+  exit(0);
 }
 #else
-int main(int argc, char **argv)
-{
-    RUN_UNITY_TESTS();
-    return 0;
+int main(int argc, char **argv) {
+  RUN_UNITY_TESTS();
+  exit(0);
+  return 0;
 }
 #endif

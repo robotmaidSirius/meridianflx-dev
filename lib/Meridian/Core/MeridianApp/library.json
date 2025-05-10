@@ -1,0 +1,19 @@
+{
+    "name": "MeridianApp",
+    "version": "1.0.0",
+    "description": "Meridian application library",
+    "keywords": "Meridian",
+    "author": "Meridian Team",
+    "license": "MIT License",
+    "dependencies": {
+        "MeridianCore": "*"
+    },
+    "headers": "",
+    "examples": [],
+    "build": {
+        "flags": []
+    },
+    "export": {
+        "exclude": []
+    }
+}

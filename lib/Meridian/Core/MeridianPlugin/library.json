@@ -1,11 +1,12 @@
 {
     "name": "MeridianPlugin",
     "version": "1.0.0",
-    "description": "MeridianPlugin",
+    "description": "共通のMeridianPluginのライブラリ",
     "keywords": "Meridian",
+    "author": "Meridian Team",
     "license": "MIT License",
     "dependencies": {
-        "ninagawa123/Meridian": "*"
+        "MeridianCore": "*"
     },
     "headers": "",
     "examples": [],

@@ -1,8 +1,22 @@
-#if defined(MERIDIAN_LITE_ESP32)
-#ifndef __MERIDIAN_LITE_MAIN__
-#define __MERIDIAN_LITE_MAIN__
+/**
+ * @file main_lite.cpp
+ * @brief
+ * @version 1.0.0
+ * @date 2025-04-27
+ * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
+ * @note MIT LICENSE
+ */
+#if defined(Meridian_LITE_ESP32)
 
-#define VERSION "Meridian_LITE_v1.1.1_2024_08.18" // バージョン表示
+#include "app_lite.hpp"
+#include <board/meridian_board_lite.hpp>
+
+meridian::board::MeridianBoardLite board;
+
+//==================================================================================================
+
+/// @brief バージョン情報の定義
+#define MERIDIAN_VERSION BUILD_BOARD_NAME " ver." BUILD_VERSION
 
 /// @file    Meridian_LITE_for_ESP32/src/main.cpp
 /// @brief   Meridian is a system that smartly realizes the digital twin of a robot.
@@ -23,16 +37,40 @@
 #include "mrd_bt_pad.h"
 #include "mrd_disp.h"
 #include "mrd_eeprom.h"
-#include "mrd_move.h"
+#include "mrd_module/mrd_move.h"
 #include "mrd_sd.h"
 #include "mrd_servo.h"
 #include "mrd_util.h"
 #include "mrd_wifi.h"
 #include "mrd_wire0.h"
 
+//==================================================================================================
+// インスタンス
+//==================================================================================================
+
 MERIDIANFLOW::Meridian mrd;
 IcsHardSerialClass ics_L(&Serial1, PIN_EN_L, SERVO_BAUDRATE_L, SERVO_TIMEOUT_L);
 IcsHardSerialClass ics_R(&Serial2, PIN_EN_R, SERVO_BAUDRATE_R, SERVO_TIMEOUT_R);
+TaskHandle_t thp[4];                // マルチスレッドのタスクハンドル格納用
+Meridim90Union s_udp_meridim;       // Meridim配列データ送信用(short型, センサや角度は100倍値)
+Meridim90Union r_udp_meridim;       // Meridim配列データ受信用
+Meridim90Union s_udp_meridim_dummy; // SPI送信ダミー用
+Meridim90Union s_spi_meridim;       // Meridim配列データ送信用
+Meridim90Union r_spi_meridim;       // Meridim配列データ受信用
+Meridim90Union tmp_meridim;         // チェック用配列
+uint8_t *s_spi_meridim_dma;         // DMA用
+uint8_t *r_spi_meridim_dma;         // DMA用
+MrdFlags flg;
+MrdSq mrdsq;
+MrdTimer tmr;
+MrdErr err;
+PadUnion pad_array = {0}; // pad値の格納用配列
+PadUnion pad_i2c = {0};   // pad値のi2c送受信用配列
+PadValue pad_analog;
+AhrsValue ahrs;
+ServoParam sv;
+MrdMonitor monitor;
+MrdMsgHandler mrd_disp(Serial);
 
 // ライブラリ導入
 #include <Arduino.h>
@@ -56,6 +94,7 @@ void IRAM_ATTR frame_timer() {
 //  SETUP
 //==================================================================================================
 void setup() {
+  board.begin();
 
   // BT接続確認用LED設定
   pinMode(PIN_LED_BT, OUTPUT);
@@ -76,7 +115,7 @@ void setup() {
   mrd_disp.charging(CHARGE_TIME);
 
   // 起動メッセージの表示(バージョン, PC-USB,SPI0,i2c0のスピード)
-  mrd_disp.hello_lite_esp(VERSION, SERIAL_PC_BPS, SPI0_SPEED, I2C0_SPEED);
+  mrd_disp.hello_lite_esp(MERIDIAN_VERSION, BUILD_TIME, SERIAL_PC_BPS, SPI0_SPEED, I2C0_SPEED);
 
   // サーボ値の初期設定
   sv.num_max = max(mrd_max_used_index(IXL_MT, IXL_MAX),  //
@@ -96,8 +135,8 @@ void setup() {
   mrd_disp.servo_bps_2lines(SERVO_BAUDRATE_L, SERVO_BAUDRATE_R);
 
   // サーボ用UART設定
-  mrd_servo_begin(L, MOUNT_SERVO_TYPE_L);         // サーボモータの通信初期設定. Serial2
-  mrd_servo_begin(R, MOUNT_SERVO_TYPE_R);         // サーボモータの通信初期設定. Serial3
+  mrd_servo_begin(MOUNT_SERVO_TYPE_L, ics_L);     // サーボモータの通信初期設定. Serial2
+  mrd_servo_begin(MOUNT_SERVO_TYPE_R, ics_R);     // サーボモータの通信初期設定. Serial3
   mrd_disp.servo_protocol(L, MOUNT_SERVO_TYPE_R); // サーボプロトコルの表示
   mrd_disp.servo_protocol(R, MOUNT_SERVO_TYPE_R);
 
@@ -168,6 +207,13 @@ void setup() {
 // MAIN LOOP
 //==================================================================================================
 void loop() {
+  Meridim90 a_meridim;
+
+  if (true == board.input(a_meridim)) {
+    // アプリ処理を記載する
+
+    board.output(a_meridim);
+  }
 
   //------------------------------------------------------------------------------------
   //  [ 1 ] UDP送信
@@ -224,13 +270,13 @@ void loop() {
     memcpy(s_udp_meridim.bval, r_udp_meridim.bval, MRDM_LEN * 2);
 
     // @[2-4a] エラービット14番(ESP32のPCからのUDP受信エラー検出)をサゲる
-    mrd_clearBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_14_PC_ESP);
+    mrd_clearBit16(s_udp_meridim.usval[MRD_ERR_CODE], ERRBIT_14_PC_ESP);
 
   } else // チェックサムがNGならバッファから転記せず前回のデータを使用する
   {
 
     // @[2-4b] エラービット14番(ESP32のPCからのUDP受信エラー検出)をアゲる
-    mrd_setBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_14_PC_ESP);
+    mrd_setBit16(s_udp_meridim.usval[MRD_ERR_CODE], ERRBIT_14_PC_ESP);
     err.pc_esp++;
     mrd.monitor_check_flow("CsErr*", monitor.flow); // デバグ用フロー表示
   }
@@ -244,14 +290,14 @@ void loop() {
   if (mrd.seq_compare_nums(mrdsq.r_expect, int(s_udp_meridim.usval[MRD_SEQ]))) {
 
     // エラービット10番[ESP受信のスキップ検出]をサゲる
-    mrd_clearBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_10_UDP_ESP_SKIP);
+    mrd_clearBit16(s_udp_meridim.usval[MRD_ERR_CODE], ERRBIT_10_UDP_ESP_SKIP);
     flg.meridim_rcvd = true; // Meridim受信成功フラグをアゲる.
 
   } else {                                              // 受信シーケンス番号の値が予想と違ったら
     mrdsq.r_expect = int(s_udp_meridim.usval[MRD_SEQ]); // 現在の受信値を予想結果としてキープ
 
     // エラービット10番[ESP受信のスキップ検出]をアゲる
-    mrd_setBit16(s_udp_meridim.usval[MRD_ERR], ERRBIT_10_UDP_ESP_SKIP);
+    mrd_setBit16(s_udp_meridim.usval[MRD_ERR_CODE], ERRBIT_10_UDP_ESP_SKIP);
 
     err.esp_skip++;
     flg.meridim_rcvd = false; // Meridim受信成功フラグをサゲる.
@@ -271,7 +317,7 @@ void loop() {
   mrd.monitor_check_flow("[4]", monitor.flow); // デバグ用フロー表示
 
   // @[4-1] センサ値のMeridimへの転記
-  meriput90_ahrs(s_udp_meridim, ahrs.read, MOUNT_IMUAHRS); // BNO055_AHRS
+  meriput90_ahrs(s_udp_meridim, ahrs.read, MOUNT_IMUAHRS, flg.imuahrs_available); // BNO055_AHRS
 
   //------------------------------------------------------------------------------------
   //  [ 5 ] リモコンの読み取り
@@ -282,7 +328,7 @@ void loop() {
   if (MOUNT_PAD > 0) { // リモコンがマウントされていれば
 
     // リモコンデータの読み込み
-    pad_array.ui64val = mrd_pad_read(MOUNT_PAD, pad_array.ui64val);
+    pad_array.ui64val = mrd_pad_read(MOUNT_PAD, pad_array.ui64val, ics_R);
 
     // リモコンの値をmeridimに格納する
     mrd_meriput90_pad(s_udp_meridim, pad_array, PAD_BUTTON_MARGE);
@@ -325,9 +371,8 @@ void loop() {
   mrd.monitor_check_flow("[8]", monitor.flow); // デバグ用フロー表示
 
   // @[8-1] サーボ受信値の処理
-  if (!MODE_ESP32_STANDALONE) { // サーボ処理を行うかどうか
-    mrd_servos_drive_lite(s_udp_meridim, MOUNT_SERVO_TYPE_L, MOUNT_SERVO_TYPE_R,
-                          sv); // サーボ動作を実行する
+  if (!MODE_ESP32_STANDALONE) {                                                                     // サーボ処理を行うかどうか
+    mrd_servos_drive_lite(s_udp_meridim, MOUNT_SERVO_TYPE_L, MOUNT_SERVO_TYPE_R, sv, ics_L, ics_R); // サーボ動作を実行する
   } else {
     // ボード単体動作モードの場合はサーボ処理をせずL0番サーボ値として+-30度のサインカーブ値を返す
     sv.ixl_tgt[0] = sin(tmr.count_loop * M_PI / 180.0) * 30;
@@ -498,5 +543,4 @@ bool execute_master_command_2(Meridim90Union a_meridim, bool a_flg_exe) {
   return false;
 }
 
-#endif // __MERIDIAN_LITE_MAIN__
-#endif
+#endif // Meridian_LITE_ESP32
