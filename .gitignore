@@ -4,6 +4,7 @@
 .LSOverride
 ._*
 ~$*
+__pycache__
 
 # Prerequisites
 *.d
