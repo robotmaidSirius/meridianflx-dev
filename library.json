@@ -1,0 +1,41 @@
+{
+    "name": "MeridianFlx",
+    "version": "0.1.0",
+    "description": "",
+    "keywords": "Meridian, MeridianFlx, teensy40, ESP32, M5StackAtom",
+    "homepage": "https://ninagawa123.github.io/Meridian_info/",
+    "authors": {
+        "name": "Ninagawa123",
+        "url": "https://ninagawa123.github.io/Meridian_info/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Ninagawa123/meridianflx-dev.git"
+    },
+    "license": "MIT license",
+    "frameworks": "arduino",
+    "dependencies": {},
+    "headers": "",
+    "examples": [
+        {
+            "name": "basic",
+            "base": "examples/basic",
+            "files": [
+                "basic.cpp"
+            ]
+        }
+    ],
+    "build": {
+        "flags": []
+    },
+    "export": {
+        "exclude": [
+            ".github/*",
+            ".vscode/*",
+            "examples/*",
+            "test/*",
+            ".clang-format",
+            "platformio.ini"
+        ]
+    }
+}
