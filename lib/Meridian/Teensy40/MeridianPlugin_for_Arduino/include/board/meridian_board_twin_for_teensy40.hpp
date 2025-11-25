@@ -9,40 +9,31 @@
 #ifndef __MERIDIAN_BOARD_MERIDIAN_BOARD_TWIN_FOR_TEENSY40_HPP__
 #define __MERIDIAN_BOARD_MERIDIAN_BOARD_TWIN_FOR_TEENSY40_HPP__
 #include <Arduino.h>
+#include <interface/i_mrd_board.hpp>
 
 namespace meridian {
 namespace board {
 
-class MeridianBoardTwinForTeensy40 {
+class MeridianBoardTwinForTeensy40 : public IMrdBoard {
 public:
   class Parameter {
   public:
   };
   Parameter parameter;
 
-public:
-  bool begin() {
-    // 初期化処理をここに記述
-    return this->setup();
-  }
-  bool update() {
-    // 定期的な更新処理をここに記述
-    return this->loop();
-  }
-
 protected:
   /// @brief 初期化を実行する
-  virtual bool setup() {
+  bool setup() override {
     return true;
   }
   /// @brief 初期化を実行する
-  virtual bool loop() {
+  bool loop() override {
     return true;
   }
 
   /// @brief ループ時の待機処理
-  void waiting() {
-    // do nothing
+  void waiting() override {
+    delay(10);
   }
 };
 

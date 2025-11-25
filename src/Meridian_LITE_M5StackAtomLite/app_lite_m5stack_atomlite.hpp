@@ -14,20 +14,24 @@ namespace meridian {
 
 class TestApp : public app::IMeridianApp {
 public:
-  TestApp() {}
+  /// @brief 区別させるための名前
+  const char *get_name() override { return "MeridianLite for M5Stack Atom Lite"; }
+
+  TestApp() {
+    this->set_interval(10);  // 10msごとに処理
+    this->set_enabled(true); // 有効化
+  }
   ~TestApp() {}
 
-  /// @brief 区別させるための名前
-  // const char *get_name() override { return "TestApp"; }
-
 protected:
-  /// @brief プラグインの初期化
-  bool setup() override {
+  /// @brief 初期化を実行する
+  bool setup(Meridim &a_meridim) override {
+    // 初期化処理をここに記述
     return true;
   }
 
   /// @brief Processの実処理
-  bool loop() override {
+  bool loop(Meridim &a_meridim) override {
 #if 0
     this->set_pwm(a_meridim); // サーボのPWM設定を行う
 
@@ -56,6 +60,11 @@ protected:
     this->info(mrd_format("  err:0x%04X,checksum:0x%04X", a_meridim.err, a_meridim.checksum).c_str());
 
 #endif
+    return true;
+  }
+  /// @brief 終了処理を実行する
+  bool closing(Meridim &a_meridim) override {
+    // 終了処理をここに記述
     return true;
   }
 };

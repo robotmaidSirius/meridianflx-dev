@@ -1,14 +1,14 @@
 /**
- * @file board_twin_tsy40.hpp
+ * @file board_twin_teensy40.hpp
  * @brief Meridian TWIN [Board: Teensy 4.0]のボード設定ファイル
  * @version 0.1.0
  * @date 2025-11-24
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#ifndef __BOARD_TWIN_TSY40_HPP__
-#define __BOARD_TWIN_TSY40_HPP__
-#include "app_twin_tsy40.hpp"
+#ifndef __BOARD_TWIN_TEENSY40_HPP__
+#define __BOARD_TWIN_TEENSY40_HPP__
+#include "app_twin_teensy40.hpp"
 #include "meridian_network_keys.hpp"
 #include "meridian_parameter.hpp"
 #include <board/meridian_board_twin_for_teensy40.hpp>
@@ -35,4 +35,4 @@ protected:
 
 } // namespace meridian
 
-#endif // __BOARD_TWIN_TSY40_HPP__
+#endif // __BOARD_TWIN_TEENSY40_HPP__

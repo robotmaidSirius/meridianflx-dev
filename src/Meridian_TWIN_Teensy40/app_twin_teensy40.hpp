@@ -1,13 +1,13 @@
 /**
- * @file app_twin_esp32.hpp
+ * @file app_twin_teensy40.hpp
  * @brief アプリケーションヘッダーファイル
  * @version 0.1.0
  * @date 2025-11-24
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#ifndef __APP_TWIN_ESP32_HPP__
-#define __APP_TWIN_ESP32_HPP__
+#ifndef __APP_TWIN_TEENSY40_HPP__
+#define __APP_TWIN_TEENSY40_HPP__
 #include <interface/i_mrd_app.hpp>
 
 namespace meridian {
@@ -15,7 +15,7 @@ namespace meridian {
 class TestApp : public app::IMeridianApp {
 public:
   /// @brief 区別させるための名前
-  const char *get_name() override { return "MeridianTwin for ESP32"; }
+  const char *get_name() override { return "MeridianTwin for Teensy40"; }
 
   TestApp() {
     this->set_interval(10);  // 10msごとに処理
@@ -43,4 +43,4 @@ protected:
 
 } // namespace meridian
 
-#endif // __APP_TWIN_ESP32_HPP__
+#endif // __APP_TWIN_TEENSY40_HPP__
