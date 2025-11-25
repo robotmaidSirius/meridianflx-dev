@@ -16,5 +16,6 @@ project_name = env["PIOENV"]
 print(f"# Project Name: {project_name}")
 mrd_setup.create_keyfile(f"{project_name}")
 mrd_setup.create_parameter(f"{project_name}")
+mrd_setup.create_board_ip_txt()
 
 print("=====================================================")

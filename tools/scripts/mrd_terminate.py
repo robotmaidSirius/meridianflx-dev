@@ -9,7 +9,8 @@ import pathlib
 # 削除対象のファイル
 target_files = [
     "meridian_network_keys.hpp",
-    "meridian_parameter.hpp"
+    "meridian_parameter.hpp",
+    "board_ip.txt"
 ]
 
 # srcフォルダのパスを取得（スクリプトから相対パス）
@@ -29,5 +30,18 @@ for target_file in target_files:
                 print(f"# Error deleting {file_path}: {e}")
         else:
             print(f"# Not found: {target_file}")
+
+tools_dir = script_dir.parent.parent / "tools"
+for target_file in target_files:
+    for file_path in tools_dir.rglob(target_file):
+        if file_path.exists():
+            try:
+                file_path.unlink()
+                print(f"# Deleted: {file_path}")
+            except Exception as e:
+                print(f"# Error deleting {file_path}: {e}")
+        else:
+            print(f"# Not found: {target_file}")
+
 
 print("Process completed.")

@@ -1,13 +1,13 @@
 /**
- * @file main_twin_tsy40.cpp
- * @brief Meridian TWIN [Board: Teensy 4.0]のメインルーチン
+ * @file main_lite_m5stack_atoms3.cpp
+ * @brief Meridian LITE [Board: M5Stack-AtomS3]のメインルーチン
  * @version 0.1.0
- * @date 2025-04-27
+ * @date 2025-11-24
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#if defined(Meridian_TWIN_Tsy40)
-#include "board_twin_tsy40.hpp"
+#if defined(Meridian_LITE_M5StackAtomS3)
+#include "board_lite_m5stack_atoms3.hpp"
 meridian::BoardSetting a_conductor;
 
 //==================================================================================================
@@ -20,7 +20,7 @@ void setup() {
   if (false == a_conductor.begin()) {
     while (true) {
       Serial.println("Error: Board Setup failed.");
-      delay(3000);
+      sleep(3000);
     }
   }
 }

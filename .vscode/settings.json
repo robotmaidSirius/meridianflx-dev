@@ -3,6 +3,7 @@
         "Adafruit",
         "AHRS",
         "ARDUHAL",
+        "atomlite",
         "baudrate",
         "BLUERETRO",
         "coryjfowler",
