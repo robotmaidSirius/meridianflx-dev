@@ -6,22 +6,22 @@
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#ifndef __MERIDIAN_CORE_MERIDIM_MERIDIM_HPP__
-#define __MERIDIAN_CORE_MERIDIM_MERIDIM_HPP__
+#ifndef __MERIDIAN_MERIDIM_HPP__
+#define __MERIDIAN_MERIDIM_HPP__
 
 #include <stdint.h>
-#define Meridim_SEQUENTIAL_MAX (0xEA60) // シーケンス番号の最大値: Defaultは60000
+#define MERIDIM_SEQUENTIAL_MAX (0xEA60) // シーケンス番号の最大値: Defaultは60000
 
-#define Meridim_DATA_LEN  (90)                   // Meridimのデータ数
-#define Meridim_BYTE_SIZE (Meridim_DATA_LEN * 2) // Meridimのバイト数
+#define MERIDIM_DATA_LEN  (90)                   // Meridimのデータ数
+#define MERIDIM_BYTE_SIZE (MERIDIM_DATA_LEN * 2) // Meridimのバイト数
 
-#ifndef Meridim_SERVO_NUM
-#define Meridim_SERVO_NUM (30) /**< 接続するサーボの数 */
+#ifndef MERIDIM_SERVO_NUM
+#define MERIDIM_SERVO_NUM (30) /**< 接続するサーボの数 */
 #endif
 
 // ユーザーデータのサイズを定義
 //   (データ数) - (マスターコマンドからフレーム数までのデータ数) - (サーボ数) - (エラーコードとチェックサム)
-#define Meridim_USER_DATA_SIZE (Meridim_DATA_LEN - 40 - Meridim_SERVO_NUM - 2) /**< ユーザーデータサイズを設定する */
+#define MERIDIM_USER_DATA_SIZE (MERIDIM_DATA_LEN - 40 - MERIDIM_SERVO_NUM - 2) /**< ユーザーデータサイズを設定する */
 
 namespace meridian {
 
@@ -59,8 +59,8 @@ struct MeridimUserdata {
   uint8_t motion_frames;  ///! モーション設定のフレーム数
   uint8_t stop_frames_ms; ///! ボード停止時のフレーム数
 
-  MeridimServo servo[Meridim_SERVO_NUM];   ///! サーボのコマンドと値
-  int16_t options[Meridim_USER_DATA_SIZE]; ///! ユーザー定義用
+  MeridimServo servo[MERIDIM_SERVO_NUM];   ///! サーボのコマンドと値
+  int16_t options[MERIDIM_USER_DATA_SIZE]; ///! ユーザー定義用
 };
 struct Meridim {
   uint16_t master_command;  ///!	マスターコマンド
@@ -73,15 +73,15 @@ struct Meridim {
 };
 
 void mrd_countup(Meridim &a_meridim) {
-  if (Meridim_SEQUENTIAL_MAX <= a_meridim.sequential) {
+  if (MERIDIM_SEQUENTIAL_MAX <= a_meridim.sequential) {
     a_meridim.sequential = 0;
   } else {
     a_meridim.sequential++;
   }
 }
 
-void set_Meridim(Meridim &a_meridim, uint8_t a_data[], int size) {
-  if (Meridim_BYTE_SIZE > size) {
+void set_meridim(Meridim &a_meridim, uint8_t a_data[], int size) {
+  if (MERIDIM_BYTE_SIZE > size) {
     a_meridim.master_command = (uint16_t)((a_data[1] << 8) | a_data[0]);
     a_meridim.sequential = (uint16_t)((a_data[3] << 8) | a_data[2]);
     a_meridim.input_data.accelerator.x = (int16_t)((a_data[5] << 8) | a_data[4]);
@@ -104,19 +104,19 @@ void set_Meridim(Meridim &a_meridim, uint8_t a_data[], int size) {
     a_meridim.input_data.control.analog_r = a_data[37];
     a_meridim.userdata.motion_frames = a_data[38] > 4;
     a_meridim.userdata.stop_frames_ms = a_data[38] & 0x0F;
-    for (int i = 0; i < Meridim_SERVO_NUM; i++) {
+    for (int i = 0; i < MERIDIM_SERVO_NUM; i++) {
       a_meridim.userdata.servo[i].id = a_data[39 + (i * 3)] > 4;
       a_meridim.userdata.servo[i].cmd = a_data[39 + (i * 3)] & 0x0F;
       a_meridim.userdata.servo[i].value = (int16_t)((a_data[41 + (i * 3)] << 8) | a_data[40 + (i * 3)]);
     }
-    for (int i = 0; i < Meridim_USER_DATA_SIZE; i++) {
-      a_meridim.userdata.options[i] = (int16_t)((a_data[39 + (Meridim_SERVO_NUM * 3) + (i * 3)] << 8) |
-                                                a_data[40 + (Meridim_SERVO_NUM * 3) + (i * 3)]);
+    for (int i = 0; i < MERIDIM_USER_DATA_SIZE; i++) {
+      a_meridim.userdata.options[i] = (int16_t)((a_data[39 + (MERIDIM_SERVO_NUM * 3) + (i * 3)] << 8) |
+                                                a_data[40 + (MERIDIM_SERVO_NUM * 3) + (i * 3)]);
     }
-    a_meridim.err = (a_data[39 + (Meridim_SERVO_NUM * 3) + (Meridim_USER_DATA_SIZE * 2)] << 8) |
-                    a_data[40 + (Meridim_SERVO_NUM * 3) + (Meridim_USER_DATA_SIZE * 2)];
-    a_meridim.checksum = (a_data[41 + (Meridim_SERVO_NUM * 3) + (Meridim_USER_DATA_SIZE * 2)] << 8) |
-                         a_data[42 + (Meridim_SERVO_NUM * 3) + (Meridim_USER_DATA_SIZE * 2)];
+    a_meridim.err = (a_data[39 + (MERIDIM_SERVO_NUM * 3) + (MERIDIM_USER_DATA_SIZE * 2)] << 8) |
+                    a_data[40 + (MERIDIM_SERVO_NUM * 3) + (MERIDIM_USER_DATA_SIZE * 2)];
+    a_meridim.checksum = (a_data[41 + (MERIDIM_SERVO_NUM * 3) + (MERIDIM_USER_DATA_SIZE * 2)] << 8) |
+                         a_data[42 + (MERIDIM_SERVO_NUM * 3) + (MERIDIM_USER_DATA_SIZE * 2)];
   }
 }
 
@@ -143,7 +143,6 @@ enum Meridim_ERRBIT {
   UDP_ESP_SKIP = 0x01 << 10, ///! PC → ESP32 のUDPフレームスキップエラー
   BOARD_SKIP = 0x01 << 9,    ///! PC → ESP32 → Teensy のフレームスキップエラー(末端で捕捉)
   PC_SKIP = 0x01 << 8,       ///! Teensy → ESP32 → PC のフレームスキップエラー(末端で捕捉)
-
 };
 
 //-------------------------------------------------------------------------
@@ -209,4 +208,4 @@ enum MASTER_COMMAND {
 
 using namespace meridian;
 
-#endif // __MERIDIAN_CORE_MERIDIM_MERIDIM_HPP__
+#endif // __MERIDIAN_MERIDIM_HPP__

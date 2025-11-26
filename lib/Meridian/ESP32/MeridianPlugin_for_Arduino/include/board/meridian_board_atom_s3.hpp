@@ -22,18 +22,11 @@ public:
   Parameter parameter;
 
 protected:
-  /// @brief 初期化を実行する
-  bool setup() override {
-    return true;
-  }
-  /// @brief 初期化を実行する
-  bool loop() override {
-    return true;
-  }
-
   /// @brief ループ時の待機処理
-  void waiting() override {
-    sleep(10);
+  int waiting() override {
+    int wait_time_ms = 10;
+    sleep(wait_time_ms);
+    return wait_time_ms * 1000;
   }
 };
 

@@ -27,11 +27,14 @@ protected:
   bool setup() override {
     return true;
   }
-
-  /// @brief Processの実処理
-  bool loop() override {
-    return true;
-  }
+  /// @brief 入力処理
+  bool loop_input(Meridim &a_meridim) override { return true; }
+  /// @brief 処理の前処理
+  bool loop_process_prepare(Meridim &a_meridim) override { return true; }
+  /// @brief 処理の片付け
+  bool loop_process_tidy_up(Meridim &a_meridim) override { return true; }
+  /// @brief 出力処理
+  bool loop_output(Meridim &a_meridim) override { return true; }
 };
 
 } // namespace meridian

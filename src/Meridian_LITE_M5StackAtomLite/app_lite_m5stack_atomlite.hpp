@@ -47,13 +47,13 @@ protected:
     this->info(mrd_format("  analog_l:%3d,analog_r:%3d", a_meridim.input_data.control.analog_l, a_meridim.input_data.control.analog_r).c_str());
     this->info(mrd_format("  motion_frames:%d,stop_frames_ms:%d", a_meridim.userdata.motion_frames, a_meridim.userdata.stop_frames_ms).c_str());
 
-    for (int i = 0; i < MERIDIM90_SERVO_NUM; i++) {
+    for (int i = 0; i < MERIDIM_SERVO_NUM; i++) {
       if (0 != a_meridim.userdata.servo[i].id) {
         this->info(mrd_format("  servo[%d]:id[%3d]cmd[%3d]val[%3d]", i, a_meridim.userdata.servo[i].id, a_meridim.userdata.servo[i].cmd, a_meridim.userdata.servo[i].value).c_str());
       }
     }
     String buffer = "";
-    for (int i = 0; i < MERIDIM90_USER_DATA_SIZE; i++) {
+    for (int i = 0; i < MERIDIM_USER_DATA_SIZE; i++) {
       buffer += mrd_format("[%d]%d ", i, a_meridim.userdata.options[i]).c_str();
     }
     this->info(mrd_format("  options:%s", buffer.c_str()).c_str());

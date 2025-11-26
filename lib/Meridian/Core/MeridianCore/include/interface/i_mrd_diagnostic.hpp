@@ -142,8 +142,8 @@ protected:
 
   bool _output_log = false;                                    ///! Output control flag
   const int _BUFFER_SIZE = MERIDIAN_COMMUNICATION_BUFFER_SIZE; ///! Buffer size
-#ifdef MERIDIAN_DEFAULT_WHOLE_LOG_LEVEL
-  OUTPUT_LOG_LEVEL _level = MERIDIAN_DEFAULT_WHOLE_LOG_LEVEL; ///! Output Level
+#ifdef MERIDIAN_DEFAULT_OVERALL_LOG_LEVEL
+  OUTPUT_LOG_LEVEL _level = MERIDIAN_DEFAULT_OVERALL_LOG_LEVEL; ///! Output Level
 #else
   OUTPUT_LOG_LEVEL _level = OUTPUT_LOG_LEVEL::LEVEL_WARN; ///! Output Level
 #endif
