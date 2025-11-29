@@ -8,23 +8,23 @@
  */
 #ifndef __MERIDIAN_APP_I_MRD_APP_HPP__
 #define __MERIDIAN_APP_I_MRD_APP_HPP__
+// ヘッダファイルの読み込み
 #include "Meridim.hpp"
+#include "meridian_core_settings.hpp"
 #include "mrd_utils/meridian_diagnostic_unit.hpp"
-
-#ifndef IMeridianApp_DEFAULT_INTERVAL_US
-#define IMeridianApp_DEFAULT_INTERVAL_US (10 * 1000) // デフォルトのインターバ
-#endif
 
 namespace meridian {
 namespace app {
 
 /// @brief プラグインのためのインターフェイスクラス
-class IMeridianApp : public meridian::communication::MeridianDiagnosticUnit {
+class IMrdApp : public meridian::communication::MeridianDiagnosticUnit {
   //////////////////////////////////////////////////////////////////////////////////////////////////
   /// 仮想関数
   ///   実装時には、以下の関数をオーバーライドすること
   //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
+  /// @brief 仮想関数 - カテゴリー名
+  virtual const char *get_category() { return "GENERAL"; }
   /// @brief 仮想関数 - 区別させるためのアプリケーション名前
   virtual const char *get_name() { return "Unknown"; }
 
@@ -95,16 +95,15 @@ public:
   /// protected 関数
   //////////////////////////////////////////////////////////////////////////////////////////////////
 protected:
-  bool _is_initialized = false;                        ///! 初期化フラグ
-  bool _enabled = true;                                ///! 有効フラグ
-  int _interval_us = IMeridianApp_DEFAULT_INTERVAL_US; ///! タイマーの間隔(マイクロ秒)
-  int _elapsed_time_us = 0;                            ///! 経過時間(マイクロ秒)
+  bool _is_initialized = false;                   ///! 初期化フラグ
+  bool _enabled = true;                           ///! 有効フラグ
+  int _interval_us = IMrdApp_DEFAULT_INTERVAL_US; ///! タイマーの間隔(マイクロ秒)
+  int _elapsed_time_us = 0;                       ///! 経過時間(マイクロ秒)
 };
 
 } // namespace app
 } // namespace meridian
 
 using namespace meridian::app;
-#undef IMeridianApp_DEFAULT_INTERVAL_US
 
 #endif // __MERIDIAN_APP_I_MRD_APP_HPP__

@@ -8,7 +8,7 @@
  */
 #ifndef __MERIDIAN_MODULES_I_MRD_DRIVER_HPP__
 #define __MERIDIAN_MODULES_I_MRD_DRIVER_HPP__
-
+// ヘッダファイルの読み込み
 #include "Meridim.hpp"
 #include "mrd_utils/meridian_diagnostic_unit.hpp"
 
@@ -16,18 +16,18 @@ namespace meridian {
 namespace modules {
 
 /// @brief プラグインのためのインターフェイスクラス
-class IMeridianDriver : public meridian::communication::MeridianDiagnosticUnit {
+class IMrdDriver : public meridian::communication::MeridianDiagnosticUnit {
   //////////////////////////////////////////////////////////////////////////////////////////////////
   /// 仮想関数
   //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-  /// @brief カテゴリー名
+  /// @brief 仮想関数 - カテゴリー名
   virtual const char *get_category() { return "NotCategorized"; }
-  /// @brief 区別させるための名前
+  /// @brief 仮想関数 - 区別させるための名前
   virtual const char *get_name() { return "Unknown"; }
 
 protected:
-  /// @brief プラグインの初期化
+  /// @brief 仮想関数 - プラグインの初期化
   virtual bool setup() = 0;
   /// @brief 仮想関数 - 入力処理処理の実処理
   virtual bool input(Meridim &a_meridim) = 0;
@@ -38,6 +38,7 @@ protected:
   /// 公開関数
   //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
+  //// @brief 入力処理と出力処理を実行するかを制御します。
   void config_control(bool a_is_input, bool a_is_output) {
     this->is_input = a_is_input;
     this->is_output = a_is_output;

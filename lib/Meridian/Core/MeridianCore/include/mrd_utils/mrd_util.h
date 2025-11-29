@@ -6,12 +6,12 @@
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#ifndef __MERIDIAN_UTILITY_H__
-#define __MERIDIAN_UTILITY_H__
-
-// ヘッダファイルの読み込み
+#ifndef __MERIDIAN_MRD_UTILITY_H__
+#define __MERIDIAN_MRD_UTILITY_H__
+// ライブラリ導入
 #include <inttypes.h>
 
+namespace meridian {
 //==================================================================================================
 // Utility ごく小規模な汎用関数
 //==================================================================================================
@@ -53,5 +53,7 @@ inline void mrd_setBit8(uint8_t &value, uint8_t a_bit_pos) { value |= (1 << a_bi
 /// @param a_bit_pos クリアするビットの位置(0から7).
 /// @return なし.
 inline void mrd_clearBit8(uint8_t &value, uint8_t a_bit_pos) { value &= ~(1 << a_bit_pos); }
+
+} // namespace meridian
 
 #endif //__MERIDIAN_UTILITY_H__

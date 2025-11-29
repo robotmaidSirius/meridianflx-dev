@@ -6,8 +6,11 @@
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#ifndef __MERIDIAN_BOARD_MERIDIAN_BOARD_LITE_ATOM_HPP__
-#define __MERIDIAN_BOARD_MERIDIAN_BOARD_LITE_ATOM_HPP__
+#ifndef __MERIDIAN_BOARD_MERIDIAN_BOARD_ATOM_S3_HPP__
+#define __MERIDIAN_BOARD_MERIDIAN_BOARD_ATOM_S3_HPP__
+// ヘッダファイルの読み込み
+#include "meridian_plugin_settings.hpp"
+// ライブラリ導入
 #include <Arduino.h>
 #include <interface/i_mrd_board.hpp>
 
@@ -24,8 +27,8 @@ public:
 protected:
   /// @brief ループ時の待機処理
   int waiting() override {
-    int wait_time_ms = 10;
-    sleep(wait_time_ms);
+    int wait_time_ms = SETTING_DEFAULT_DELAY_TIME_MS;
+    delayMicroseconds(wait_time_ms * 1000); // 追加の待機（マイクロ秒単位）
     return wait_time_ms * 1000;
   }
 };
@@ -33,4 +36,4 @@ protected:
 } // namespace board
 } // namespace meridian
 
-#endif // __MERIDIAN_BOARD_MERIDIAN_BOARD_LITE_ATOM_HPP__
+#endif // __MERIDIAN_BOARD_MERIDIAN_BOARD_ATOM_S3_HPP__

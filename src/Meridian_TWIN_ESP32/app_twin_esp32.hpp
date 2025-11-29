@@ -12,7 +12,7 @@
 
 namespace meridian {
 
-class TestApp : public app::IMeridianApp {
+class TestApp : public app::IMrdApp {
 public:
   /// @brief 区別させるための名前
   const char *get_name() override { return "MeridianTwin for ESP32"; }

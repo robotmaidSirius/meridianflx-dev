@@ -6,12 +6,12 @@
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#ifndef __MERIDIAN_CORE_COMMUNICATION_I_MRD_COM_CONVERSATION_HPP__
-#define __MERIDIAN_CORE_COMMUNICATION_I_MRD_COM_CONVERSATION_HPP__
-
+#ifndef __MERIDIAN_COMMUNICATION_I_MRD_CONVERSATION_HPP__
+#define __MERIDIAN_COMMUNICATION_I_MRD_CONVERSATION_HPP__
+// ヘッダファイルの読み込み
 #include "Meridim.hpp"
 #include "mrd_utils/meridian_diagnostic_unit.hpp"
-
+// ライブラリ導入
 #include <string.h>
 
 namespace meridian {
@@ -19,20 +19,20 @@ namespace communication {
 
 /// @brief 通信のためのインターフェイスクラス
 /// @note Meridianの通信はこのクラスを継承して実装すること。
-class IMeridianConversation : public MeridianDiagnosticUnit {
+class IMrdConversation : public MeridianDiagnosticUnit {
   //////////////////////////////////////////////////////////////////////////////////////////////////
   /// 仮想関数
   //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-  /// @brief カテゴリー名
+  /// @brief 仮想関数 - カテゴリー名
   virtual const char *get_category() { return "Conversation"; }
-  /// @brief 区別させるための名前
+  /// @brief 仮想関数 - 区別させるための名前
   virtual const char *get_name() { return "NONE"; }
 
 protected:
-  /// @brief 通信の初期化
+  /// @brief 仮想関数 - 通信の初期化
   virtual bool setup() { return true; }
-  /// @brief 受信処理の実処理
+  /// @brief 仮想関数 - 受信処理の実処理
   /// @param a_meridim 受信するデータ
   virtual bool received(uint8_t *data, int *data_length) {
     static uint8_t *buffer = new uint8_t[180]{0x00};
@@ -40,7 +40,7 @@ protected:
     data = buffer;
     return true;
   }
-  /// @brief 送信処理の実処理
+  /// @brief 仮想関数 - 送信処理の実処理
   /// @param a_meridim 送信するデータ
   virtual bool send(uint8_t *data) { return true; }
 
@@ -49,7 +49,7 @@ protected:
   //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
   /// @brief コンストラクタ
-  IMeridianConversation() {
+  IMrdConversation() {
   }
   /// @brief 送信、受信をするか制御します。フラグがtrueの場合、送信、受信を行います。
   void config(bool call_func_received, bool call_func_send) {
@@ -128,4 +128,4 @@ protected:
 } // namespace communication
 } // namespace meridian
 
-#endif // __MERIDIAN_CORE_COMMUNICATION_I_MRD_COM_CONVERSATION_HPP__
+#endif // __MERIDIAN_COMMUNICATION_I_MRD_CONVERSATION_HPP__

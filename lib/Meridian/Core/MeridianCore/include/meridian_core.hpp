@@ -6,8 +6,10 @@
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#ifdef __MERIDIAN_CORE_EXECUTION_MERIDIAN_CORE_HPP__
-#define __MERIDIAN_CORE_EXECUTION_MERIDIAN_CORE_HPP__
+#ifndef __MERIDIAN_EXECUTION_MERIDIAN_CORE_HPP__
+#define __MERIDIAN_EXECUTION_MERIDIAN_CORE_HPP__
+// ヘッダファイルの読み込み
+// ライブラリ導入
 
 namespace meridian {
 namespace execution {

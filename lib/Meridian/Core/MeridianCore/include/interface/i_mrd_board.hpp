@@ -8,13 +8,13 @@
  */
 #ifndef __MERIDIAN_BOARD_I_MRD_BOARD_HPP__
 #define __MERIDIAN_BOARD_I_MRD_BOARD_HPP__
-
+// ヘッダファイルの読み込み
 #include "Meridim.hpp"
 #include "interface/i_mrd_app.hpp"
 #include "interface/i_mrd_conversation.hpp"
 #include "interface/i_mrd_driver.hpp"
 #include "mrd_utils/meridian_diagnostic_unit.hpp"
-
+// ライブラリ導入
 #include <list>
 
 namespace meridian {
@@ -32,18 +32,20 @@ class IMrdBoard : public meridian::communication::MeridianDiagnosticUnit {
   ///   実装時には、以下の関数をオーバーライドすること
   //////////////////////////////////////////////////////////////////////////////////////////////////
 protected:
-  /// @brief ループ時の待機処理。ボードによってTimerの実装が異なるため、継承先で実装すること。
+  /// @brief 仮想関数 - ループ時の待機処理。ボードによってTimerの実装が異なるため、継承先で実装すること。
   /// @return 待機時間（マイクロ秒単位）
   virtual int waiting() = 0;
-  /// @brief 初期化処理
+  /// @brief 仮想関数 - 初期化処理
+  virtual bool init() { return true; }
+  /// @brief 仮想関数 - セットアップ処理
   virtual bool setup() { return true; }
-  /// @brief 入力処理
+  /// @brief 仮想関数 - 入力処理
   virtual bool loop_input(Meridim &a_meridim) { return true; }
-  /// @brief 処理の前処理
+  /// @brief 仮想関数 - 処理の前処理
   virtual bool loop_process_prepare(Meridim &a_meridim) { return true; }
-  /// @brief 処理の片付け
+  /// @brief 仮想関数 - 処理の片付け
   virtual bool loop_process_tidy_up(Meridim &a_meridim) { return true; }
-  /// @brief 出力処理
+  /// @brief 仮想関数 - 出力処理
   virtual bool loop_output(Meridim &a_meridim) { return true; }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,11 +62,13 @@ public:
   bool begin() {
     bool result = false;
     if (false == this->_is_initialized) {
+      result = this->init();
+
       if (nullptr == this->diag) {
-        this->diag = new IMeridianDiagnostic();
+        this->diag = new IMrdDiagnostic();
       }
       if (nullptr == this->con) {
-        this->con = new IMeridianConversation();
+        this->con = new IMrdConversation();
       }
       result = this->diag->begin();
       if (true == result) {
@@ -78,7 +82,7 @@ public:
         // this->error("Failed to initialize diagnostic unit.");
       }
       if (true == result) {
-        for (IMeridianDriver *module : this->modules) {
+        for (IMrdDriver *module : this->modules) {
           if (nullptr != module) {
             if (true == module->is_output) {
               result &= module->begin();
@@ -131,13 +135,19 @@ public:
     //     前回から何秒立っているか確認する必要がある。
     bool result = this->_is_initialized;
     static int elapsed_time_us = 0;
+    bool is_diagnostic = (nullptr != this->diag);
+    if (true == is_diagnostic) {
+      if (OUTPUT_LOG_LEVEL::LEVEL_DEBUG >= this->get_level_unit()) {
+        this->diag->log(OUTPUT_LOG_LEVEL::LEVEL_DEBUG, true, "============================");
+      }
+    }
 
     // 受信処理
     if (true == result) {
       if (nullptr != this->con) {
         if (true == this->con->reception(this->meridim)) {
-          if (nullptr != this->diag) {
-            if (this->_unit_level <= OUTPUT_LOG_LEVEL::LEVEL_DEBUG) {
+          if (true == is_diagnostic) {
+            if (OUTPUT_LOG_LEVEL::LEVEL_DEBUG >= this->get_level_unit()) {
               this->diag->log(OUTPUT_LOG_LEVEL::LEVEL_DEBUG, true, "<run> Received Data[seq:%04X]", this->meridim.sequential);
             }
           }
@@ -148,8 +158,8 @@ public:
     // 継承されたinput関数の処理
     if (true == result) {
       result = this->loop_input(this->meridim);
-      if (nullptr != this->diag) {
-        if (this->_unit_level <= OUTPUT_LOG_LEVEL::LEVEL_DEBUG) {
+      if (true == is_diagnostic) {
+        if (OUTPUT_LOG_LEVEL::LEVEL_DEBUG >= this->get_level_unit()) {
           this->diag->log(result ? OUTPUT_LOG_LEVEL::LEVEL_DEBUG : OUTPUT_LOG_LEVEL::LEVEL_WARN, true, "<run> Board Input");
         }
       }
@@ -157,12 +167,12 @@ public:
 
     // 登録されたモジュールの入力処理
     if (true == result) {
-      for (IMeridianDriver *module : this->modules) {
+      for (IMrdDriver *module : this->modules) {
         if (nullptr != module) {
           if (true == module->is_input) {
             result &= module->reception(this->meridim);
-            if (nullptr != this->diag) {
-              if (this->_unit_level <= OUTPUT_LOG_LEVEL::LEVEL_DEBUG) {
+            if (true == is_diagnostic) {
+              if (OUTPUT_LOG_LEVEL::LEVEL_DEBUG >= this->get_level_unit()) {
                 this->diag->log(result ? OUTPUT_LOG_LEVEL::LEVEL_DEBUG : OUTPUT_LOG_LEVEL::LEVEL_WARN, true, "<run> Module [%s] Reception", module->get_name());
               }
             }
@@ -174,8 +184,8 @@ public:
     // 継承されたProcessの前処理
     if (true == result) {
       result = this->loop_process_prepare(this->meridim);
-      if (nullptr != this->diag) {
-        if (this->_unit_level <= OUTPUT_LOG_LEVEL::LEVEL_DEBUG) {
+      if (true == is_diagnostic) {
+        if (OUTPUT_LOG_LEVEL::LEVEL_DEBUG >= this->get_level_unit()) {
           this->diag->log(result ? OUTPUT_LOG_LEVEL::LEVEL_DEBUG : OUTPUT_LOG_LEVEL::LEVEL_WARN, true, "<run> Process Prepare");
         }
       }
@@ -187,8 +197,8 @@ public:
         if (nullptr != ap) {
           if (true == ap->is_enabled()) {
             result &= ap->update(this->meridim, elapsed_time_us);
-            if (nullptr != this->diag) {
-              if (this->_unit_level <= OUTPUT_LOG_LEVEL::LEVEL_DEBUG) {
+            if (true == is_diagnostic) {
+              if (OUTPUT_LOG_LEVEL::LEVEL_DEBUG >= this->get_level_unit()) {
                 this->diag->log(result ? OUTPUT_LOG_LEVEL::LEVEL_DEBUG : OUTPUT_LOG_LEVEL::LEVEL_WARN, true, "<run> App [%s] Process", ap->get_name());
               }
             }
@@ -200,8 +210,8 @@ public:
     // 継承されたProcessの片付け
     if (true == result) {
       result = this->loop_process_tidy_up(this->meridim);
-      if (nullptr != this->diag) {
-        if (this->_unit_level <= OUTPUT_LOG_LEVEL::LEVEL_DEBUG) {
+      if (true == is_diagnostic) {
+        if (OUTPUT_LOG_LEVEL::LEVEL_DEBUG >= this->get_level_unit()) {
           this->diag->log(result ? OUTPUT_LOG_LEVEL::LEVEL_DEBUG : OUTPUT_LOG_LEVEL::LEVEL_WARN, true, "<run> Process Tidy Up");
         }
       }
@@ -209,12 +219,12 @@ public:
 
     // モジュールの出力処理
     if (true == result) {
-      for (IMeridianDriver *module : this->modules) {
+      for (IMrdDriver *module : this->modules) {
         if (nullptr != module) {
           if (true == module->is_output) {
             result &= module->transmission(this->meridim);
-            if (nullptr != this->diag) {
-              if (this->_unit_level <= OUTPUT_LOG_LEVEL::LEVEL_DEBUG) {
+            if (true == is_diagnostic) {
+              if (OUTPUT_LOG_LEVEL::LEVEL_DEBUG >= this->get_level_unit()) {
                 this->diag->log(result ? OUTPUT_LOG_LEVEL::LEVEL_DEBUG : OUTPUT_LOG_LEVEL::LEVEL_WARN, true, "<run> Module [%s] Transmission", module->get_name());
               }
             }
@@ -226,8 +236,8 @@ public:
     // 継承されたoutput関数の出力処理
     if (true == result) {
       result = this->loop_output(this->meridim);
-      if (nullptr != this->diag) {
-        if (this->_unit_level <= OUTPUT_LOG_LEVEL::LEVEL_DEBUG) {
+      if (true == is_diagnostic) {
+        if (OUTPUT_LOG_LEVEL::LEVEL_DEBUG >= this->get_level_unit()) {
           this->diag->log(result ? OUTPUT_LOG_LEVEL::LEVEL_DEBUG : OUTPUT_LOG_LEVEL::LEVEL_WARN, true, "<run> Board Output");
         }
       }
@@ -237,8 +247,8 @@ public:
     if (true == result) {
       if (nullptr != this->con) {
         result = this->con->transmission(this->meridim);
-        if (nullptr != this->diag) {
-          if (this->_unit_level <= OUTPUT_LOG_LEVEL::LEVEL_DEBUG) {
+        if (true == is_diagnostic) {
+          if (OUTPUT_LOG_LEVEL::LEVEL_DEBUG >= this->get_level_unit()) {
             this->diag->log(result ? OUTPUT_LOG_LEVEL::LEVEL_DEBUG : OUTPUT_LOG_LEVEL::LEVEL_WARN, true, "<run> Send Data[seq:%04X]", this->meridim.sequential);
           }
         }
@@ -249,23 +259,23 @@ public:
     return result;
   }
   /// @brief communicationを登録する
-  void push_communication(IMeridianConversation *a_con, IMeridianDiagnostic *a_diag) {
+  void push_communication(IMrdConversation *a_con, IMrdDiagnostic *a_diag) {
     this->diag = a_diag;
     this->con = a_con;
     this->trace("push_communication() called");
     // 初期化されていない場合は、デフォルトのインスタンスを作成
     if (nullptr == this->diag) {
-      this->diag = new IMeridianDiagnostic();
+      this->diag = new IMrdDiagnostic();
     }
     if (nullptr == this->con) {
-      this->con = new IMeridianConversation();
+      this->con = new IMrdConversation();
     }
     // diagの設定を追加
     if (nullptr != this->diag) {
       if (nullptr != this->con) {
         this->con->set_diagnostic(*this->diag);
       }
-      for (IMeridianDriver *module : this->modules) {
+      for (IMrdDriver *module : this->modules) {
         if (nullptr != module) {
           module->set_diagnostic(*this->diag);
         }
@@ -278,18 +288,18 @@ public:
     }
   }
   /// @brief communicationを登録する
-  void push_communication(IMeridianDiagnostic *a_diag) {
+  void push_communication(IMrdDiagnostic *a_diag) {
     this->diag = a_diag;
     this->trace("push_communication() called");
     // 初期化されていない場合は、デフォルトのインスタンスを作成
     if (nullptr == this->diag) {
-      this->diag = new IMeridianDiagnostic();
+      this->diag = new IMrdDiagnostic();
     }
     if (nullptr != this->diag) {
       if (nullptr != this->con) {
         this->con->set_diagnostic(*this->diag);
       }
-      for (IMeridianDriver *module : this->modules) {
+      for (IMrdDriver *module : this->modules) {
         if (nullptr != module) {
           module->set_diagnostic(*this->diag);
         }
@@ -301,11 +311,11 @@ public:
       }
     }
   }
-  void push_communication(IMeridianConversation *a_con) {
+  void push_communication(IMrdConversation *a_con) {
     this->con = a_con;
     this->trace("push_communication() called");
     if (nullptr == this->con) {
-      this->con = new IMeridianConversation();
+      this->con = new IMrdConversation();
     }
     if (nullptr != this->diag) {
       if (nullptr != this->con) {
@@ -314,12 +324,12 @@ public:
     }
   }
   /// @brief モジュールを登録します。
-  bool push_module(IMeridianDriver *a_module) {
+  bool push_module(IMrdDriver *a_module) {
     if (nullptr != a_module) {
       if (nullptr != this->diag) {
         a_module->set_diagnostic(*this->diag);
         if (nullptr != this->diag) {
-          if (this->_unit_level <= OUTPUT_LOG_LEVEL::LEVEL_TRACE) {
+          if (OUTPUT_LOG_LEVEL::LEVEL_TRACE >= this->get_level_unit()) {
             this->diag->log(OUTPUT_LOG_LEVEL::LEVEL_TRACE, true, "<push_module> Module [%s] added", a_module->get_name());
           }
         }
@@ -330,12 +340,12 @@ public:
     return false;
   }
   /// @brief アプリを登録します。
-  bool push_app(IMeridianApp *a_app) {
+  bool push_app(IMrdApp *a_app) {
     if (nullptr != a_app) {
       if (nullptr != this->diag) {
         a_app->set_diagnostic(*this->diag);
         if (nullptr != this->diag) {
-          if (this->_unit_level <= OUTPUT_LOG_LEVEL::LEVEL_TRACE) {
+          if (OUTPUT_LOG_LEVEL::LEVEL_TRACE >= this->get_level_unit()) {
             this->diag->log(OUTPUT_LOG_LEVEL::LEVEL_TRACE, true, "<push_app> App [%s] added", a_app->get_name());
           }
         }
@@ -350,10 +360,10 @@ public:
   /// protected 変数
   //////////////////////////////////////////////////////////////////////////////////////////////////
 protected:
-  IMeridianConversation *con = nullptr; ///! 通信用のインスタンス
-  std::list<IMeridianDriver *> modules; ///! modulesのインスタンス
-  std::list<IMeridianApp *> app;        ///! プラグインのインターフェース
-  bool _is_initialized = false;         ///! 初期化フラグ
+  IMrdConversation *con = nullptr; ///! 通信用のインスタンス
+  std::list<IMrdDriver *> modules; ///! modulesのインスタンス
+  std::list<IMrdApp *> app;        ///! プラグインのインターフェース
+  bool _is_initialized = false;    ///! 初期化フラグ
 };
 
 } // namespace board

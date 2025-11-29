@@ -6,10 +6,11 @@
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#ifndef __MERIDIAN_CORE_COMMUNICATION_I_MRD_COM_DIAGNOSTIC_HPP__
-#define __MERIDIAN_CORE_COMMUNICATION_I_MRD_COM_DIAGNOSTIC_HPP__
-
+#ifndef __MERIDIAN_COMMUNICATION_I_MRD_DIAGNOSTIC_HPP__
+#define __MERIDIAN_COMMUNICATION_I_MRD_DIAGNOSTIC_HPP__
+// ヘッダファイルの読み込み
 #include "Meridim.hpp"
+// ライブラリ導入
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,8 +24,6 @@
 #endif
 
 namespace meridian {
-namespace communication {
-
 /// @brief Define log level
 typedef enum output_log_level_t {
   LEVEL_ALL,         /*!< Any logging levels that have been configured are logged at this log level. */
@@ -38,14 +37,16 @@ typedef enum output_log_level_t {
   LEVEL_OFF          /*!< Nothing is logged at this level of logging. */
 } OUTPUT_LOG_LEVEL;
 
+namespace communication {
+
 /// @brief ログ通知用のインターフェイスクラス
 /// @note このクラスを継承して実装すること。
-class IMeridianDiagnostic {
+class IMrdDiagnostic {
   //////////////////////////////////////////////////////////////////////////////////////////////////
   /// 仮想関数
   //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-  /// @brief カテゴリー名
+  /// @brief 仮想関数 - カテゴリー名
   virtual const char *get_category() { return "Diagnostic"; }
   /// @brief 仮想関数 - 名前を取得
   virtual const char *get_name() { return "None"; }
@@ -66,7 +67,9 @@ public:
   bool begin() { return this->setup(); }
   /// @brief 出力レベルの設定
   /// @param level 出力レベル
-  void set_level(OUTPUT_LOG_LEVEL level) { this->_level = level; }
+  void set_level_system(OUTPUT_LOG_LEVEL level) { this->_level_system = level; }
+  /// @brief 現在のログレベルを取得
+  OUTPUT_LOG_LEVEL get_level_system() { return this->_level_system; }
   /// @brief ログの出力を有効化
   void enable() { this->_output_log = true; }
   /// @brief ログの出力を無効化
@@ -77,7 +80,7 @@ public:
   /// @param format 出力フォーマット
   void log(OUTPUT_LOG_LEVEL a_level, bool a_newline, const char *format, ...) {
     if (this->_output_log) {
-      if (this->_level <= a_level) {
+      if (this->_level_system >= a_level) {
         char loc_buf[this->_BUFFER_SIZE];
         char *message = loc_buf;
         va_list arg;
@@ -142,14 +145,16 @@ protected:
 
   bool _output_log = false;                                    ///! Output control flag
   const int _BUFFER_SIZE = MERIDIAN_COMMUNICATION_BUFFER_SIZE; ///! Buffer size
-#ifdef MERIDIAN_DEFAULT_OVERALL_LOG_LEVEL
-  OUTPUT_LOG_LEVEL _level = MERIDIAN_DEFAULT_OVERALL_LOG_LEVEL; ///! Output Level
+
+private:
+#ifdef MERIDIAN_DEFAULT_SYSTEM_LOG_LEVEL
+  OUTPUT_LOG_LEVEL _level_system = MERIDIAN_DEFAULT_SYSTEM_LOG_LEVEL; ///! Output Level
 #else
-  OUTPUT_LOG_LEVEL _level = OUTPUT_LOG_LEVEL::LEVEL_WARN; ///! Output Level
+  OUTPUT_LOG_LEVEL _level_system = OUTPUT_LOG_LEVEL::LEVEL_WARN; ///! Output Level
 #endif
 };
 
 } // namespace communication
 } // namespace meridian
 
-#endif // __MERIDIAN_CORE_COMMUNICATION_I_MRD_COM_DIAGNOSTIC_HPP__
+#endif // __MERIDIAN_COMMUNICATION_I_MRD_DIAGNOSTIC_HPP__

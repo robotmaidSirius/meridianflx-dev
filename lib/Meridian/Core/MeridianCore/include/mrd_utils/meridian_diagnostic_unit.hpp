@@ -6,9 +6,9 @@
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#ifndef __MERIDIAN_CORE_COMMUNICATION_MERIDIAN_DIAGNOSTIC_UNIT_HPP__
-#define __MERIDIAN_CORE_COMMUNICATION_MERIDIAN_DIAGNOSTIC_UNIT_HPP__
-
+#ifndef __MERIDIAN_COMMUNICATION_MERIDIAN_DIAGNOSTIC_UNIT_HPP__
+#define __MERIDIAN_COMMUNICATION_MERIDIAN_DIAGNOSTIC_UNIT_HPP__
+// ヘッダファイルの読み込み
 #include "interface/i_mrd_diagnostic.hpp"
 
 namespace meridian {
@@ -18,20 +18,29 @@ namespace communication {
 class MeridianDiagnosticUnit {
 public:
   /// @brief インスタンスの登録
-  virtual void set_diagnostic(IMeridianDiagnostic &a_ref) { this->diag = &a_ref; }
+  virtual void set_diagnostic(IMrdDiagnostic &a_ref) { this->diag = &a_ref; }
 
   // 全体のログレベルを設定
   /// @param a_level ログレベル
-  void set_overall_log_level(OUTPUT_LOG_LEVEL a_level) {
+  void set_log_level_system(OUTPUT_LOG_LEVEL a_level) {
     if (nullptr != this->diag) {
-      this->diag->set_level(a_level);
+      this->diag->set_level_system(a_level);
     }
   }
   /// @brief 個別のログレベルを設定
   /// @param a_level ログレベル
-  void
-  set_log_level(OUTPUT_LOG_LEVEL a_level) {
+  void set_log_level_unit(OUTPUT_LOG_LEVEL a_level) {
     this->_unit_level = a_level;
+  }
+  OUTPUT_LOG_LEVEL get_level_unit() {
+    return this->_unit_level;
+  }
+  OUTPUT_LOG_LEVEL get_level_system() {
+    if (nullptr != this->diag) {
+      return this->diag->get_level_system();
+    } else {
+      return this->_unit_level;
+    }
   }
 
 public:
@@ -93,7 +102,9 @@ public:
   }
 
 protected:
-  IMeridianDiagnostic *diag = nullptr; ///! 診断用のインターフェース
+  IMrdDiagnostic *diag = nullptr; ///! 診断用のインターフェース
+
+private:
 #ifdef MERIDIAN_DEFAULT_LOG_LEVEL
   OUTPUT_LOG_LEVEL _unit_level = MERIDIAN_DEFAULT_LOG_LEVEL; ///! 出力レベル
 #else
@@ -104,4 +115,4 @@ protected:
 } // namespace communication
 } // namespace meridian
 
-#endif // __MERIDIAN_CORE_COMMUNICATION_MERIDIAN_DIAGNOSTIC_UNIT_HPP__
+#endif // __MERIDIAN_COMMUNICATION_MERIDIAN_DIAGNOSTIC_UNIT_HPP__

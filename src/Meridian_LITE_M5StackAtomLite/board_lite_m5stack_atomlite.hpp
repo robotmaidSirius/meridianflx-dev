@@ -13,9 +13,21 @@
 #include "meridian_parameter.hpp"
 #include <board/meridian_board_atom_lite.hpp>
 
+#include <mrd_communication/mrd_diagnostic_uart.hpp>
+// #include <mrd_communication/mrd_conversation_wired_LAN_W5500.hpp>
+#include <mrd_communication/mrd_conversation_wifi.hpp>
+// #include <mrd_communication/mrd_con_and_diag_wifi.hpp>
+
 namespace meridian {
 
 class BoardSetting : public board::MeridianBoardOnAtomLite {
+private:
+  meridian::TestApp app;
+  communication::MrdDiagnosticUart *diag = new communication::MrdDiagnosticUart(&Serial);
+  // MrdConversationWiredLAN *com = new MrdConversationWiredLAN(5, 15, MERIDIAN_BOARD_NAME);
+  communication::MrdConversationWifi *com = new communication::MrdConversationWifi(nullptr, MERIDIAN_BOARD_NAME);
+  // MrdConversationAndDiagnosticWifi *com = new MrdConversationAndDiagnosticWifi(&Serial);
+
 public:
   BoardSetting() {}
   ~BoardSetting() {}
@@ -23,8 +35,39 @@ public:
   /// @brief 区別させるための名前
   // const char *get_name() override { return "BoardSetting"; }
 protected:
-  /// @brief プラグインの初期化
+  /// @brief ボードの初期化処理
+  bool init() override {
+    //////////////////////////////////////////////////////////
+    // ログレベル変更
+    //////////////////////////////////////////////////////////
+    this->com->set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_ALL);
+    this->app.set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_ALL);
+    this->set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_ALL);
+    //////////////////////////////////////////////////////////
+    // ボード設定
+    //////////////////////////////////////////////////////////
+    this->push_communication(this->com, this->diag);
+
+    //////////////////////////////////////////////////////////
+    // moduleの設定
+    //////////////////////////////////////////////////////////
+    // this->push_module(this->servo_pwm1);
+
+    //////////////////////////////////////////////////////////
+    // アプリケーションの設定
+    //////////////////////////////////////////////////////////
+    this->push_app(&this->app);
+    return true;
+  }
+  /// @brief プラグインのセットアップ処理
   bool setup() override {
+    // comの設定
+    this->com->config(false, false); // 受信と送信を有効化
+    this->com->add_target(NETWORK_SEND_IP, NETWORK_SEND_PORT);
+#ifdef WIFI_LOG_IP
+    this->com->add_target_diag(WIFI_LOG_IP);
+#endif
+
     return true;
   }
   /// @brief 入力処理

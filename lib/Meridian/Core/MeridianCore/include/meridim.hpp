@@ -8,8 +8,9 @@
  */
 #ifndef __MERIDIAN_MERIDIM_HPP__
 #define __MERIDIAN_MERIDIM_HPP__
-
+// ライブラリ導入
 #include <stdint.h>
+
 #define MERIDIM_SEQUENTIAL_MAX (0xEA60) // シーケンス番号の最大値: Defaultは60000
 
 #define MERIDIM_DATA_LEN  (90)                   // Meridimのデータ数
@@ -134,7 +135,7 @@ void set_meridim(Meridim &a_meridim, uint8_t a_data[], int size) {
 #define ERRBIT_10_UDP_ESP_SKIP 10 // PC → ESP32 のUDPフレームスキップエラー
 #define ERRBIT_9_BOARD_SKIP    9  // PC → ESP32 → Teensy のフレームスキップエラー(末端で捕捉)
 #define ERRBIT_8_PC_SKIP       8  // Teensy → ESP32 → PC のフレームスキップエラー(末端で捕捉)
-enum Meridim_ERRBIT {
+enum MERIDIM_ERRBIT {
   ESP_PC = 0x01 << 15,       ///! ESP32 → PC のUDP受信エラー (0:エラーなし、1:エラー検出)
   PC_ESP = 0x01 << 14,       ///! PC → ESP32 のUDP受信エラー
   ESP_TSY = 0x01 << 13,      ///! ESP32 → TeensyのSPI受信エラー
@@ -148,7 +149,7 @@ enum Meridim_ERRBIT {
 //-------------------------------------------------------------------------
 //---- Meridim 配列アクセス対応キー  --------------------------------------
 //-------------------------------------------------------------------------
-enum Meridim_KEY {
+enum MERIDIM_KEY {
   MASTER = 0,         // マスターコマンド
   SEQ = 2,            // シーケンス番号
   ACC_X = 4,          // 加速度センサX値
