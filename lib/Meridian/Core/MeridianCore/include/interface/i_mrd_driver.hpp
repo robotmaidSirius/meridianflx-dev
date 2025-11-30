@@ -19,6 +19,7 @@ namespace modules {
 /// @brief プラグインのためのインターフェイスクラス
 class IMrdDriver : public meridian::communication::MeridianDiagnosticUnit {
 public:
+  /// @brief コンストラクタ
   IMrdDriver(bool a_is_input, bool a_is_output) {
     this->config_control(a_is_input, a_is_output);
   }
@@ -30,18 +31,6 @@ public:
   virtual const char *get_category() { return "NotCategorized"; }
   /// @brief 仮想関数 - 区別させるための名前
   virtual const char *get_name() { return "Unknown"; }
-
-  /// @brief インターバルの設定
-  void set_interval(int a_interval_us) {
-    this->_interval_reception_us = a_interval_us;
-    this->_interval_transmission_us = a_interval_us;
-  }
-  void set_interval_input(int a_interval_us) {
-    this->_interval_reception_us = a_interval_us;
-  }
-  void set_interval_output(int a_interval_us) {
-    this->_interval_transmission_us = a_interval_us;
-  }
 
 protected:
   /// @brief 仮想関数 - プラグインの初期化
@@ -55,6 +44,24 @@ protected:
   /// 公開関数
   //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
+  /// @brief 即時実行のトリガーをセットする
+  void immediate_run() {
+    this->_trigger = true;
+  }
+  /// @brief インターバルの設定(入力/出力共通)
+  void set_interval(int a_interval_us) {
+    this->_interval_reception_us = a_interval_us;
+    this->_interval_transmission_us = a_interval_us;
+  }
+  /// @brief インターバルの設定（入力のみ）
+  void set_interval_input(int a_interval_us) {
+    this->_interval_reception_us = a_interval_us;
+  }
+  /// @brief インターバルの設定（出力のみ）
+  void set_interval_output(int a_interval_us) {
+    this->_interval_transmission_us = a_interval_us;
+  }
+
   //// @brief 入力処理と出力処理を実行するかを制御します。
   void config_control(bool a_is_input, bool a_is_output) {
     this->is_input = a_is_input;
@@ -96,17 +103,20 @@ public:
   bool has_reached_checkpoint(int a_elapsed_time_us) {
     this->_elapsed_time_reception_us += a_elapsed_time_us;
     this->_elapsed_time_transmission_us += a_elapsed_time_us;
-    if (this->_elapsed_time_reception_us >= this->_interval_reception_us) {
+    if ((this->_elapsed_time_reception_us >= this->_interval_reception_us) || (true == this->_trigger)) {
       this->_elapsed_time_reception_us -= this->_interval_reception_us;
       this->_is_running_reception = true;
     } else {
       this->_is_running_reception = false;
     }
-    if (this->_elapsed_time_transmission_us >= this->_interval_transmission_us) {
+    if ((this->_elapsed_time_transmission_us >= this->_interval_transmission_us) || (true == this->_trigger)) {
       this->_elapsed_time_transmission_us -= this->_interval_transmission_us;
       this->_is_running_transmission = true;
     } else {
       this->_is_running_transmission = false;
+    }
+    if (true == this->_trigger) {
+      this->_trigger = false;
     }
     return this->_is_running_transmission && this->_is_running_reception;
   }
@@ -127,6 +137,7 @@ protected:
   bool _is_running_transmission = false;                          ///! 実行中フラグ
   int _interval_transmission_us = IMrdDriver_DEFAULT_INTERVAL_US; ///! タイマーの間隔(マイクロ秒)
   int _elapsed_time_transmission_us = 0;                          ///! 経過時間(マイクロ秒)
+  bool _trigger = false;                                          ///! 即時実行フラグ
 };
 
 } // namespace modules

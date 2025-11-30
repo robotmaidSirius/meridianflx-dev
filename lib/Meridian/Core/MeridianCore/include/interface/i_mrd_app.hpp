@@ -84,8 +84,11 @@ public:
   /// @brief チェックポイントに到達したか確認する
   bool has_reached_checkpoint(int a_elapsed_time_us) {
     this->_elapsed_time_us += a_elapsed_time_us;
-    if (this->_elapsed_time_us >= this->_interval_us) {
+    if ((this->_elapsed_time_us >= this->_interval_us) || (true == this->_trigger)) {
       this->_elapsed_time_us -= this->_interval_us;
+      if (true == this->_trigger) {
+        this->_trigger = false;
+      }
       return true;
     }
     return false;
@@ -99,6 +102,7 @@ protected:
   bool _enabled = true;                           ///! 有効フラグ
   int _interval_us = IMrdApp_DEFAULT_INTERVAL_US; ///! タイマーの間隔(マイクロ秒)
   int _elapsed_time_us = 0;                       ///! 経過時間(マイクロ秒)
+  bool _trigger = false;                          ///! 即時実行フラグ
 };
 
 } // namespace app
