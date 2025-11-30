@@ -19,7 +19,7 @@ namespace modules {
 class MrdGpioIN : public IMrdDriver {
 
 public:
-  MrdGpioIN(uint8_t a_pin, int a_user_data_index) {
+  MrdGpioIN(uint8_t a_pin, int a_user_data_index) : IMrdDriver(true, false) {
     assert(-1 <= a_user_data_index && a_user_data_index < MERIDIM_USER_DATA_SIZE);
 
     this->_index = a_pin;

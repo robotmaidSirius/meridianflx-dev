@@ -17,6 +17,7 @@
 // #include <mrd_communication/mrd_conversation_wired_LAN_W5500.hpp>
 #include <mrd_communication/mrd_conversation_wifi.hpp>
 // #include <mrd_communication/mrd_con_and_diag_wifi.hpp>
+#include <mrd_modules/mrd_notion.hpp>
 
 namespace meridian {
 
@@ -27,6 +28,7 @@ private:
   // MrdConversationWiredLAN *com = new MrdConversationWiredLAN(5, 15, NETWORK_HOST_NAME);
   communication::MrdConversationWifi *com = new communication::MrdConversationWifi(nullptr, NETWORK_HOST_NAME);
   // MrdConversationAndDiagnosticWifi *com = new MrdConversationAndDiagnosticWifi(&Serial);
+  modules::MrdNotion *notion = new modules::MrdNotion(); // ノーションモジュール
 
 public:
   BoardSetting() {}
@@ -42,7 +44,8 @@ protected:
     //////////////////////////////////////////////////////////
     this->com->set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_ALL);
     this->app.set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_ALL);
-    this->set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_ALL);
+    this->notion->set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_ALL);
+    this->set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_INFO);
     //////////////////////////////////////////////////////////
     // ボード設定
     //////////////////////////////////////////////////////////
@@ -52,7 +55,7 @@ protected:
     //////////////////////////////////////////////////////////
     // moduleの設定
     //////////////////////////////////////////////////////////
-    // this->push_module(this->servo_pwm1);
+    this->push_module(this->notion);
 
     //////////////////////////////////////////////////////////
     // アプリケーションの設定
@@ -62,6 +65,7 @@ protected:
   }
   /// @brief プラグインのセットアップ処理
   bool setup() override {
+    this->info("============ BoardSetting::setup():start called ============");
     // comの設定
     this->com->config(false, false); // 受信と送信を有効化
     this->com->add_target(NETWORK_SEND_IP, NETWORK_SEND_PORT);
@@ -69,6 +73,13 @@ protected:
     this->com->add_target_diag(WIFI_LOG_IP);
 #endif
     this->com->connect(NETWORK_WIFI_SSID, NETWORK_WIFI_PASS);
+
+    // モジュールの追加
+    this->notion->set_interval_input(250 * 1000);
+    this->notion->set_interval_output(500 * 1000);
+    // アプリケーションの設定
+    this->app.set_interval(1 * 1000 * 1000);
+    this->info("============ BoardSetting::setup():end called ============");
 
     return true;
   }

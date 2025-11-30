@@ -30,7 +30,7 @@ public:
   };
 
 public:
-  MrdGpioOut(uint8_t a_pin, int a_user_data_index, GPIO_FUNCTIONS a_func = GPIO_FUNCTIONS::GPIO_OUTPUT) {
+  MrdGpioOut(uint8_t a_pin, int a_user_data_index, GPIO_FUNCTIONS a_func = GPIO_FUNCTIONS::GPIO_OUTPUT) : IMrdDriver(false, true) {
     assert(-1 <= a_user_data_index && a_user_data_index < MERIDIM_USER_DATA_SIZE);
 
     this->_pin = a_pin;

@@ -18,7 +18,7 @@ namespace modules {
 
 class MrdAnalogIn : public IMrdDriver {
 public:
-  MrdAnalogIn(uint8_t a_pin, int a_user_data_index) {
+  MrdAnalogIn(uint8_t a_pin, int a_user_data_index) : IMrdDriver(true, false) {
     assert(-1 <= a_user_data_index && a_user_data_index < MERIDIM_USER_DATA_SIZE);
     this->_pin = a_pin;
     this->_index = a_user_data_index;

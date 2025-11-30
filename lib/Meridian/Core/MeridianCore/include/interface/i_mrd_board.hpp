@@ -88,11 +88,9 @@ public:
       if (true == result) {
         for (IMrdDriver *module : this->modules) {
           if (nullptr != module) {
-            if (true == module->is_output) {
-              result &= module->begin();
-              if (false == result) {
-                this->error("Failed to initialize module: %s", module->get_name());
-              }
+            result &= module->begin();
+            if (false == result) {
+              this->error("Failed to initialize module: %s", module->get_name());
             }
           }
         }
@@ -158,11 +156,15 @@ public:
         }
       }
     }
-    // 登録されたモジュールの入力処理
+    // moduleのチェックポイント確認
     if (true == result) {
       for (IMrdDriver *module : this->modules) {
         if (nullptr != module) {
-          module->has_reached_checkpoint(elapsed_time_us);
+          if (true == module->has_reached_checkpoint(elapsed_time_us)) {
+            if (true == is_diagnostic) {
+              this->diag->log(OUTPUT_LOG_LEVEL::LEVEL_DEBUG, true, "<run> Module [%s-%s] checkpoint reached", module->get_category(), module->get_name());
+            }
+          }
         }
       }
     }

@@ -33,8 +33,8 @@ public:
   /// @brief 区別させるための名前
   const char *get_name() override { return "PCA9685"; }
 
-  MrdPwmPca9685(TwoWire *a_wire, uint8_t a_address = 0x40) {
-    this->config_control(false, true); // 入力:Off/出力:On
+  MrdPwmPca9685(TwoWire *a_wire, uint8_t a_address = 0x40) : IMrdDriver(false, true) {
+    // this->config_control(false, true); // 入力:Off/出力:On
 
     this->_wire = a_wire;
     this->_address = a_address;

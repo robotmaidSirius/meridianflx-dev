@@ -25,7 +25,7 @@ public:
   const char *get_category() override { return "Servo"; }
   /// @brief 区別させるための名前
   const char *get_name() override { return "PWM"; }
-  MrdServoPwm(int a_index, uint8_t a_pin_num, uint16_t a_min_us, uint16_t a_max_us, int a_min_angle = 0, int a_max_angle = 100) {
+  MrdServoPwm(int a_index, uint8_t a_pin_num, uint16_t a_min_us, uint16_t a_max_us, int a_min_angle = 0, int a_max_angle = 100) : IMrdDriver(true, true) {
     this->is_input = false; // 入力処理を無効にする
     this->is_output = true; // 出力処理を有効にする
 

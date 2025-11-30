@@ -12,12 +12,14 @@
 #include "meridian_network_keys.hpp"
 #include "meridian_parameter.hpp"
 #include <board/meridian_board_twin_for_teensy40.hpp>
+#include <mrd_modules/mrd_notion.hpp>
 
 namespace meridian {
 
 class BoardSetting : public board::MeridianBoardTwinForTeensy40 {
 private:
   meridian::TestApp app;
+  modules::MrdNotion *notion = new modules::MrdNotion(); // ノーションモジュール
 
 public:
   BoardSetting() {}
@@ -32,7 +34,8 @@ protected:
     // ログレベル変更
     //////////////////////////////////////////////////////////
     this->app.set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_ALL);
-    this->set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_ALL);
+    this->notion->set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_ALL);
+    this->set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_INFO);
     //////////////////////////////////////////////////////////
     // ボード設定
     //////////////////////////////////////////////////////////
@@ -41,7 +44,7 @@ protected:
     //////////////////////////////////////////////////////////
     // moduleの設定
     //////////////////////////////////////////////////////////
-    // this->push_module(this->servo_pwm1);
+    this->push_module(this->notion);
 
     //////////////////////////////////////////////////////////
     // アプリケーションの設定
@@ -51,7 +54,15 @@ protected:
   }
   /// @brief プラグインのセットアップ処理
   bool setup() override {
-    // 初期化処理をここに記述
+    this->info("============ BoardSetting::setup():start called ============");
+
+    // モジュールの追加
+    this->notion->set_interval_input(250 * 1000);
+    this->notion->set_interval_output(500 * 1000);
+    // アプリケーションの設定
+    this->app.set_interval(1 * 1000 * 1000);
+    this->info("============ BoardSetting::setup():end called ============");
+
     return true;
   }
   /// @brief 入力処理
