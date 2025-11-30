@@ -31,9 +31,9 @@ private:
 public:
   BoardSetting() {}
   ~BoardSetting() {}
-
   /// @brief 区別させるための名前
-  // const char *get_name() override { return "BoardSetting"; }
+  const char *get_name() override { return MERIDIAN_BOARD_NAME; }
+
 protected:
   /// @brief ボードの初期化処理
   bool init() override {

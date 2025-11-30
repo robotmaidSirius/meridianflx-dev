@@ -56,7 +56,7 @@ bool mrd_sd_init(bool a_sd_mount, int a_sd_chipselect_pin) {
 /// @param a_sd_chipselect_pin SDカードのチップ選択ピン番号.
 /// @param a_sd_check_rw SDカードの読み書きをチェックするかどうかのブール値.
 /// @return SDカードの読み書きが成功した場合はtrueを, 失敗した場合はfalseを返す.
-bool mrd_sd_check(bool a_sd_mount, int a_sd_chipselect_pin, bool a_sd_check_rw) {
+bool mrd_sd_check(bool a_sd_mount, int a_sd_chipselect_pin, bool a_sd_check_rw, uint8_t pinG0) {
   if (a_sd_mount && a_sd_check_rw) {
     File sd_file; // SDカード用
     sd_file = SD.open("/test.txt", FILE_WRITE);
@@ -65,7 +65,7 @@ bool mrd_sd_check(bool a_sd_mount, int a_sd_chipselect_pin, bool a_sd_check_rw) 
     if (sd_file) {
       Serial.print("Checking SD card r/w... ");
       // SD書き込みテスト用のランダムな4桁の数字を生成
-      randomSeed(long(analogRead(G0))); // 未接続ピンのノイズを利用
+      randomSeed(long(analogRead(pinG0))); // 未接続ピンのノイズを利用
       int rand_number_tmp = random(1000, 9999);
 
       Serial.print("write code ");

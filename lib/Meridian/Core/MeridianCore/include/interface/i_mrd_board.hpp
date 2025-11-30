@@ -31,6 +31,10 @@ class IMrdBoard : public meridian::communication::MeridianDiagnosticUnit {
   /// 仮想関数
   ///   実装時には、以下の関数をオーバーライドすること
   //////////////////////////////////////////////////////////////////////////////////////////////////
+public:
+  /// @brief 仮想関数 - 区別させるためのアプリケーション名前
+  virtual const char *get_name() { return "UNSPECIFIED"; }
+
 protected:
   /// @brief 仮想関数 - ループ時の待機処理。ボードによってTimerの実装が異なるため、継承先で実装すること。
   /// @return 待機時間（マイクロ秒単位）

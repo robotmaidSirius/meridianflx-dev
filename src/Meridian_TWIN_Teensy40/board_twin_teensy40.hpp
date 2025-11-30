@@ -16,12 +16,40 @@
 namespace meridian {
 
 class BoardSetting : public board::MeridianBoardTwinForTeensy40 {
+private:
+  meridian::TestApp app;
+
 public:
   BoardSetting() {}
   ~BoardSetting() {}
+  /// @brief 区別させるための名前
+  const char *get_name() override { return MERIDIAN_BOARD_NAME; }
 
 protected:
-  /// @brief 初期化を実行する
+  /// @brief ボードの初期化処理
+  bool init() override {
+    //////////////////////////////////////////////////////////
+    // ログレベル変更
+    //////////////////////////////////////////////////////////
+    this->app.set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_ALL);
+    this->set_log_level_unit(OUTPUT_LOG_LEVEL::LEVEL_ALL);
+    //////////////////////////////////////////////////////////
+    // ボード設定
+    //////////////////////////////////////////////////////////
+    this->push_communication(this->diag);
+
+    //////////////////////////////////////////////////////////
+    // moduleの設定
+    //////////////////////////////////////////////////////////
+    // this->push_module(this->servo_pwm1);
+
+    //////////////////////////////////////////////////////////
+    // アプリケーションの設定
+    //////////////////////////////////////////////////////////
+    this->push_app(&this->app);
+    return true;
+  }
+  /// @brief プラグインのセットアップ処理
   bool setup() override {
     // 初期化処理をここに記述
     return true;

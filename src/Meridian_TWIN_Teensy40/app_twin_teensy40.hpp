@@ -27,11 +27,12 @@ protected:
   /// @brief 初期化を実行する
   bool setup(Meridim &a_meridim) override {
     // 初期化処理をここに記述
+    this->info("<APP> TestApp::setup() called");
     return true;
   }
   /// @brief Processの実処理
   bool loop(Meridim &a_meridim) override {
-    // 定期的な更新処理をここに記述
+    this->info("<APP> Application Loop Start");
     return true;
   }
   /// @brief 終了処理を実行する

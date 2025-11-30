@@ -27,11 +27,13 @@ protected:
   /// @brief 初期化を実行する
   bool setup(Meridim &a_meridim) override {
     // 初期化処理をここに記述
+    this->info("<APP> TestApp::setup() called");
     return true;
   }
 
   /// @brief Processの実処理
   bool loop(Meridim &a_meridim) override {
+    this->info("<APP> Application Loop Start");
 #if 0
     this->set_pwm(a_meridim); // サーボのPWM設定を行う
 
