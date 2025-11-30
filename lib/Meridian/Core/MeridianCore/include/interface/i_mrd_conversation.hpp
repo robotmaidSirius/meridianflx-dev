@@ -76,7 +76,7 @@ public:
           int sum = 0;
           int checksum = 0;
           if (data_length > 2) {
-            for (size_t i = 0; (i < data_length - 2) && (i < MERIDIM_DATA_LEN); i = i + 2) {
+            for (int i = 0; (i < data_length - 2) && (i < MERIDIM_DATA_LEN); i = i + 2) {
               sum = (sum + (data[i] & 0xFF) + ((data[i + 1] << 8) & 0xFF00)) & 0xFFFF;
             }
             checksum = (~((data[data_length - 2] & 0xFF) + ((data[data_length - 1] << 8) & 0xFF00))) & 0xFFFF;

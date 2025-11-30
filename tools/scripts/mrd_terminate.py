@@ -43,5 +43,4 @@ for target_file in target_files:
         else:
             print(f"# Not found: {target_file}")
 
-
-print("Process completed.")
+print("Completed.")

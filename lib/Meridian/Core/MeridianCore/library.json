@@ -5,9 +5,7 @@
     "keywords": "Meridian",
     "author": "Meridian Team",
     "license": "MIT License",
-    "dependencies": {
-        "ninagawa123/Meridian": "*"
-    },
+    "dependencies": {},
     "headers": "meridian_core.hpp",
     "examples": [],
     "build": {

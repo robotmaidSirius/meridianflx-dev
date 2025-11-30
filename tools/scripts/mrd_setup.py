@@ -42,7 +42,7 @@ def create_board_ip_txt(root_dir="."):
     else:
         print(f'## [Info] Already exists: {file_path}')
 
-def create_keyfile(sub_dir, root_dir="."):
+def create_network_keys_file(sub_dir, root_dir="."):
     ########################################
     # meridian_network_keys.hppの作成
     ########################################
@@ -162,5 +162,5 @@ if __name__ == '__main__':
     update_submodule()
     create_board_ip_txt(script_dir)
     for project_name in project_list:
-        create_keyfile(project_name, script_dir)
+        create_network_keys_file(project_name, script_dir)
         create_parameter(project_name, script_dir)

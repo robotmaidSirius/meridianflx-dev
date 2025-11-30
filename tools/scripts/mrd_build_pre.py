@@ -14,7 +14,7 @@ print("=====================================================")
 # Update submodules
 project_name = env["PIOENV"]
 print(f"# Project Name: {project_name}")
-mrd_setup.create_keyfile(f"{project_name}")
+mrd_setup.create_network_keys_file(f"{project_name}")
 mrd_setup.create_parameter(f"{project_name}")
 mrd_setup.create_board_ip_txt()
 

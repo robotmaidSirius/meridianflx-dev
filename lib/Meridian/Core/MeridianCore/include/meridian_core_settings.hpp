@@ -10,7 +10,12 @@
 #define __MERIDIAN_CORE_SETTINGS_HPP__
 
 #ifndef IMrdApp_DEFAULT_INTERVAL_US
-#define IMrdApp_DEFAULT_INTERVAL_US (10 * 1000) // デフォルトのインターバ
+/// @brief デフォルト実行インターバル（マイクロ秒単位）
+#define IMrdApp_DEFAULT_INTERVAL_US (10 * 1000)
+#endif
+#ifndef IMrdDriver_DEFAULT_INTERVAL_US
+/// @brief デフォルト実行インターバル（マイクロ秒単位）
+#define IMrdDriver_DEFAULT_INTERVAL_US (10 * 1000)
 #endif
 
 #endif // __MERIDIAN_CORE_SETTINGS_HPP__

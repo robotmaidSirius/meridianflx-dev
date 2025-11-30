@@ -154,6 +154,14 @@ public:
         }
       }
     }
+    // 登録されたモジュールの入力処理
+    if (true == result) {
+      for (IMrdDriver *module : this->modules) {
+        if (nullptr != module) {
+          module->has_reached_checkpoint(elapsed_time_us);
+        }
+      }
+    }
 
     // 継承されたinput関数の処理
     if (true == result) {

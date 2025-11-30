@@ -24,8 +24,8 @@ class BoardSetting : public board::MeridianBoardOnAtomLite {
 private:
   meridian::TestApp app;
   communication::MrdDiagnosticUart *diag = new communication::MrdDiagnosticUart(&Serial);
-  // MrdConversationWiredLAN *com = new MrdConversationWiredLAN(5, 15, MERIDIAN_BOARD_NAME);
-  communication::MrdConversationWifi *com = new communication::MrdConversationWifi(nullptr, MERIDIAN_BOARD_NAME);
+  // MrdConversationWiredLAN *com = new MrdConversationWiredLAN(5, 15, NETWORK_HOST_NAME);
+  communication::MrdConversationWifi *com = new communication::MrdConversationWifi(nullptr, NETWORK_HOST_NAME);
   // MrdConversationAndDiagnosticWifi *com = new MrdConversationAndDiagnosticWifi(&Serial);
 
 public:
@@ -46,7 +46,8 @@ protected:
     //////////////////////////////////////////////////////////
     // ボード設定
     //////////////////////////////////////////////////////////
-    this->push_communication(this->com, this->diag);
+    this->push_communication(this->diag);
+    this->push_communication(this->com);
 
     //////////////////////////////////////////////////////////
     // moduleの設定
@@ -67,6 +68,7 @@ protected:
 #ifdef WIFI_LOG_IP
     this->com->add_target_diag(WIFI_LOG_IP);
 #endif
+    this->com->connect(NETWORK_WIFI_SSID, NETWORK_WIFI_PASS);
 
     return true;
   }
