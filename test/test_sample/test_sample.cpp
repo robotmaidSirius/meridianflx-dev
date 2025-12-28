@@ -1,6 +1,5 @@
 /**
  * @file test_sample.cpp
- * @author Akari-mobility (masiro.to.akari@gmail.com)
  * @brief
  * @version 0.0.1
  * @date 2023-03-07

@@ -19,7 +19,7 @@
 #
 # ・起動方法
 # 当ファイルがあるディレクトリにて, ターミナルより
-# python3 Meridian_console.py [送信先のESP32のIPアドレス　例:192.168.1.12]
+# python3 Meridian_console.py [送信先のESP32のIPアドレス 例:192.168.1.12]
 # と入力して実行します. 必要に応じてライブラリをpip3で追加してください
 # （IPアドレスなしで実行した場合は, 82行目のUDP_SEND_IP_DEFでの設定が反映されます）
 # UDP_SEND_IPはESP32の起動時にPCシリアルモニタ上に表示されます
@@ -89,9 +89,9 @@ except ImportError:
 
 
 # 定数
-TITLE_VERSION = "Meridian_Console_v25.0406"  # DPGのウィンドウタイトル兼バージョン表示
-UDP_RESV_PORT = 22222                       # 受信ポート
-UDP_SEND_PORT = 22224                       # 送信ポート
+TITLE_VERSION = "Meridian_Console_v25.0406" # DPGのウィンドウタイトル兼バージョン表示
+UDP_RESV_PORT = 40009                       # 受信ポート
+UDP_SEND_PORT = 40009                       # 送信ポート
 MSG_SIZE = 90                               # Meridim配列の長さ(デフォルトは90)
 MSG_BUFF = MSG_SIZE * 2                     # Meridim配列のバイト長さ
 MSG_ERRS = MSG_SIZE - 2                     # Meridim配列のエラーフラグの格納場所（配列の最後から２番目）

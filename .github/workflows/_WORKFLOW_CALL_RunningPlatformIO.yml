@@ -52,7 +52,7 @@ jobs:
         PLATFORMIO_BUILD_FLAGS: ${{inputs.build_flags}}
 
     - name: Rename firmware.${{inputs.ext_name}}
-      if: success() && '${{inputs.firmware_name}}' != 'firmware'
+      if: success() && inputs.firmware_name != 'firmware'
       working-directory: ${{github.workspace}}/.pio/build/${{inputs.board_env}}
       run: cp firmware.${{inputs.ext_name}} ${{inputs.firmware_name}}.${{inputs.ext_name}}
 

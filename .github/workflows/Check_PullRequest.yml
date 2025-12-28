@@ -16,11 +16,11 @@ jobs:
     with:
       board_env: Meridian_TWIN_ESP32
       firmware_name: Meridian_TWIN_for_ESP32
-  Build_MERIDIAN_TWIN_TSY40:
+  Build_MERIDIAN_TWIN_TEENSY40:
     uses: ./.github/workflows/_WORKFLOW_CALL_RunningPlatformIO.yml
     with:
-      board_env: Meridian_TWIN_Tsy40
-      firmware_name: Meridian_TWIN_for_Tsy40
+      board_env: Meridian_TWIN_Teensy40
+      firmware_name: Meridian_TWIN_for_Teensy40
       ext_name: hex
   Build_MERIDIAN_LITE_M5STACK_ATOM:
     uses: ./.github/workflows/_WORKFLOW_CALL_RunningPlatformIO.yml

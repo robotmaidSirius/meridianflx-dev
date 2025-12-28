@@ -53,4 +53,6 @@ doxygen
 
 # My Project
 board_ip.txt
-keys.h
+meridian_network_keys.hpp
+meridian_parameter.hpp
+examples

@@ -1,8 +1,8 @@
 {
     "name": "MeridianFlx",
     "version": "0.1.0",
-    "description": "",
-    "keywords": "Meridian, MeridianFlx, teensy40, ESP32",
+    "description": "\"Meridian\"はヒューマノイドロボットの制御や開発を円滑にするためのオープンソースプロジェクトです",
+    "keywords": "Meridian, MeridianFlx, teensy40, ESP32, M5StackAtom",
     "homepage": "https://ninagawa123.github.io/Meridian_info/",
     "authors": {
         "name": "Ninagawa123",

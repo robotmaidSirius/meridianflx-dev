@@ -6,6 +6,22 @@
 		}
 	],
 	"settings": {
+		"doxdocgen.file.versionTag": "@version 0.1.0",
+		"doxdocgen.file.copyrightTag": [
+			"@copyright Copyright (c) {year} by Meridian Team. All rights reserved."
+		],
+		"doxdocgen.file.customTag": [
+			"@note MIT LICENSE"
+		],
+		"doxdocgen.file.fileOrder": [
+			"file",
+			"brief",
+			"version",
+			"date",
+			"copyright",
+			"custom",
+			"note"
+		],
 		"files.encoding": "utf8",
 		"files.eol": "\n",
 		"editor.formatOnSave": true,
