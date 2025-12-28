@@ -80,7 +80,57 @@ protected:
     // アプリケーションの設定
     this->app.set_interval(1 * 1000 * 1000);
     this->info("============ BoardSetting::setup():end called ============");
+#if 0
+    bool result = true;
+    try {
+      if (true == result) {
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        this->info("==========================================");
+        this->info(mrd_format("%s(%s)", MERIDIAN_VERSION, mrd_time_to_string(BUILD_TIME).c_str()).c_str());
+        this->info(mrd_format("Conversation: %s", this->con->get_name()).c_str());
+        this->info(mrd_format("Diagnostic  : %s", this->diag->get_name()).c_str());
 
+        this->info("Modules: ");
+        for (IMrdDriver *module : this->modules) {
+          if (nullptr != module) {
+            if ((true == module->is_input) && (false == module->is_output)) {
+              this->info(mrd_format("  - [%s:%s] %s:%s", module->is_input ? "In" : "--", module->is_output ? "Out" : "---", module->get_category(), module->get_name()).c_str());
+            }
+          }
+        }
+        for (IMrdDriver *module : this->modules) {
+          if (nullptr != module) {
+            if ((true == module->is_input) && (true == module->is_output)) {
+              this->info(mrd_format("  - [%s:%s] %s:%s", module->is_input ? "In" : "--", module->is_output ? "Out" : "---", module->get_category(), module->get_name()).c_str());
+            }
+          }
+        }
+        for (IMrdDriver *module : this->modules) {
+          if (nullptr != module) {
+            if ((false == module->is_input) && (true == module->is_output)) {
+              this->info(mrd_format("  - [%s:%s] %s:%s", module->is_input ? "In" : "--", module->is_output ? "Out" : "---", module->get_category(), module->get_name()).c_str());
+            }
+          }
+        }
+
+        this->info("Apps: ");
+        for (auto &ap : this->app) {
+          if (nullptr != ap) {
+            this->info(mrd_format("  - %s", ap->get_name()).c_str());
+          }
+        }
+        this->info("==========================================");
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        meridian::mrd_timer_setup(this->parameter.delay_time_us,
+                                  this->parameter.timer_section_us,
+                                  this->parameter.timer_delay_rate);
+      }
+    } catch (...) {
+      this->error("Exception occurred during setup.");
+      result = false;
+    }
+#endif
     return true;
   }
   /// @brief 入力処理
