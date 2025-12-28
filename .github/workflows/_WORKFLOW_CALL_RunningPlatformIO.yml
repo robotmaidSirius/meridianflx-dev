@@ -1,0 +1,65 @@
+name: Running PlatformIO
+on:
+  workflow_call:
+    inputs:
+      board_env:
+        required: true
+        type: string
+      build_flags:
+        description: 'Build flags'
+        required: false
+        type: string
+        default: ''
+      firmware_name:
+        description: 'Firmware name'
+        required: false
+        type: string
+        default: 'firmware'
+      ext_name:
+        description: 'ext name'
+        required: false
+        type: string
+        default: 'bin'
+
+jobs:
+  build:
+    name: Running PlatformIO
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout my project
+      uses: actions/checkout@v4
+
+    - name: Cache PlatformIO dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{github.workspace}}/.cache/pip
+          ${{github.workspace}}/.platformio/.cache
+        key: ${{ runner.os }}-pio
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install PlatformIO Core
+      working-directory: ${{github.workspace}}
+      run: pip install --upgrade platformio
+
+    - name: Build PlatformIO Project
+      working-directory: ${{github.workspace}}
+      run: pio run -e ${{inputs.board_env}}
+      env:
+        PLATFORMIO_BUILD_FLAGS: ${{inputs.build_flags}}
+
+    - name: Rename firmware.${{inputs.ext_name}}
+      if: success() && inputs.firmware_name != 'firmware'
+      working-directory: ${{github.workspace}}/.pio/build/${{inputs.board_env}}
+      run: cp firmware.${{inputs.ext_name}} ${{inputs.firmware_name}}.${{inputs.ext_name}}
+
+    - name: Upload artifacts
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{inputs.firmware_name}}
+        path: ${{github.workspace}}/.pio/build/${{inputs.board_env}}/${{inputs.firmware_name}}.${{inputs.ext_name}}
+        overwrite: true
