@@ -31,7 +31,7 @@ public:
   }
 
   bool input(Meridim &a_meridim) override {
-    this->info("<Driver>[-> input] MrdNotion called");
+    this->info("<Driver>[-> input ] MrdNotion called");
     return true;
   }
 
