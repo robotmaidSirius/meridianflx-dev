@@ -10,10 +10,16 @@
 #include "board_lite_pico.hpp"
 meridian::BoardSetting a_conductor;
 
+pin_size_t pin_led = LED_BUILTIN;
 //==================================================================================================
 //  SETUP
 //==================================================================================================
 void setup() {
+  // delay(3000);
+  pinMode(pin_led, OUTPUT);
+  digitalWrite(pin_led, LOW);
+  delay(500);
+  digitalWrite(pin_led, HIGH);
   if (false == a_conductor.begin()) {
     while (true) {
       Serial.println("Error: Board Setup failed.");

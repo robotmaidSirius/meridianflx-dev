@@ -156,7 +156,7 @@ if __name__ == '__main__':
         "Meridian_LITE_M5StackAtomS3",
         "Meridian_LITE_ESP32",
         "Meridian_TWIN_ESP32",
-        "Meridian_TWIN_Teensy40"
+        "Meridian_TWIN_Teensy"
     ]
 
     update_submodule()

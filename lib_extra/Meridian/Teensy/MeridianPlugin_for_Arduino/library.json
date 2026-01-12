@@ -1,8 +1,8 @@
 {
-    "name": "MeridianPlugin for Arduino on Teensy40",
+    "name": "MeridianPlugin for Arduino on Teensy",
     "version": "1.0.0",
-    "description": "フレームワークが'Arduino'、CPUが'Teensy40'である場合のMeridianPluginのライブラリ",
-    "keywords": "Meridian Arduino Teensy40",
+    "description": "フレームワークが'Arduino'、CPUが'Teensy'である場合のMeridianPluginのライブラリ",
+    "keywords": "Meridian Arduino Teensy",
     "author": "Meridian Team",
     "license": "MIT License",
     "dependencies": {

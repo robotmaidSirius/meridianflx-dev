@@ -1,22 +1,22 @@
 /**
- * @file board_twin_teensy40.hpp
+ * @file board_twin_teensy.hpp
  * @brief Meridian TWIN [Board: Teensy 4.0]のボード設定ファイル
  * @version 0.1.0
  * @date 2025-11-24
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#ifndef __BOARD_TWIN_TEENSY40_HPP__
-#define __BOARD_TWIN_TEENSY40_HPP__
-#include "app_twin_teensy40.hpp"
+#ifndef __BOARD_TWIN_TEENSY_HPP__
+#define __BOARD_TWIN_TEENSY_HPP__
+#include "app_twin_teensy.hpp"
 #include "meridian_network_keys.hpp"
 #include "meridian_parameter.hpp"
-#include <board/meridian_board_twin_for_teensy40.hpp>
+#include <board/meridian_board_twin_for_teensy.hpp>
 #include <mrd_modules/mrd_notion.hpp>
 
 namespace meridian {
 
-class BoardSetting : public board::MeridianBoardTwinForTeensy40 {
+class BoardSetting : public board::MeridianBoardTwinForTeensy {
 private:
   meridian::TestApp app;
   modules::MrdNotion *notion = new modules::MrdNotion(); // ノーションモジュール
@@ -77,4 +77,4 @@ protected:
 
 } // namespace meridian
 
-#endif // __BOARD_TWIN_TEENSY40_HPP__
+#endif // __BOARD_TWIN_TEENSY_HPP__

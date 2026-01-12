@@ -6,8 +6,8 @@
  * @copyright Copyright (c) 2025 by Meridian Team. All rights reserved.
  * @note MIT LICENSE
  */
-#ifndef __APP_TWIN_TEENSY40_HPP__
-#define __APP_TWIN_TEENSY40_HPP__
+#ifndef __APP_LITE_PICO_HPP__
+#define __APP_LITE_PICO_HPP__
 #include <interface/i_mrd_app.hpp>
 
 namespace meridian {
@@ -44,4 +44,4 @@ protected:
 
 } // namespace meridian
 
-#endif // __APP_TWIN_TEENSY40_HPP__
+#endif // __APP_LITE_PICO_HPP__
